@@ -1,0 +1,4 @@
+#for IDEA
+out/
+.idea/
+*.iml
