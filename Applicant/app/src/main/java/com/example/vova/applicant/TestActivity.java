@@ -22,26 +22,25 @@ public class TestActivity extends AppCompatActivity {
 
     String s;
 
-
     ListView mListView;
     ArrayAdapter<String> mAdapter;
     ArrayList<String> mStrings = new ArrayList<>();
+
+    public static final String INTENT_KEY = "INTENT_KEY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
 
-        Intent intent = getIntent();
-       s = intent.getStringExtra("Tag");
+       s = (String) getIntent().getExtras().get("INTENT_KEY");
 
         mListView = (ListView)findViewById(R.id.listViewtest);
-
 
         new ParseYears().execute();
         mAdapter = new ArrayAdapter<>(TestActivity.this, android.R.layout.simple_list_item_1,
                 mStrings);
-        Log.d("My", "onCreate   mYearsArray ->" + s);
+        Log.d("My", "onCreate   s ->" + s);
     }
 
     public class ParseYears extends AsyncTask<String, Void, String> {
@@ -49,6 +48,9 @@ public class TestActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
             String html = "http://vstup.info";
+
+            Log.d("My", "onCreate   html ->" + html);
+
             Document document;
             try {
                 document = Jsoup.connect(html + s).get();
@@ -60,7 +62,7 @@ public class TestActivity extends AppCompatActivity {
                     mStrings.add(element.text());
                 }
 
-                Log.d("My", "doInBackground   mYearsArray ->" + mStrings);
+                Log.d("My", "doInBackground   mCitiesArray ->" + mStrings);
 
             } catch (IOException e) {
                 e.printStackTrace();
