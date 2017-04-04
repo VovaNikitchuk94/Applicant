@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> mCitiesArray = new ArrayList<>();
     ArrayList<String> mCitiesLinks = new ArrayList<>();
 
-    Map<String, String> mMap = new HashMap<>();
+//    Map<String, String> mMap = new HashMap<>();
 
     TextView mTextView;
 
@@ -71,20 +71,20 @@ public class MainActivity extends AppCompatActivity {
                 Element elementRegion = document.getElementById("region");
                 Elements links = elementRegion.getElementsByTag("a");
                 for (Element link : links) {
-//                    mCitiesLinks.add(link.attr("href"));
-//                    mCitiesArray.add(link.text());
-                    mMap.put(link.attr("href"), link.text());
+                    mCitiesLinks.add(link.attr("href"));
+                    mCitiesArray.add(link.text());
+//                    mMap.put(link.attr("href"), link.text());
                 }
 
-                for (Map.Entry entry: mMap.entrySet()) {
-                    mCitiesLinks.add(entry.getKey().toString());
-                    mCitiesArray.add(entry.getValue().toString());
-
-                }
+//                for (Map.Entry entry: mMap.entrySet()) {
+//                    mCitiesLinks.add(entry.getKey().toString());
+//                    mCitiesArray.add(entry.getValue().toString());
+//
+//                }
 
                 Log.d("My", "doInBackground   mCitiesLinks ->" + mCitiesLinks);
                 Log.d("My", "doInBackground   mCitiesArray ->" + mCitiesArray);
-                Log.d("My", "doInBackground   mMap ->" + mMap);
+//                Log.d("My", "doInBackground   mMap ->" + mMap);
 
 //                Elements years = document.select("a[href]");
 
