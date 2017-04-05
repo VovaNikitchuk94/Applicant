@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.vova.applicant.MainActivity">
+    tools:context="com.example.vova.applicant.UniversitiesActivity">
 
     <TextView
+        android:id="@+id/chooseUniversityUniversityActivity"
+        style="@style/headTextViewStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textViewСhooseCityMainActivity"
-        android:text="@string/chooseCityMainActivity"
-        style="@style/headTextViewStyle"/>
+        android:text="@string/textViewChooseUniversityUniversityActivity"/>
 
     <ListView
+        android:id="@+id/listViewUniversityActivity"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/listViewMainActivity"/>
+        android:layout_height="wrap_content"></ListView>
 
 </LinearLayout>

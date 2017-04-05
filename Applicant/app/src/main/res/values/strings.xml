@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Applicant</string>
+    <string name="chooseCityMainActivity">Будь-ласка, виберіть Місто</string>
+    <string name="textViewChooseUniversityUniversityActivity">Будь-ласка, виберіть навчальний заклад</string>
+    <string name="headTextAboutUniversityActivity">Інформація про ВНЗ</string>
 </resources>
