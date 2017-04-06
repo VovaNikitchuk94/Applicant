@@ -19,16 +19,18 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class UniversitiesActivity extends AppCompatActivity {
+public class UniversitiesListActivity extends AppCompatActivity {
 
-    String s;
+    public static final String HTTP_VSTUP_INFO = "http://vstup.info";
 
-    ListView mListView;
-    ArrayAdapter<String> mAdapter;
-    ArrayList<String> mUniversityArray = new ArrayList<>();
-    ArrayList<String> mUniversityLinks = new ArrayList<>();
+    private String link;
 
-    TextView mTextViewHeadText;
+    private ListView mListView;
+    private ArrayAdapter<String> mAdapter;
+    private ArrayList<String> mUniversitiesName = new ArrayList<>();
+    private ArrayList<String> mUniversityLinks = new ArrayList<>();
+
+    private TextView mTextViewHeadText;
 
     public static final String INTENT_KEY_UNIVERSITY_ACTIVITY = "INTENT_KEY_UNIVERSITY_ACTIVITY";
 
@@ -37,8 +39,15 @@ public class UniversitiesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_universities);
 
-       s = (String) getIntent().getExtras().get("INTENT_KEY_UNIVERSITY_ACTIVITY");
+        Intent intent = getIntent();
+        if (intent != null){
 
+            Bundle bundle = intent.getExtras();
+            if (bundle != null){
+
+                link = bundle.getString(INTENT_KEY_UNIVERSITY_ACTIVITY);
+            }
+        }
 
         mListView = (ListView)findViewById(R.id.listViewUniversityActivity);
         mTextViewHeadText = (TextView)findViewById(R.id.textViewHeadAboutUniversityActivity);
@@ -47,49 +56,43 @@ public class UniversitiesActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 
-                Intent intent = new Intent(UniversitiesActivity.this, AboutUniversityActivity.class);
-                intent.putExtra(AboutUniversityActivity.INTENT_KEY_ABOUT_UNIVERSITY_ACTIVITY,
+                Intent intent = new Intent(UniversitiesListActivity.this, UniversityPageActivity.class);
+                intent.putExtra(UniversityPageActivity.KEY_UNIVERSITY_LINK,
                         mUniversityLinks.get(position));
+                intent.putExtra(UniversityPageActivity.KEY_UNIVERSITY_TITLE,
+                        mUniversitiesName.get(position));
                 startActivity(intent);
                 Log.d("My", "position = " + position + "id = " + id);
 
             }
         });
 
-        new ParseYears().execute();
-        mAdapter = new ArrayAdapter<>(UniversitiesActivity.this, android.R.layout.simple_list_item_1,
-                mUniversityArray);
-        Log.d("My", "onCreate   s ->" + s);
+        new ParseUniversityList().execute();
+        mAdapter = new ArrayAdapter<>(UniversitiesListActivity.this, android.R.layout.simple_list_item_1,
+                mUniversitiesName);
+        Log.d("My", "onCreate   link ->" + link);
     }
 
-    public class ParseYears extends AsyncTask<String, Void, String> {
+    public class ParseUniversityList extends AsyncTask<String, Integer, String> {
 
         @Override
         protected String doInBackground(String... params) {
-            String html = "http://vstup.info";
-
-            Log.d("My", "onCreate   html ->" + html);
 
             Document document;
             try {
-                document = Jsoup.connect(html + s).get();
+                document = Jsoup.connect(HTTP_VSTUP_INFO + link).get();
+                Log.d("My", "UniversitiesListActivity -> ParseUniversityList - > documentLink"  + document.text());
 
                 Element elementUnivers = document.getElementById("okrArea");
                 Elements links = elementUnivers.getElementsByTag("a");
 
                 for (Element link : links) {
+                    //TODO нужно как то обрабатывать года
                     mUniversityLinks.add(link.attr("href"));
-                    mUniversityArray.add(link.text());
+                    mUniversitiesName.add(link.text());
                 }
-//                Elements cities = document.select("tr");
 
-//                mUniversityArray.clear();
-//
-//                for (Element element : cities){
-//                    mUniversityArray.add(element.text());
-//                }
-
-                Log.d("My", "doInBackground   mUniversityArray ->" + mUniversityArray);
+                Log.d("My", "doInBackground   mUniversitiesName ->" + mUniversitiesName);
                 Log.d("My", "doInBackground   mUniversityLinks ->" + mUniversityLinks);
 
             } catch (IOException e) {

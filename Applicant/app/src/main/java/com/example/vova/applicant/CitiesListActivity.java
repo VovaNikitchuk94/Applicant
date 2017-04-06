@@ -19,26 +19,40 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class CitiesListActivity extends AppCompatActivity {
 
-    ListView mListView;
-    ArrayAdapter<String> mAdapter;
-    ArrayList<String> mCitiesArray = new ArrayList<>();
-    ArrayList<String> mCitiesLinks = new ArrayList<>();
+    public static final String KEY_YEARS_CITIES_LIST_ACTIVITY = "KEY_YEARS_CITIES_LIST_ACTIVITY";
 
-    TextView mTextView;
+    private ListView mListView;
+    private ArrayAdapter<String> mAdapter;
+    private ArrayList<String> mCitiesArray = new ArrayList<>();
+    private ArrayList<String> mCitiesLinks = new ArrayList<>();
+
+    private TextView mTextView;
+
+    private String yearsCode = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_cities_list);
 
-        mListView = (ListView) findViewById(R.id.listViewMainActivity);
+        mListView = (ListView) findViewById(R.id.listViewCitiesListActivity);
         mTextView = (TextView) findViewById(R.id.textViewСhooseCityMainActivity);
         mTextView.setText(getText(R.string.chooseCityMainActivity));
 
-        new ParseYears().execute();
-        mAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1,
+        Intent intent = getIntent();
+        if (intent != null){
+
+             Bundle bundle = intent.getExtras();
+            if (bundle != null){
+
+                yearsCode = bundle.getString(KEY_YEARS_CITIES_LIST_ACTIVITY);
+            }
+        }
+
+        new ParseCitiesList().execute();
+        mAdapter = new ArrayAdapter<>(CitiesListActivity.this, android.R.layout.simple_list_item_1,
                 mCitiesArray);
         Log.d("My", "onCreate   mCitiesArray ->" + mCitiesArray);
 
@@ -46,27 +60,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 
-                            Intent intent = new Intent(MainActivity.this, UniversitiesActivity.class);
-                            intent.putExtra(UniversitiesActivity.INTENT_KEY_UNIVERSITY_ACTIVITY, mCitiesLinks.get(position));
+                            Intent intent = new Intent(CitiesListActivity.this, UniversitiesListActivity.class);
+                            intent.putExtra(UniversitiesListActivity.INTENT_KEY_UNIVERSITY_ACTIVITY, mCitiesLinks.get(position));
                             startActivity(intent);
-                    Log.d("My", "position = " + position + "id = " + id);
-
+                    Log.d("My", "position = " + position + " id = " + id);
             }
         });
     }
 
-    public class ParseYears extends AsyncTask<String, Void, String> {
+    public class ParseCitiesList extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... params) {
-            String html = "http://www.vstup.info/2016/";
+            String html = yearsCode;
             Document document;
             try {
                 document = Jsoup.connect(html).get();
 
                 Element elementRegion = document.getElementById("region");
                 Elements links = elementRegion.getElementsByTag("a");
-
 
                 for (Element link : links) {
                     mCitiesLinks.add(link.attr("href"));

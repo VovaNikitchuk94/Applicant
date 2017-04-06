@@ -11,17 +11,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".TopLevelActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".UniversitiesActivity">
-        </activity>
-        <activity android:name=".AboutUniversityActivity">
-        </activity>
+        <activity android:name=".UniversitiesListActivity"/>
+        <activity android:name=".AboutUniversityActivity"/>
+        <activity android:name=".CitiesListActivity"/>
+        <activity android:name=".FullTimeFormListActivity"/>
+        <activity android:name=".ExternalFormListActivity"/>
+        <activity android:name=".UniversityPageActivity"/>
     </application>
 
 </manifest>

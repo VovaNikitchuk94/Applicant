@@ -5,8 +5,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -21,75 +19,61 @@ import java.util.ArrayList;
 
 public class AboutUniversityActivity extends AppCompatActivity {
 
-    public static final String INTENT_KEY_ABOUT_UNIVERSITY_ACTIVITY =
-            "INTENT_KEY_ABOUT_UNIVERSITY_ACTIVITY";
+    public static final String KEY_ABOUT_UNIVERSITY_ACTIVITY =
+            "KEY_ABOUT_UNIVERSITY_ACTIVITY";
 
-    String s;
+    private String mAboutUniversityText;
 
-    ListView mListView;
-    ArrayAdapter<String> mAdapter;
-    ArrayList<String> mAboutUniversityArray = new ArrayList<>();
-//    ArrayList<String> mUniversityLinks = new ArrayList<>();
+    private ListView mListView;
+    private ArrayAdapter<String> mAdapter;
+    private ArrayList<String> mAboutUniversityArray = new ArrayList<>();
 
-    TextView mTextViewHeadText;
+    private TextView mTextViewHeadText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_university);
 
-        s = (String) getIntent().getExtras().get("INTENT_KEY_ABOUT_UNIVERSITY_ACTIVITY");
-        s = s.substring(1);
+        Intent intent = getIntent();
+        if (intent != null){
+
+            Bundle bundle = intent.getExtras();
+            if (bundle != null){
+                mAboutUniversityText = bundle.getString(KEY_ABOUT_UNIVERSITY_ACTIVITY);
+            }
+        }
+        mAboutUniversityText = mAboutUniversityText.substring(1);
 
         mListView = (ListView)findViewById(R.id.listViewAboutUniversityActivity);
         mTextViewHeadText = (TextView)findViewById(R.id.textViewHeadAboutUniversityActivity);
 
-//        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-//
-//                Intent intent = new Intent(UniversitiesActivity.this, AboutUniversityActivity.class);
-//                intent.putExtra(AboutUniversityActivity.INTENT_KEY_ABOUT_UNIVERSITY_ACTIVITY,
-//                        mUniversityLinks.get(position));
-//                startActivity(intent);
-//                Log.d("My", "position = " + position + "id = " + id);
-//
-//            }
-//        });
-
-        new ParseYears().execute();
+        new ParseAboutUniversityList().execute();
         mAdapter = new ArrayAdapter<>(AboutUniversityActivity.this, android.R.layout.simple_list_item_1,
                 mAboutUniversityArray);
-        Log.d("My", "onCreate   s ->" + s);
+        Log.d("My", "onCreate   link ->" + mAboutUniversityText);
     }
 
-    public class ParseYears extends AsyncTask<String, Void, String> {
+    public class ParseAboutUniversityList extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... params) {
-            String html = "http://vstup.info/2016";
+            String html = TopLevelActivity.yearsCodeLink;
 
             Log.d("My", "onCreate   html ->" + html);
 
             Document document;
             try {
-                document = Jsoup.connect(html + s).get();
+                document = Jsoup.connect(html + mAboutUniversityText).get();
 
-                Element elementUnivers = document.getElementById("about");
-                Elements texts = elementUnivers.getElementsByTag("tr");
+                Element elementAboutUniversities = document.getElementById("about");
+                Elements texts1 = elementAboutUniversities.getElementsByTag("tr");
 
-                for (Element link : texts) {
+                for (Element link : texts1) {
                     mAboutUniversityArray.add(link.text());
                 }
-//                Elements cities = document.select("tr");
 
-//                mUniversityArray.clear();
-//
-//                for (Element element : cities){
-//                    mUniversityArray.add(element.text());
-//                }
-
-                Log.d("My", "doInBackground   mAboutUniversityArray ->" + mAboutUniversityArray);
+                Log.d("My", "doInBackground   mAboutExternalFormArray ->" + mAboutUniversityArray);
 
             } catch (IOException e) {
                 e.printStackTrace();

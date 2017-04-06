@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Абітурієнт</string>
+    <string name="SearchTopLevelActivity">Пошук</string>
+    <string name="headTextAboutUniversityActivity">Інформація про ВНЗ</string>
+    <string name="textButton2015YearTopLevelActivity">2015 Рік</string>
+    <string name="textButton2016YearTopLevelActivity">2016 Рік</string>
+    <string name="textButton2017YearTopLevelActivity">2017 Рік</string>
+    <string name="textExternalFormUniversityPageActivity">Заочна форма</string>
+    <string name="textFullTimeFormUniversityPageActivity">Денна форма</string>
+    <string name="textViewChooseUniversityUniversityActivity">Будь-ласка, виберіть навчальний заклад</string>
+    <string name="textAboutUniversityPageActivity">Про ВНЗ</string>
+    <string name="chooseCityMainActivity">Виберіть місто</string>
+</resources>

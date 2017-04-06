@@ -1,6 +1,13 @@
 <resources>
     <string name="app_name">Applicant</string>
-    <string name="chooseCityMainActivity">Будь-ласка, виберіть Місто</string>
-    <string name="textViewChooseUniversityUniversityActivity">Будь-ласка, виберіть навчальний заклад</string>
-    <string name="headTextAboutUniversityActivity">Інформація про ВНЗ</string>
+    <string name="textViewChooseUniversityUniversityActivity">Please, choose university</string>
+    <string name="headTextAboutUniversityActivity">Information about University</string>
+    <string name="SearchTopLevelActivity">Search</string>
+    <string name="textButton2017YearTopLevelActivity">2017 year</string>
+    <string name="textButton2016YearTopLevelActivity">2016 year</string>
+    <string name="textButton2015YearTopLevelActivity">2015 year</string>
+    <string name="textAboutUniversityPageActivity">About University</string>
+    <string name="textFullTimeFormUniversityPageActivity">Full Time Form</string>
+    <string name="textExternalFormUniversityPageActivity">External Form</string>
+    <string name="chooseCityMainActivity">Please, choose city</string>
 </resources>
