@@ -10,4 +10,8 @@
     <string name="textFullTimeFormUniversityPageActivity">Full Time Form</string>
     <string name="textExternalFormUniversityPageActivity">External Form</string>
     <string name="chooseCityMainActivity">Please, choose city</string>
+    <string name="textChooseDegreeFullTimeFormPageActivity">Choose Degree</string>
+    <string name="textBachelorDegreeFullTimeFormPageActivity">Bachelor</string>
+    <string name="textSpecialistDegreeFullTimeFormPageActivity">Specialist</string>
+    <string name="textMasterDegreeFullTimeFormPageActivity">Master</string>
 </resources>

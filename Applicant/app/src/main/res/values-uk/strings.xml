@@ -11,4 +11,8 @@
     <string name="textViewChooseUniversityUniversityActivity">Будь-ласка, виберіть навчальний заклад</string>
     <string name="textAboutUniversityPageActivity">Про ВНЗ</string>
     <string name="chooseCityMainActivity">Виберіть місто</string>
+    <string name="textChooseDegreeFullTimeFormPageActivity">Виберіть ступінь</string>
+    <string name="textMasterDegreeFullTimeFormPageActivity">Магістр</string>
+    <string name="textBachelorDegreeFullTimeFormPageActivity">Бакалавр</string>
+    <string name="textSpecialistDegreeFullTimeFormPageActivity">Спеціаліст</string>
 </resources>

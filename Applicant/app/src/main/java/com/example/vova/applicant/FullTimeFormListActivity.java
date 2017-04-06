@@ -42,7 +42,7 @@ public class FullTimeFormListActivity extends AppCompatActivity {
         }
         mAboutFullTimeForm = mAboutFullTimeForm.substring(1);
 
-        mListView = (ListView) findViewById(R.id.listViewFullTimeForm);
+        mListView = (ListView) findViewById(R.id.listViewFullTimeFormListActivity);
 
         new ParseFullTimeFormUniversity().execute();
         mAdapter = new ArrayAdapter<String>(FullTimeFormListActivity.this,  android.R.layout.simple_list_item_1,

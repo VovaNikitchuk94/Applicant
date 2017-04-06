@@ -87,7 +87,6 @@ public class UniversitiesListActivity extends AppCompatActivity {
                 Elements links = elementUnivers.getElementsByTag("a");
 
                 for (Element link : links) {
-                    //TODO нужно как то обрабатывать года
                     mUniversityLinks.add(link.attr("href"));
                     mUniversitiesName.add(link.text());
                 }

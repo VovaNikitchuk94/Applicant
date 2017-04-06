@@ -43,7 +43,7 @@ public class ExternalFormListActivity extends AppCompatActivity {
         }
         mAboutExternalForm = mAboutExternalForm.substring(1);
 
-        mListView = (ListView) findViewById(R.id.listViewExternalForm);
+        mListView = (ListView) findViewById(R.id.listViewExternalFormListActivity);
 
         new ParseExternalFormUniversity().execute();
         mAdapter = new ArrayAdapter<String>(ExternalFormListActivity.this,  android.R.layout.simple_list_item_1,

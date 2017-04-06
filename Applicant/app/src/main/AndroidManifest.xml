@@ -24,6 +24,8 @@
         <activity android:name=".FullTimeFormListActivity"/>
         <activity android:name=".ExternalFormListActivity"/>
         <activity android:name=".UniversityPageActivity"/>
+        <activity android:name=".ExternalFormPageActivity"/>
+        <activity android:name=".FullTimeFormPageActivity"/>
     </application>
 
 </manifest>
