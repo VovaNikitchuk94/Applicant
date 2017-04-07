@@ -14,9 +14,9 @@ public class FullTimeFormPageActivity extends AppCompatActivity implements View.
     public static final String KEY_DEGREE_TITLE = "KEY_DEGREE_TITLE";
     public static final String KEY_DEGREE_LINK = "KEY_DEGREE_LINK";
 
-    private static final String KEY_BACHELOR = "#d_o_1";
-    private static final String KEY_SPECIALIST = "#d_o_3";
-    private static final String KEY_MASTER = "#d_o_2";
+    private static final String KEY_BACHELOR_FULL_TIME = "#d_o_1";
+    private static final String KEY_SPECIALIST_FULL_TIME = "#d_o_3";
+    private static final String KEY_MASTER_FULL_TIME = "#d_o_2";
 
     private TextView mTextViewDegree;
 
@@ -70,19 +70,23 @@ public class FullTimeFormPageActivity extends AppCompatActivity implements View.
                 intent = new Intent(this, BachelorListActivity.class);
                 intent.putExtra(BachelorListActivity.KEY_BACHELOR_TITLE, mStrFullTimeName);
                 intent.putExtra(BachelorListActivity.KEY_BACHELOR_LINK, mStrFullTimeLink
-                        + KEY_BACHELOR);
+                        + KEY_BACHELOR_FULL_TIME);
                 Log.d("My", "FullTimeFormPageActivity -> onClick ->  mStrFullTimeLink \n" +
-                        " + KEY_BACHELOR" +  mStrFullTimeLink + KEY_BACHELOR);
+                        " + KEY_BACHELOR_FULL_TIME" +  mStrFullTimeLink + KEY_BACHELOR_FULL_TIME);
                 Log.d("My", "FullTimeFormPageActivity -> onClick ->  mStrFullTimeName \n" +
-                        " + KEY_BACHELOR" +  mStrFullTimeName + KEY_BACHELOR);
+                        " + KEY_BACHELOR_FULL_TIME" +  mStrFullTimeName + KEY_BACHELOR_FULL_TIME);
                 break;
             case R.id.buttonSpecialistDegreeFullTimeFormPageActivity:
-                intent = new Intent(this, MasterListActivity.class);
-                //TODO
+                intent = new Intent(this, SpecialistListActivity.class);
+                intent.putExtra(SpecialistListActivity.KEY_SPECIALIST_TITLE, mStrFullTimeName);
+                intent.putExtra(SpecialistListActivity.KEY_SPECIALIST_LINK, mStrFullTimeLink
+                        + KEY_SPECIALIST_FULL_TIME);
                 break;
             case R.id.buttonMasterDegreeFullTimeFormPageActivity:
-                intent = new Intent(this, SpecialistListActivity.class);
-                //TODO
+                intent = new Intent(this, MasterListActivity.class);
+                intent.putExtra(MasterListActivity.KEY_MASTER_TITLE, mStrFullTimeName);
+                intent.putExtra(MasterListActivity.KEY_MASTER_LINK, mStrFullTimeLink
+                        + KEY_MASTER_FULL_TIME);
                 break;
         }
 

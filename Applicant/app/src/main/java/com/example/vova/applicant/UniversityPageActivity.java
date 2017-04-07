@@ -77,14 +77,17 @@ public class UniversityPageActivity extends AppCompatActivity implements View.On
                         universityName);
                 intent.putExtra(FullTimeFormPageActivity.KEY_DEGREE_LINK,
                         universityLink);
-                Log.d("My", "UniversityPageActivity -> onClick -> universityLink" + universityLink);
-                Log.d("My", "UniversityPageActivity -> onClick -> universityName" + universityName);
+                Log.d("My", "UniversityPageActivity -> onClick -> buttonExternalFormUniversityPageActivity -> universityLink" + universityLink);
+                Log.d("My", "UniversityPageActivity -> onClick -> buttonExternalFormUniversityPageActivity -> universityName" + universityName);
                 break;
             case R.id.buttonExternalFormUniversityPageActivity:
-                intent = new Intent(this, ExternalFormListActivity.class);
-                intent.putExtra(ExternalFormListActivity.KEY_ABOUT_EXTERNAL_FORM,
+                intent = new Intent(this, ExternalFormPageActivity.class);
+                intent.putExtra(ExternalFormPageActivity.KEY_DEGREE_TITLE,
+                        universityName);
+                intent.putExtra(ExternalFormPageActivity.KEY_DEGREE_LINK,
                         universityLink);
-                Log.d("My", "UniversityPageActivity -> onClick -> universityLink" + universityLink);
+                Log.d("My", "UniversityPageActivity -> onClick -> buttonExternalFormUniversityPageActivity -> universityLink" + universityLink);
+                Log.d("My", "UniversityPageActivity -> onClick -> buttonExternalFormUniversityPageActivity ->universityLink" + universityLink);
                 break;
         }
 

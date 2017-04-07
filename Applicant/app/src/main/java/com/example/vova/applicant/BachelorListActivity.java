@@ -65,15 +65,15 @@ public class BachelorListActivity extends AppCompatActivity{
 
         @Override
         protected String doInBackground(String... params) {
+
             String html = TopLevelActivity.yearsCodeLink;
 
             Log.d("My", "onCreate   html ->" + html);
-//            String test = "http://www.vstup.info/2016/i2016i252.html#vnz#d_o_1";
             Document document;
             try {
                 document = Jsoup.connect(html + mStrBachelorLink).get();
 //                document = Jsoup.connect(test).get();
-                Log.d("My", "BachelorListActivity -> ParseBachelorList - > documentLink"  + document.text());
+                Log.d("My", "BachelorListActivity -> ParseSpecialistList - > documentLink"  + document.text());
 
                 Elements links = document.select("td");
 
@@ -101,9 +101,4 @@ public class BachelorListActivity extends AppCompatActivity{
 
         }
     }
-
-
-
-    //TODO create  & manifest
-
 }
