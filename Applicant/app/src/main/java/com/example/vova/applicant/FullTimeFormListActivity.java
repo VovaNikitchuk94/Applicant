@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -25,12 +27,15 @@ public class FullTimeFormListActivity extends AppCompatActivity {
 
     private ListView mListView;
     private ArrayAdapter<String> mAdapter;
-    private ArrayList<String> mAboutFullTimeFormArray = new ArrayList<>();
+    private ArrayList<String> mAboutFullTimeFormName = new ArrayList<>();
+    private ArrayList<String> mAboutFullTimeFormLink = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_time_form_list);
+
+        Log.d("OnCreate", "FullTimeFormListActivity -> OnCreate");
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -45,8 +50,25 @@ public class FullTimeFormListActivity extends AppCompatActivity {
         mListView = (ListView) findViewById(R.id.listViewFullTimeFormListActivity);
 
         new ParseFullTimeFormUniversity().execute();
-        mAdapter = new ArrayAdapter<String>(FullTimeFormListActivity.this,  android.R.layout.simple_list_item_1,
-                mAboutFullTimeFormArray);
+        mAdapter = new ArrayAdapter<String>(FullTimeFormListActivity.this,
+                android.R.layout.simple_list_item_1,
+                mAboutFullTimeFormName);
+
+//        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+//
+//                Intent intent = new Intent(FullTimeFormListActivity.this, FullTimeFormPageActivity.class);
+//                intent.putExtra(FullTimeFormPageActivity.KEY_DEGREE_LINK,
+//                        mAboutFullTimeFormName.get(position));
+//                intent.putExtra(FullTimeFormPageActivity.KEY_DEGREE_TITLE,
+//                        mAboutFullTimeFormName.get(position));
+//                startActivity(intent);
+//                Log.d("My", "FullTimeFormListActivity  -> mAboutFullTimeFormName.get(position)"
+//                        + mAboutFullTimeFormName.get(position));
+//                Log.d("My", "position = " + position + " id = " + id);
+//            }
+//        });
     }
 
     public class ParseFullTimeFormUniversity extends AsyncTask<String, Void, String> {
@@ -66,12 +88,14 @@ public class FullTimeFormListActivity extends AppCompatActivity {
 
                 for (Element link : texts2) {
                     if (link.text().contains("Бакалавр")){
-                        mAboutFullTimeFormArray.add(link.text());
+                        mAboutFullTimeFormName.add(link.text());
+                        mAboutFullTimeFormLink.add(link.attr("href"));
                     }
 
                 }
 
-                Log.d("My", "doInBackground   mAboutExternalFormArray ->" + mAboutFullTimeFormArray);
+                Log.d("My", "doInBackground   mAboutFullTimeFormName ->" + mAboutFullTimeFormName);
+                Log.d("My", "doInBackground   mAboutFullTimeFormLink ->" + mAboutFullTimeFormLink);
 
             } catch (IOException e) {
                 e.printStackTrace();

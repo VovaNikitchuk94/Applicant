@@ -33,6 +33,8 @@ public class ExternalFormListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_external_form_list);
 
+        Log.d("OnCreate", "ExternalFormListActivity -> OnCreate");
+
         Intent intent = getIntent();
         if (intent != null) {
 

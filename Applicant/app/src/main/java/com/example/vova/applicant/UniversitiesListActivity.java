@@ -39,6 +39,8 @@ public class UniversitiesListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_universities);
 
+        Log.d("OnCreate", "UniversitiesListActivity -> OnCreate");
+
         Intent intent = getIntent();
         if (intent != null){
 

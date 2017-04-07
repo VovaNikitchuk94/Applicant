@@ -29,6 +29,8 @@ public class UniversityPageActivity extends AppCompatActivity implements View.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_university_page);
 
+        Log.d("OnCreate", "UniversityPageActivity -> OnCreate");
+
         Intent intent = getIntent();
         if (intent != null){
 
@@ -40,10 +42,10 @@ public class UniversityPageActivity extends AppCompatActivity implements View.On
             }
         }
 
-        initialView();
+        initializeView();
     }
 
-    private void initialView() {
+    private void initializeView() {
         mNameOfUniversity = (TextView)findViewById(R.id.textViewNameOfUniversityPageActivity);
         mNameOfUniversity.setText(universityName);
 
@@ -68,11 +70,15 @@ public class UniversityPageActivity extends AppCompatActivity implements View.On
                         universityLink);
                 Log.d("My", "UniversityPageActivity -> onClick -> universityLink" + universityLink);
                 break;
+            // по нажатию на кнопку переход на FullTimeFormPageActivity и передача ссылки и имени университета
             case R.id.buttonFullTimeFormUniversityPageActivity:
-                intent = new Intent(this, FullTimeFormListActivity.class);
-                intent.putExtra(FullTimeFormListActivity.KEY_ABOUT_FULL_TIME_FORM,
+                intent = new Intent(this, FullTimeFormPageActivity.class);
+                intent.putExtra(FullTimeFormPageActivity.KEY_DEGREE_TITLE,
+                        universityName);
+                intent.putExtra(FullTimeFormPageActivity.KEY_DEGREE_LINK,
                         universityLink);
                 Log.d("My", "UniversityPageActivity -> onClick -> universityLink" + universityLink);
+                Log.d("My", "UniversityPageActivity -> onClick -> universityName" + universityName);
                 break;
             case R.id.buttonExternalFormUniversityPageActivity:
                 intent = new Intent(this, ExternalFormListActivity.class);

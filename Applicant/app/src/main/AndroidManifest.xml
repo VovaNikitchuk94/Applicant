@@ -26,6 +26,9 @@
         <activity android:name=".UniversityPageActivity"/>
         <activity android:name=".ExternalFormPageActivity"/>
         <activity android:name=".FullTimeFormPageActivity"/>
+        <activity android:name=".BachelorListActivity"/>
+        <activity android:name=".SpecialistListActivity"/>
+        <activity android:name=".MasterListActivity"/>
     </application>
 
 </manifest>

@@ -37,6 +37,8 @@ public class CitiesListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cities_list);
 
+        Log.d("OnCreate", "CitiesListActivity -> OnCreate");
+
         mListView = (ListView) findViewById(R.id.listViewCitiesListActivity);
         mTextView = (TextView) findViewById(R.id.textViewСhooseCityMainActivity);
         mTextView.setText(getText(R.string.chooseCityMainActivity));
