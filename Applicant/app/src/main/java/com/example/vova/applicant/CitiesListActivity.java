@@ -83,12 +83,13 @@ public class CitiesListActivity extends AppCompatActivity {
                 Elements links = elementRegion.getElementsByTag("a");
 
                 for (Element link : links) {
+//                    mCitiesLinks.add(link.attr("abs:href")); TODO использовать абсолютные ссылки!!!
                     mCitiesLinks.add(link.attr("href"));
                     mCitiesArray.add(link.text());
                 }
 
-                Log.d("My", "doInBackground   mCitiesLinks ->" + mCitiesLinks);
-                Log.d("My", "doInBackground   mCitiesArray ->" + mCitiesArray);
+                Log.d("My", "CitiesListActivity doInBackground   mCitiesLinks ->" + mCitiesLinks);
+                Log.d("My", "CitiesListActivity doInBackground   mCitiesArray ->" + mCitiesArray);
 
             } catch (IOException e) {
                 e.printStackTrace();

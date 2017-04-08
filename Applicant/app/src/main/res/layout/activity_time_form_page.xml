@@ -8,38 +8,29 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textViewChooseDegreeFullTimeFormPageActivity"
-        android:text="@string/textChooseDegreeFullTimeFormPageActivity"
+        android:id="@+id/textViewChooseDegreeTimeFormPageActivity"
+        android:text="@string/textChooseDegreeTimeFormPageActivity"
         style="@style/headTextViewStyle"/>
 
     <Button
-        android:id="@+id/buttonBachelorDegreeFullTimeFormPageActivity"
+        android:id="@+id/buttonBachelorDegreeTimeFormPageActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/textBachelorDegreeFullTimeFormPageActivity"
+        android:text="@string/textBachelorDegreeTimeFormPageActivity"
         style="@style/ButtonTopLevelActivityStyle"/>
 
     <Button
         style="@style/ButtonTopLevelActivityStyle"
-        android:id="@+id/buttonSpecialistDegreeFullTimeFormPageActivity"
+        android:id="@+id/buttonSpecialistDegreeTimeFormPageActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/textSpecialistDegreeFullTimeFormPageActivity"/>
+        android:text="@string/textSpecialistDegreeTimeFormPageActivity"/>
 
     <Button
         style="@style/ButtonTopLevelActivityStyle"
-        android:id="@+id/buttonMasterDegreeFullTimeFormPageActivity"
+        android:id="@+id/buttonMasterDegreeTimeFormPageActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/textMasterDegreeFullTimeFormPageActivity"/>
-
-
-
-    <!--<ListView-->
-        <!--android:id="@+id/listViewFullTimeFormPageActivity"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content">-->
-        <!---->
-    <!--</ListView>-->
+        android:text="@string/textMasterDegreeTimeFormPageActivity"/>
 
 </LinearLayout>

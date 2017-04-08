@@ -10,28 +10,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/SearchTopLevelActivity"
-
         />
 
     <Button
         android:id="@+id/button2017YearTopLevelActivity"
+        style="@style/ButtonTopLevelActivityStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/textButton2017YearTopLevelActivity"
-        style="@style/ButtonTopLevelActivityStyle"
-
         />
 
     <Button
-        style="@style/ButtonTopLevelActivityStyle"
         android:id="@+id/button2016YearTopLevelActivity"
+        style="@style/ButtonTopLevelActivityStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/textButton2016YearTopLevelActivity"/>
 
     <Button
-        style="@style/ButtonTopLevelActivityStyle"
         android:id="@+id/button2015YearTopLevelActivity"
+        style="@style/ButtonTopLevelActivityStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/textButton2015YearTopLevelActivity"/>

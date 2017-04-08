@@ -21,14 +21,10 @@
         <activity android:name=".UniversitiesListActivity"/>
         <activity android:name=".AboutUniversityActivity"/>
         <activity android:name=".CitiesListActivity"/>
-        <activity android:name=".FullTimeFormListActivity"/>
-        <activity android:name=".ExternalFormListActivity"/>
         <activity android:name=".UniversityPageActivity"/>
-        <activity android:name=".ExternalFormPageActivity"/>
         <activity android:name=".FullTimeFormPageActivity"/>
-        <activity android:name=".BachelorListActivity"/>
-        <activity android:name=".SpecialistListActivity"/>
-        <activity android:name=".MasterListActivity"/>
+        <activity android:name=".SpecialtiesListActivity"/>
+        <activity android:name=".ApplicationListActivity"/>
     </application>
 
 </manifest>

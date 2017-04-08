@@ -77,17 +77,25 @@ public class UniversityPageActivity extends AppCompatActivity implements View.On
                         universityName);
                 intent.putExtra(FullTimeFormPageActivity.KEY_DEGREE_LINK,
                         universityLink);
-                Log.d("My", "UniversityPageActivity -> onClick -> buttonExternalFormUniversityPageActivity -> universityLink" + universityLink);
-                Log.d("My", "UniversityPageActivity -> onClick -> buttonExternalFormUniversityPageActivity -> universityName" + universityName);
+                intent.putExtra(FullTimeFormPageActivity.KEY_TIME_FORM,
+                        FullTimeFormPageActivity.INT_FULL_TIME_FORM);
+                Log.d("My", "UniversityPageActivity -> onClick -> buttonExternalFormUniversityPageActivity " +
+                        "-> universityLink" + universityLink);
+                Log.d("My", "UniversityPageActivity -> onClick -> buttonExternalFormUniversityPageActivity" +
+                        " -> universityName" + universityName);
                 break;
             case R.id.buttonExternalFormUniversityPageActivity:
-                intent = new Intent(this, ExternalFormPageActivity.class);
-                intent.putExtra(ExternalFormPageActivity.KEY_DEGREE_TITLE,
+                intent = new Intent(this, FullTimeFormPageActivity.class);
+                intent.putExtra(FullTimeFormPageActivity.KEY_DEGREE_TITLE,
                         universityName);
-                intent.putExtra(ExternalFormPageActivity.KEY_DEGREE_LINK,
+                intent.putExtra(FullTimeFormPageActivity.KEY_DEGREE_LINK,
                         universityLink);
-                Log.d("My", "UniversityPageActivity -> onClick -> buttonExternalFormUniversityPageActivity -> universityLink" + universityLink);
-                Log.d("My", "UniversityPageActivity -> onClick -> buttonExternalFormUniversityPageActivity ->universityLink" + universityLink);
+                intent.putExtra(FullTimeFormPageActivity.KEY_TIME_FORM,
+                        FullTimeFormPageActivity.INT_EXTERNAL_FORM);
+                Log.d("My", "UniversityPageActivity -> onClick -> buttonExternalFormUniversityPageActivity " +
+                        "-> universityLink" + universityLink);
+                Log.d("My", "UniversityPageActivity -> onClick -> buttonExternalFormUniversityPageActivity" +
+                        " ->universityLink" + universityLink);
                 break;
         }
 
