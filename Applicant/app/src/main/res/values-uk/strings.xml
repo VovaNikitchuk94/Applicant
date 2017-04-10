@@ -15,4 +15,5 @@
     <string name="textMasterDegreeTimeFormPageActivity">Магістр</string>
     <string name="textBachelorDegreeTimeFormPageActivity">Бакалавр</string>
     <string name="textSpecialistDegreeTimeFormPageActivity">Спеціаліст</string>
+    <string name="textJuniorSpecialistDegreeTimeFormPageActivity">Молодший спеціаліст</string>
 </resources>

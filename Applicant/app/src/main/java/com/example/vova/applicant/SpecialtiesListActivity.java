@@ -64,7 +64,7 @@ public class SpecialtiesListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Intent intent = new Intent(SpecialtiesListActivity.this, ApplicationListActivity.class);
                 intent.putExtra(ApplicationListActivity.INTENT_KEY_APPLICANT_ACTIVITY,
-                        mSpecialtiesLink.get((int) id));
+                        mSpecialtiesLink.get(position));
                 startActivity(intent);
                 Log.d("My", "SpecialtiesListActivity -> position = " + position);
                 Log.d("My", "SpecialtiesListActivity ->  mSpecialtiesLink.get(position) = " + mSpecialtiesLink.get(position));
@@ -88,6 +88,9 @@ public class SpecialtiesListActivity extends AppCompatActivity {
                 Elements links = document.select("tr");
                 Elements elements = document.getElementsByClass("button button-mini");
 
+                mSpecialtiesLink.clear();
+                mSpecialtiesNames.clear();
+
                 for (Element link : links) {
                     if (mIntDegree == 5) {
                         if (link.text().contains("Бакалавр")) {
@@ -107,7 +110,15 @@ public class SpecialtiesListActivity extends AppCompatActivity {
                             mSpecialtiesLink.add(elements.attr("abs:href"));
                         }
                     }
+                    if (mIntDegree == 8) {
+                        if (link.text().contains("Молодший спеціаліст")) {
+                            mSpecialtiesNames.add(link.text());
+                            mSpecialtiesLink.add(elements.attr("abs:href"));
+                        }
+                    }
                 }
+
+                mIntDegree = 0;
 
                 int asd = mSpecialtiesLink.size();
                 int asdqw = mSpecialtiesNames.size();

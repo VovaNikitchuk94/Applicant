@@ -85,8 +85,13 @@ public class UniversitiesListActivity extends AppCompatActivity {
                 document = Jsoup.connect(link).get();
                 Log.d("My", "UniversitiesListActivity -> ParseUniversityList - > documentLink"  + document.text());
 
+//                Elements links = document.getElementsByClass("accordion-body in collapse");
+//                Elements elements = links.select("tr");
                 Element elementUnivers = document.getElementById("okrArea");
                 Elements links = elementUnivers.getElementsByTag("a");
+
+                mUniversityLinks.clear();
+                mUniversitiesName.clear();
 
                 for (Element link : links) {
                     mUniversityLinks.add(link.attr("abs:href"));

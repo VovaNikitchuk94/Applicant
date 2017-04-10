@@ -23,8 +23,11 @@ public class TimeFormPageActivity extends AppCompatActivity implements View.OnCl
     private static final String KEY_BACHELOR_FULL_TIME = "#d_o_1";
     private static final String KEY_SPECIALIST_FULL_TIME = "#d_o_3";
     private static final String KEY_MASTER_FULL_TIME = "#d_o_2";
+    private static final String KEY_JUNIOR_SPECIALIST_FULL_TIME = "#d_o_4";
+
     private static final String KEY_BACHELOR_EXTERNAL = "#z_o_1";
     private static final String KEY_SPECIALIST_EXTERNAL = "#z_o_3";
+    private static final String KEY_JUNIOR_SPECIALIST_EXTERNAL = "#z_o_4";
     private static final String KEY_MASTER_EXTERNAL = "#z_o_2";
 
     private TextView mTextViewDegree;
@@ -32,6 +35,7 @@ public class TimeFormPageActivity extends AppCompatActivity implements View.OnCl
     private Button mButtonBachelor;
     private Button mButtonMaster;
     private Button mButtonSpecialist;
+    private Button mButtonJuniorSpecialist;
 
     private String mStrFullTimeName;
     private String mStrFullTimeLink;
@@ -64,6 +68,7 @@ public class TimeFormPageActivity extends AppCompatActivity implements View.OnCl
 
         mButtonBachelor = (Button)findViewById(R.id.buttonBachelorDegreeTimeFormPageActivity);
         mButtonSpecialist = (Button)findViewById(R.id.buttonSpecialistDegreeTimeFormPageActivity);
+        mButtonSpecialist = (Button)findViewById(R.id.buttonJuniorSpecialistDegreeTimeFormPageActivity);
         mButtonMaster = (Button)findViewById(R.id.buttonMasterDegreeTimeFormPageActivity);
 
         mButtonBachelor.setOnClickListener(this);
@@ -106,6 +111,20 @@ public class TimeFormPageActivity extends AppCompatActivity implements View.OnCl
                 }else if (mIntTimeForm == INT_EXTERNAL_FORM){
                     intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_LINK, mStrFullTimeLink
                             + KEY_SPECIALIST_EXTERNAL);
+                } else {
+                    Toast.makeText(TimeFormPageActivity.this, "Error", Toast.LENGTH_LONG).show();
+                }
+                break;
+            case R.id.buttonJuniorSpecialistDegreeTimeFormPageActivity:
+                intent = new Intent(this, SpecialtiesListActivity.class);
+                intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_TITLE, mStrFullTimeName);
+                intent.putExtra(SpecialtiesListActivity.KEY_DEGREE, 8);
+                if (mIntTimeForm == INT_FULL_TIME_FORM){
+                    intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_LINK, mStrFullTimeLink
+                            + KEY_JUNIOR_SPECIALIST_FULL_TIME);
+                }else if (mIntTimeForm == INT_EXTERNAL_FORM){
+                    intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_LINK, mStrFullTimeLink
+                            + KEY_JUNIOR_SPECIALIST_EXTERNAL);
                 } else {
                     Toast.makeText(TimeFormPageActivity.this, "Error", Toast.LENGTH_LONG).show();
                 }

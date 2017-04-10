@@ -9,6 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.vova.applicant.adapters.UniversityInfoAdapter;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -22,13 +24,12 @@ public class AboutUniversityActivity extends AppCompatActivity {
     public static final String KEY_ABOUT_UNIVERSITY_ACTIVITY =
             "KEY_ABOUT_UNIVERSITY_ACTIVITY";
 
-    private String mAboutUniversityText;
+    private String mAboutUniversityLink;
 
     private ListView mListView;
-    private ArrayAdapter<String> mAdapter;
-    private ArrayList<String> mAboutUniversityArray = new ArrayList<>();
 
-    private TextView mTextViewHeadText;
+    private ArrayList<UniversityInfo> mUniversityInfos = new ArrayList<>();
+    private UniversityInfoAdapter mUniversityInfoAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,22 +39,25 @@ public class AboutUniversityActivity extends AppCompatActivity {
         Log.d("OnCreate", "AboutUniversityActivity -> OnCreate");
 
         Intent intent = getIntent();
-        if (intent != null){
+        if (intent != null) {
 
             Bundle bundle = intent.getExtras();
-            if (bundle != null){
-                mAboutUniversityText = bundle.getString(KEY_ABOUT_UNIVERSITY_ACTIVITY);
+            if (bundle != null) {
+                mAboutUniversityLink = bundle.getString(KEY_ABOUT_UNIVERSITY_ACTIVITY);
             }
         }
 
-        mListView = (ListView)findViewById(R.id.listViewAboutUniversityActivity);
-        mTextViewHeadText = (TextView)findViewById(R.id.textViewHeadAboutUniversityActivity);
+        mListView = (ListView) findViewById(R.id.listViewAboutUniversityActivity);
 
         new ParseAboutUniversityList().execute();
         // TODO modified listView style
-        mAdapter = new ArrayAdapter<>(AboutUniversityActivity.this, android.R.layout.simple_list_item_1,
-                mAboutUniversityArray);
-        Log.d("My", "onCreate   link ->" + mAboutUniversityText);
+
+        mUniversityInfoAdapter = new UniversityInfoAdapter(AboutUniversityActivity.this,
+                R.layout.list_item_university_info, mUniversityInfos);
+        Log.d("My", "onCreate   link -> mAboutUniversityLink" + mAboutUniversityLink);
+        Log.d("My", "onCreate   link -> mUniversityInfos" + mUniversityInfos);
+
+        mListView.setAdapter(mUniversityInfoAdapter);
     }
 
     public class ParseAboutUniversityList extends AsyncTask<String, Void, String> {
@@ -63,16 +67,19 @@ public class AboutUniversityActivity extends AppCompatActivity {
 
             Document document;
             try {
-                document = Jsoup.connect( mAboutUniversityText).get();
+                document = Jsoup.connect(mAboutUniversityLink).get();
 
                 Element elementAboutUniversities = document.getElementById("about");
                 Elements texts1 = elementAboutUniversities.getElementsByTag("tr");
 
-                for (Element link : texts1) {
-                    mAboutUniversityArray.add(link.text());
+                for (Element link : texts1){
+                    mUniversityInfos.add(new UniversityInfo(
+                            link.select("td").first().text(),
+                            link.select("td").last().text()));
                 }
 
-                Log.d("My", "doInBackground   mAboutExternalFormArray ->" + mAboutUniversityArray);
+                Log.d("My", "doInBackground   mUniversityInfos ->" + mUniversityInfos);
+                Log.d("My", "doInBackground   mUniversityInfos ->" + mUniversityInfos.size());
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -83,7 +90,7 @@ public class AboutUniversityActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String srt) {
-            mListView.setAdapter(mAdapter);
+            mListView.setAdapter(mUniversityInfoAdapter);
 
         }
     }

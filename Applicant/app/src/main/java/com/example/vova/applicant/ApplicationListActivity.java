@@ -64,6 +64,8 @@ public class ApplicationListActivity extends AppCompatActivity {
                 Elements elements = links.select("tbody");
                 Elements tr = elements.select("tr");
 
+                mApplicantArray.clear();
+
                 for (Element link : tr) {
                     mApplicantArray.add(link.text());
                 }

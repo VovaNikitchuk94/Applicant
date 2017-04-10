@@ -28,6 +28,13 @@
 
     <Button
         style="@style/ButtonTopLevelActivityStyle"
+        android:id="@+id/buttonJuniorSpecialistDegreeTimeFormPageActivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/textJuniorSpecialistDegreeTimeFormPageActivity"/>
+
+    <Button
+        style="@style/ButtonTopLevelActivityStyle"
         android:id="@+id/buttonMasterDegreeTimeFormPageActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

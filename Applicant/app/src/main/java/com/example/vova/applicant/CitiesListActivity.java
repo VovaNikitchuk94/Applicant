@@ -83,6 +83,9 @@ public class CitiesListActivity extends AppCompatActivity {
                 Element elementRegion = document.getElementById("region");
                 Elements links = elementRegion.getElementsByTag("a");
 
+                mCitiesArray.clear();
+                mCitiesLinks.clear();
+
                 for (Element link : links) {
                     mCitiesLinks.add(link.attr("abs:href"));
                     mCitiesArray.add(link.text());
