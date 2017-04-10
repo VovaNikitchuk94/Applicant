@@ -65,8 +65,6 @@ public class ApplicationListActivity extends AppCompatActivity {
                 Elements tr = elements.select("tr");
 
                 for (Element link : tr) {
-//                    mCitiesLinks.add(link.attr("abs:href")); TODO использовать абсолютные ссылки!!!
-//                    mCitiesLinks.add(link.attr("href"));
                     mApplicantArray.add(link.text());
                 }
 

@@ -20,7 +20,7 @@ public class TopLevelActivity extends AppCompatActivity implements View.OnClickL
     private Button mButton2016Year;
     private Button mButton2015Year;
 
-    public static String yearsCodeLink = "";
+    public String yearsCodeLink = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

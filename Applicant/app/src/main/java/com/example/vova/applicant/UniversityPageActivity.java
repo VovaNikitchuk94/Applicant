@@ -70,28 +70,28 @@ public class UniversityPageActivity extends AppCompatActivity implements View.On
                         universityLink);
                 Log.d("My", "UniversityPageActivity -> onClick -> universityLink" + universityLink);
                 break;
-            // по нажатию на кнопку переход на FullTimeFormPageActivity и передача ссылки и имени университета
+            // по нажатию на кнопку переход на TimeFormPageActivity и передача ссылки и имени университета
             case R.id.buttonFullTimeFormUniversityPageActivity:
-                intent = new Intent(this, FullTimeFormPageActivity.class);
-                intent.putExtra(FullTimeFormPageActivity.KEY_DEGREE_TITLE,
+                intent = new Intent(this, TimeFormPageActivity.class);
+                intent.putExtra(TimeFormPageActivity.KEY_DEGREE_TITLE,
                         universityName);
-                intent.putExtra(FullTimeFormPageActivity.KEY_DEGREE_LINK,
+                intent.putExtra(TimeFormPageActivity.KEY_DEGREE_LINK,
                         universityLink);
-                intent.putExtra(FullTimeFormPageActivity.KEY_TIME_FORM,
-                        FullTimeFormPageActivity.INT_FULL_TIME_FORM);
+                intent.putExtra(TimeFormPageActivity.KEY_TIME_FORM,
+                        TimeFormPageActivity.INT_FULL_TIME_FORM);
                 Log.d("My", "UniversityPageActivity -> onClick -> buttonExternalFormUniversityPageActivity " +
                         "-> universityLink" + universityLink);
                 Log.d("My", "UniversityPageActivity -> onClick -> buttonExternalFormUniversityPageActivity" +
                         " -> universityName" + universityName);
                 break;
             case R.id.buttonExternalFormUniversityPageActivity:
-                intent = new Intent(this, FullTimeFormPageActivity.class);
-                intent.putExtra(FullTimeFormPageActivity.KEY_DEGREE_TITLE,
+                intent = new Intent(this, TimeFormPageActivity.class);
+                intent.putExtra(TimeFormPageActivity.KEY_DEGREE_TITLE,
                         universityName);
-                intent.putExtra(FullTimeFormPageActivity.KEY_DEGREE_LINK,
+                intent.putExtra(TimeFormPageActivity.KEY_DEGREE_LINK,
                         universityLink);
-                intent.putExtra(FullTimeFormPageActivity.KEY_TIME_FORM,
-                        FullTimeFormPageActivity.INT_EXTERNAL_FORM);
+                intent.putExtra(TimeFormPageActivity.KEY_TIME_FORM,
+                        TimeFormPageActivity.INT_EXTERNAL_FORM);
                 Log.d("My", "UniversityPageActivity -> onClick -> buttonExternalFormUniversityPageActivity " +
                         "-> universityLink" + universityLink);
                 Log.d("My", "UniversityPageActivity -> onClick -> buttonExternalFormUniversityPageActivity" +

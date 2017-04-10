@@ -45,12 +45,12 @@ public class AboutUniversityActivity extends AppCompatActivity {
                 mAboutUniversityText = bundle.getString(KEY_ABOUT_UNIVERSITY_ACTIVITY);
             }
         }
-        mAboutUniversityText = mAboutUniversityText.substring(1);
 
         mListView = (ListView)findViewById(R.id.listViewAboutUniversityActivity);
         mTextViewHeadText = (TextView)findViewById(R.id.textViewHeadAboutUniversityActivity);
 
         new ParseAboutUniversityList().execute();
+        // TODO modified listView style
         mAdapter = new ArrayAdapter<>(AboutUniversityActivity.this, android.R.layout.simple_list_item_1,
                 mAboutUniversityArray);
         Log.d("My", "onCreate   link ->" + mAboutUniversityText);
@@ -60,13 +60,10 @@ public class AboutUniversityActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            String html = TopLevelActivity.yearsCodeLink;
-
-            Log.d("My", "onCreate   html ->" + html);
 
             Document document;
             try {
-                document = Jsoup.connect(html + mAboutUniversityText).get();
+                document = Jsoup.connect( mAboutUniversityText).get();
 
                 Element elementAboutUniversities = document.getElementById("about");
                 Elements texts1 = elementAboutUniversities.getElementsByTag("tr");

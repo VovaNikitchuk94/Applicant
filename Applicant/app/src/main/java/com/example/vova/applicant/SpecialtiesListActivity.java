@@ -21,8 +21,8 @@ import java.util.ArrayList;
 
 public class SpecialtiesListActivity extends AppCompatActivity {
 
-    public static final String KEY_BACHELOR_TITLE = "KEY_BACHELOR_TITLE";
-    public static final String KEY_BACHELOR_LINK = "KEY_BACHELOR_LINK";
+    public static final String KEY_SPECIALITIES_TITLE = "KEY_SPECIALITIES_TITLE";
+    public static final String KEY_SPECIALITIES_LINK = "KEY_SPECIALITIES_LINK";
     public static final String KEY_DEGREE = "KEY_DEGREE";
 
     private String mStrBachelorLink = "";
@@ -45,12 +45,10 @@ public class SpecialtiesListActivity extends AppCompatActivity {
 
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
-                mStrBachelorLink = bundle.getString(KEY_BACHELOR_LINK);
+                mStrBachelorLink = bundle.getString(KEY_SPECIALITIES_LINK);
                 mIntDegree = bundle.getInt(KEY_DEGREE);
             }
         }
-
-        mStrBachelorLink = mStrBachelorLink.substring(1);
 
         mListView = (ListView) findViewById(R.id.listViewUniversal);
 
@@ -63,10 +61,10 @@ public class SpecialtiesListActivity extends AppCompatActivity {
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Intent intent = new Intent(SpecialtiesListActivity.this, ApplicationListActivity.class);
                 intent.putExtra(ApplicationListActivity.INTENT_KEY_APPLICANT_ACTIVITY,
-                        mSpecialtiesLink.get(position));
+                        mSpecialtiesLink.get((int) id));
                 startActivity(intent);
                 Log.d("My", "SpecialtiesListActivity -> position = " + position);
                 Log.d("My", "SpecialtiesListActivity ->  mSpecialtiesLink.get(position) = " + mSpecialtiesLink.get(position));
@@ -80,15 +78,12 @@ public class SpecialtiesListActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
 
-            String html = TopLevelActivity.yearsCodeLink;
-
-            Log.d("My", "onCreate   html ->" + html);
             Document document;
             try {
-                document = Jsoup.connect(html + mStrBachelorLink).get();
+                document = Jsoup.connect(mStrBachelorLink).get();
 
                 Log.d("My", "SpecialtiesListActivity -> ParseSpecialistList - > documentLink" + document.text());
-                Log.d("My", "SpecialtiesListActivity -> ParseSpecialistList - > html -> " + html + mStrBachelorLink);
+                Log.d("My", "SpecialtiesListActivity -> ParseSpecialistList - > html -> "  + mStrBachelorLink);
 
                 Elements links = document.select("tr");
                 Elements elements = document.getElementsByClass("button button-mini");

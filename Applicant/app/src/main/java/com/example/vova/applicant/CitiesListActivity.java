@@ -30,7 +30,7 @@ public class CitiesListActivity extends AppCompatActivity {
 
     private TextView mTextView;
 
-    private String yearsCode = "";
+    private String yearsCodeLink = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +49,7 @@ public class CitiesListActivity extends AppCompatActivity {
              Bundle bundle = intent.getExtras();
             if (bundle != null){
 
-                yearsCode = bundle.getString(KEY_YEARS_CITIES_LIST_ACTIVITY);
+                yearsCodeLink = bundle.getString(KEY_YEARS_CITIES_LIST_ACTIVITY);
             }
         }
 
@@ -62,8 +62,9 @@ public class CitiesListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 
+                //try use id for intent
                             Intent intent = new Intent(CitiesListActivity.this, UniversitiesListActivity.class);
-                            intent.putExtra(UniversitiesListActivity.INTENT_KEY_UNIVERSITY_ACTIVITY, mCitiesLinks.get(position));
+                            intent.putExtra(UniversitiesListActivity.INTENT_KEY_UNIVERSITY_ACTIVITY, mCitiesLinks.get((int) id));
                             startActivity(intent);
                     Log.d("My", "position = " + position + " id = " + id);
             }
@@ -74,7 +75,7 @@ public class CitiesListActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            String html = yearsCode;
+            String html = yearsCodeLink;
             Document document;
             try {
                 document = Jsoup.connect(html).get();
@@ -83,8 +84,7 @@ public class CitiesListActivity extends AppCompatActivity {
                 Elements links = elementRegion.getElementsByTag("a");
 
                 for (Element link : links) {
-//                    mCitiesLinks.add(link.attr("abs:href")); TODO использовать абсолютные ссылки!!!
-                    mCitiesLinks.add(link.attr("href"));
+                    mCitiesLinks.add(link.attr("abs:href"));
                     mCitiesArray.add(link.text());
                 }
 

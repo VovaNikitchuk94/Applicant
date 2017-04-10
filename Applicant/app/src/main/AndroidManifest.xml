@@ -22,7 +22,7 @@
         <activity android:name=".AboutUniversityActivity"/>
         <activity android:name=".CitiesListActivity"/>
         <activity android:name=".UniversityPageActivity"/>
-        <activity android:name=".FullTimeFormPageActivity"/>
+        <activity android:name=".TimeFormPageActivity"/>
         <activity android:name=".SpecialtiesListActivity"/>
         <activity android:name=".ApplicationListActivity"/>
     </application>
