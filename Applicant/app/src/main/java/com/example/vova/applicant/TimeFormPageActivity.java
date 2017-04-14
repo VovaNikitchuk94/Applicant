@@ -2,6 +2,7 @@ package com.example.vova.applicant;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -20,15 +21,15 @@ public class TimeFormPageActivity extends AppCompatActivity implements View.OnCl
 
     public static final String KEY_TIME_FORM = "KEY_TIME_FORM";
 
-    private static final String KEY_BACHELOR_FULL_TIME = "#d_o_1";
-    private static final String KEY_SPECIALIST_FULL_TIME = "#d_o_3";
-    private static final String KEY_MASTER_FULL_TIME = "#d_o_2";
-    private static final String KEY_JUNIOR_SPECIALIST_FULL_TIME = "#d_o_4";
+    private static final String KEY_BACHELOR_FULL_TIME = "d_o_1";
+    private static final String KEY_SPECIALIST_FULL_TIME = "d_o_3";
+    private static final String KEY_MASTER_FULL_TIME = "d_o_2";
+    private static final String KEY_JUNIOR_SPECIALIST_FULL_TIME = "d_o_4";
 
-    private static final String KEY_BACHELOR_EXTERNAL = "#z_o_1";
-    private static final String KEY_SPECIALIST_EXTERNAL = "#z_o_3";
-    private static final String KEY_JUNIOR_SPECIALIST_EXTERNAL = "#z_o_4";
-    private static final String KEY_MASTER_EXTERNAL = "#z_o_2";
+    private static final String KEY_BACHELOR_EXTERNAL = "z_o_1";
+    private static final String KEY_SPECIALIST_EXTERNAL = "z_o_3";
+    private static final String KEY_JUNIOR_SPECIALIST_EXTERNAL = "z_o_4";
+    private static final String KEY_MASTER_EXTERNAL = "z_o_2";
 
     private TextView mTextViewDegree;
 
@@ -41,6 +42,8 @@ public class TimeFormPageActivity extends AppCompatActivity implements View.OnCl
     private String mStrFullTimeLink;
 
     private int mIntTimeForm = 0;
+
+    private Intent intent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,95 +60,76 @@ public class TimeFormPageActivity extends AppCompatActivity implements View.OnCl
                 mIntTimeForm = bundle.getInt(KEY_TIME_FORM);
             }
         }
-
         initializeView();
     }
 
     private void initializeView() {
         mTextViewDegree = (TextView)findViewById(R.id.textViewChooseDegreeTimeFormPageActivity);
-        //TODO setText
         mTextViewDegree.setText(getText(R.string.textChooseDegreeTimeFormPageActivity));
 
         mButtonBachelor = (Button)findViewById(R.id.buttonBachelorDegreeTimeFormPageActivity);
         mButtonSpecialist = (Button)findViewById(R.id.buttonSpecialistDegreeTimeFormPageActivity);
-        mButtonSpecialist = (Button)findViewById(R.id.buttonJuniorSpecialistDegreeTimeFormPageActivity);
+        mButtonJuniorSpecialist = (Button)findViewById(R.id.buttonJuniorSpecialistDegreeTimeFormPageActivity);
         mButtonMaster = (Button)findViewById(R.id.buttonMasterDegreeTimeFormPageActivity);
 
         mButtonBachelor.setOnClickListener(this);
         mButtonSpecialist.setOnClickListener(this);
+        mButtonJuniorSpecialist.setOnClickListener(this);
         mButtonMaster.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
-
-        Intent intent = null;
-
         switch (view.getId()){
 
             case R.id.buttonBachelorDegreeTimeFormPageActivity:
-                intent = new Intent(this, SpecialtiesListActivity.class);
-                intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_TITLE, mStrFullTimeName);
-                intent.putExtra(SpecialtiesListActivity.KEY_DEGREE, 5);
-                if (mIntTimeForm == 1){
-                    intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_LINK, mStrFullTimeLink
-                            + KEY_BACHELOR_FULL_TIME);
-                }else if (mIntTimeForm == INT_EXTERNAL_FORM){
-                    intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_LINK, mStrFullTimeLink
-                            + KEY_BACHELOR_EXTERNAL);
-                } else {
-                    Toast.makeText(TimeFormPageActivity.this, "Error", Toast.LENGTH_LONG).show();
+                intent = getIntent(mStrFullTimeName, mStrFullTimeLink, 5);
+                if (mIntTimeForm == INT_FULL_TIME_FORM){
+                    intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_BACHELOR_FULL_TIME);
+                }else {
+                    intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_BACHELOR_EXTERNAL);
                 }
-                Log.d("My", "TimeFormPageActivity -> onClick ->  mStrFullTimeLink \n" +
-                        " + KEY_BACHELOR_FULL_TIME -> " +  mStrFullTimeLink + KEY_BACHELOR_FULL_TIME);
-                Log.d("My", "TimeFormPageActivity -> onClick ->  mStrFullTimeName \n" +
-                        " + KEY_BACHELOR_FULL_TIME -> " +  mStrFullTimeName + KEY_BACHELOR_FULL_TIME);
                 break;
             case R.id.buttonSpecialistDegreeTimeFormPageActivity:
-                intent = new Intent(this, SpecialtiesListActivity.class);
-                intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_TITLE, mStrFullTimeName);
-                intent.putExtra(SpecialtiesListActivity.KEY_DEGREE, 6);
+                intent = getIntent(mStrFullTimeName, mStrFullTimeLink, 6);
                 if (mIntTimeForm == INT_FULL_TIME_FORM){
-                    intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_LINK, mStrFullTimeLink
-                            + KEY_SPECIALIST_FULL_TIME);
-                }else if (mIntTimeForm == INT_EXTERNAL_FORM){
-                    intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_LINK, mStrFullTimeLink
-                            + KEY_SPECIALIST_EXTERNAL);
-                } else {
-                    Toast.makeText(TimeFormPageActivity.this, "Error", Toast.LENGTH_LONG).show();
+                    intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_SPECIALIST_FULL_TIME);
+                }else {
+                    intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_SPECIALIST_EXTERNAL);
                 }
                 break;
             case R.id.buttonJuniorSpecialistDegreeTimeFormPageActivity:
-                intent = new Intent(this, SpecialtiesListActivity.class);
-                intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_TITLE, mStrFullTimeName);
-                intent.putExtra(SpecialtiesListActivity.KEY_DEGREE, 8);
+                intent = getIntent(mStrFullTimeName, mStrFullTimeLink, 8);
                 if (mIntTimeForm == INT_FULL_TIME_FORM){
-                    intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_LINK, mStrFullTimeLink
-                            + KEY_JUNIOR_SPECIALIST_FULL_TIME);
-                }else if (mIntTimeForm == INT_EXTERNAL_FORM){
-                    intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_LINK, mStrFullTimeLink
-                            + KEY_JUNIOR_SPECIALIST_EXTERNAL);
-                } else {
-                    Toast.makeText(TimeFormPageActivity.this, "Error", Toast.LENGTH_LONG).show();
+                    intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_JUNIOR_SPECIALIST_FULL_TIME);
+                }else {
+                    intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_JUNIOR_SPECIALIST_EXTERNAL);
                 }
                 break;
             case R.id.buttonMasterDegreeTimeFormPageActivity:
-                intent = new Intent(this, SpecialtiesListActivity.class);
-                intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_TITLE, mStrFullTimeName);
-                intent.putExtra(SpecialtiesListActivity.KEY_DEGREE, 7);
+                intent = getIntent(mStrFullTimeName, mStrFullTimeLink, 7);
                 if (mIntTimeForm == INT_FULL_TIME_FORM){
-                    intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_LINK, mStrFullTimeLink
-                            + KEY_MASTER_FULL_TIME);
-                } else if (mIntTimeForm == INT_EXTERNAL_FORM){
-                    intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_LINK, mStrFullTimeLink
-                            + KEY_MASTER_EXTERNAL);
-                } else {
-                    Toast.makeText(TimeFormPageActivity.this, "Error", Toast.LENGTH_LONG).show();
+                    intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_MASTER_FULL_TIME);
+                }else {
+                    intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_MASTER_EXTERNAL);
                 }
                 break;
         }
 
         startActivity(intent);
 
+    }
+
+    @NonNull
+    public Intent getIntent(String timeName, String link, int degree ) {
+//        Intent intent;
+        intent = new Intent(this, SpecialtiesListActivity.class);
+        intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_TITLE, timeName);
+        intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_LINK, link + KEY_BACHELOR_FULL_TIME);
+        intent.putExtra(SpecialtiesListActivity.KEY_DEGREE, degree);
+        Log.d("My", "KEY_SPECIALITIES_TITLE, timeName); -> " + timeName);
+        Log.d("My", "KEY_SPECIALITIES_LINK, link); -> " + link);
+        Log.d("My", "KEY_DEGREE, degree -> " + degree);
+        return intent;
     }
 }

@@ -15,10 +15,6 @@ import com.example.vova.applicant.UniversityInfo;
 
 import java.util.ArrayList;
 
-/**
- * Created by vovan on 10.04.2017.
- */
-
 public class UniversityInfoAdapter extends ArrayAdapter<UniversityInfo> {
 
     public UniversityInfoAdapter(@NonNull Context context, @LayoutRes int resource,
@@ -30,21 +26,33 @@ public class UniversityInfoAdapter extends ArrayAdapter<UniversityInfo> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
-        View listItemView = convertView;
-        if (listItemView == null){
-            listItemView = LayoutInflater.from(getContext()).inflate(
+//        ViewHolder holder;
+        if (convertView == null){
+            convertView = LayoutInflater.from(getContext()).inflate(
                     R.layout.list_item_university_info, parent, false);
+//            holder = new ViewHolder();
+//            holder.typeUniversityInfoTextView = (TextView)convertView.findViewById(R.id.textViewTypeUniversityInfo);
+//            holder.dataUniversityInfoTextView = (TextView)convertView.findViewById(R.id.textViewDataUniversityInfo);
+//        } else {
+//            holder = (ViewHolder) convertView.getTag();
         }
 
         UniversityInfo universityInfo = getItem(position);
 
-        TextView typeUniversityInfo = (TextView)listItemView.findViewById(R.id.textViewTypeUniversityInfo);
-        typeUniversityInfo.setText(universityInfo.getStrInfoType());
+        TextView typeUniversityInfoTextView = (TextView)convertView.findViewById(R.id.textViewTypeUniversityInfo);
+        TextView dataUniversityInfoTextView = (TextView) convertView.findViewById(R.id.textViewDataUniversityInfo);
 
-        TextView dataUniversityInfo = (TextView)listItemView.findViewById(R.id.textViewDataUniversityInfo);
-        dataUniversityInfo.setText(universityInfo.getStrInfoData());
+        typeUniversityInfoTextView.setText(universityInfo.getStrInfoType());
+        dataUniversityInfoTextView.setText(universityInfo.getStrInfoData());
 
+//        holder.typeUniversityInfoTextView.setText(universityInfo.getStrInfoType());
+//        holder.dataUniversityInfoTextView.setText(universityInfo.getStrInfoData());
 
-        return listItemView;
+        return convertView;
     }
+
+//    private class ViewHolder {
+//        TextView typeUniversityInfoTextView;
+//        TextView dataUniversityInfoTextView;
+//    }
 }

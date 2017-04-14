@@ -45,12 +45,23 @@ public class ApplicationListActivity extends AppCompatActivity {
         }
 
         new ParseApplicantsList().execute();
+
         mAdapter = new ArrayAdapter<>(ApplicationListActivity.this, android.R.layout.simple_list_item_1,
                 mApplicantArray);
+
         Log.d("My", "onCreate   mApplicantArray ->" + mApplicantArray);
+        Log.d("My", "ApplicationListActivity onCreate   mApplicantArray ->" + mApplicantArray);
+        Log.d("My", "ApplicationListActivity onCreate   mApplicantArray.size ->" + mApplicantArray.size());
+        Log.d("My", "ApplicationListActivity onCreate   mListView.getCount() ->" + mListView.getCount());
+
     }
 
-    public class ParseApplicantsList extends AsyncTask<String, Void, String> {
+    public class ParseApplicantsList extends AsyncTask<String, String, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
 
         @Override
         protected String doInBackground(String... params) {
@@ -65,14 +76,17 @@ public class ApplicationListActivity extends AppCompatActivity {
                 Elements tr = elements.select("tr");
 
                 mApplicantArray.clear();
+//                mAdapter.notifyDataSetChanged();
 
                 for (Element link : tr) {
                     mApplicantArray.add(link.text());
                 }
 
 //                Log.d("My", "CitiesListActivity doInBackground   mCitiesLinks ->" + mCitiesLinks);
-                Log.d("My", "CitiesListActivity doInBackground   mApplicantArray ->" + mApplicantArray);
-                Log.d("My", "CitiesListActivity doInBackground   mApplicantArray.size ->" + mApplicantArray.size());
+                Log.d("My", "ApplicationListActivity doInBackground   mApplicantArray ->" + mApplicantArray);
+                Log.d("My", "ApplicationListActivity doInBackground   mApplicantArray.size ->" + mApplicantArray.size());
+                Log.d("My", "ApplicationListActivity doInBackground   mAdapter.getCount ->" + mAdapter.getCount());
+                Log.d("My", "ApplicationListActivity doInBackground  mListView ->" + mListView);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -86,4 +100,47 @@ public class ApplicationListActivity extends AppCompatActivity {
             mListView.setAdapter(mAdapter);
         }
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("My", "ApplicationListActivity onStart   mApplicantArray ->" + mApplicantArray);
+        Log.d("My", "ApplicationListActivity onStart   mApplicantArray.size ->" + mApplicantArray.size());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("My", "ApplicationListActivity onStop   mApplicantArray ->" + mApplicantArray);
+        Log.d("My", "ApplicationListActivity onStop   mApplicantArray.size ->" + mApplicantArray.size());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("My", "ApplicationListActivity onDestroy   mApplicantArray ->" + mApplicantArray);
+        Log.d("My", "ApplicationListActivity onDestroy   mApplicantArray.size ->" + mApplicantArray.size());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("My", "ApplicationListActivity onPause   mApplicantArray ->" + mApplicantArray);
+        Log.d("My", "ApplicationListActivity onPause   mApplicantArray.size ->" + mApplicantArray.size());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("My", "ApplicationListActivity onResume   mApplicantArray ->" + mApplicantArray);
+        Log.d("My", "ApplicationListActivity onResume   mApplicantArray.size ->" + mApplicantArray.size());
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d("My", "ApplicationListActivity onRestart   mApplicantArray ->" + mApplicantArray);
+        Log.d("My", "ApplicationListActivity onRestart   mApplicantArray.size ->" + mApplicantArray.size());
+    }
+
 }
