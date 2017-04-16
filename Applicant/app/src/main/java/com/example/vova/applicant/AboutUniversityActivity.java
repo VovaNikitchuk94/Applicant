@@ -1,5 +1,6 @@
 package com.example.vova.applicant;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -8,11 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.example.vova.applicant.adapters.UniversityInfoAdapter;
+import com.example.vova.applicant.model.UniversityInfo;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -72,6 +72,7 @@ public class AboutUniversityActivity extends AppCompatActivity {
 
                 switch (myPosition.getStrInfoType()){
                     case "Веб-сайт:":
+                        //TODO сделать проверку как записан сайт
                         intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + myPosition.getStrInfoData()));
                         break;
                     case "Адреса:":
@@ -80,6 +81,7 @@ public class AboutUniversityActivity extends AppCompatActivity {
 //                        intent.setPackage("com.google.android.apps.maps");
                         break;
                     case "Телефони:":
+//                        TODO обработка нескольких номером и правильность написания номера
                         intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + myPosition.getStrInfoData()));
                         break;
                     case "E-mail:":
@@ -95,11 +97,24 @@ public class AboutUniversityActivity extends AppCompatActivity {
 
     public class ParseAboutUniversityList extends AsyncTask<String, Void, String> {
 
+        ProgressDialog progDailog = new ProgressDialog(AboutUniversityActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            progDailog.setMessage(getString(R.string.textResourceLoading));
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(true);
+            progDailog.show();
+        }
+
         @Override
         protected String doInBackground(String... params) {
 
-            String type = "";
-            String data = "";
+            String type;
+            String data;
             String wrongDog = " [ at ] ";
 
             Document document;
@@ -107,10 +122,10 @@ public class AboutUniversityActivity extends AppCompatActivity {
                 document = Jsoup.connect(mAboutUniversityLink).get();
 
                 Element elementAboutUniversities = document.getElementById("about");
-                Elements texts1 = elementAboutUniversities.getElementsByTag("tr");
+                Elements elements = elementAboutUniversities.getElementsByTag("tr");
 
                 //add new element to array only when second text isn't empty
-                for (Element link : texts1){
+                for (Element link : elements){
                     type = link.select("td").first().text();
                     data = link.select("td").last().text();
 
@@ -137,6 +152,7 @@ public class AboutUniversityActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String srt) {
             mListView.setAdapter(mUniversityInfoAdapter);
+            progDailog.dismiss();
 
         }
     }

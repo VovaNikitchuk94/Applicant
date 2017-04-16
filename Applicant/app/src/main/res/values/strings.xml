@@ -15,4 +15,5 @@
     <string name="textSpecialistDegreeTimeFormPageActivity">Specialist</string>
     <string name="textMasterDegreeTimeFormPageActivity">Master</string>
     <string name="textJuniorSpecialistDegreeTimeFormPageActivity">Junior Specialist</string>
+    <string name="textResourceLoading">Loading...</string>
 </resources>

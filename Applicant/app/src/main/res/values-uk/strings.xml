@@ -16,4 +16,5 @@
     <string name="textBachelorDegreeTimeFormPageActivity">Бакалавр</string>
     <string name="textSpecialistDegreeTimeFormPageActivity">Спеціаліст</string>
     <string name="textJuniorSpecialistDegreeTimeFormPageActivity">Молодший спеціаліст</string>
+    <string name="textResourceLoading">Завантаження...</string>
 </resources>

@@ -15,6 +15,12 @@
         android:text="@string/chooseCityMainActivity"
         style="@style/headTextViewStyle"/>
 
+    <!--<ProgressBar-->
+        <!--android:id="@+id/progressBar"-->
+        <!--style="?android:attr/progressBarStyleInverse"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"/>-->
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

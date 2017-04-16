@@ -1,5 +1,6 @@
 package com.example.vova.applicant;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -20,8 +21,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class UniversitiesListActivity extends AppCompatActivity {
-
-    public static final String HTTP_VSTUP_INFO = "http://vstup.info";
 
     private String link;
 
@@ -77,6 +76,19 @@ public class UniversitiesListActivity extends AppCompatActivity {
 
     public class ParseUniversityList extends AsyncTask<String, Integer, String> {
 
+        ProgressDialog progDailog = new ProgressDialog(UniversitiesListActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            progDailog.setMessage(getString(R.string.textResourceLoading));
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(true);
+            progDailog.show();
+        }
+
         @Override
         protected String doInBackground(String... params) {
 
@@ -85,8 +97,6 @@ public class UniversitiesListActivity extends AppCompatActivity {
                 document = Jsoup.connect(link).get();
                 Log.d("My", "UniversitiesListActivity -> ParseUniversityList - > documentLink"  + document.text());
 
-//                Elements links = document.getElementsByClass("accordion-body in collapse");
-//                Elements elements = links.select("tr");
                 Element elementUnivers = document.getElementById("okrArea");
                 Elements links = elementUnivers.getElementsByTag("a");
 
@@ -111,6 +121,7 @@ public class UniversitiesListActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String srt) {
             mListView.setAdapter(mAdapter);
+            progDailog.dismiss();
 
         }
     }

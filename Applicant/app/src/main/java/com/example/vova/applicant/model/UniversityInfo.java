@@ -1,8 +1,4 @@
-package com.example.vova.applicant;
-
-/**
- * Created by vovan on 10.04.2017.
- */
+package com.example.vova.applicant.model;
 
 public class UniversityInfo {
 
@@ -20,13 +16,5 @@ public class UniversityInfo {
 
     public String getStrInfoData() {
         return mStrInfoData;
-    }
-
-    public void setStrInfoType(String strInfoType) {
-        mStrInfoType = strInfoType;
-    }
-
-    public void setStrInfoData(String strInfoData) {
-        mStrInfoData = strInfoData;
     }
 }

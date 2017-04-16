@@ -1,5 +1,6 @@
 package com.example.vova.applicant;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -79,6 +80,19 @@ public class SpecialtiesListActivity extends AppCompatActivity {
 
     public class ParseBachelorList extends AsyncTask<String, Void, String> {
 
+
+        ProgressDialog progDailog = new ProgressDialog(SpecialtiesListActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            progDailog.setMessage(getString(R.string.textResourceLoading));
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(true);
+            progDailog.show();
+        }
         @Override
         protected String doInBackground(String... params) {
 
@@ -161,7 +175,7 @@ public class SpecialtiesListActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String srt) {
             mListView.setAdapter(mAdapter);
-
+            progDailog.dismiss();
         }
     }
 

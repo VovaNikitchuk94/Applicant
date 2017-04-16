@@ -11,7 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.example.vova.applicant.R;
-import com.example.vova.applicant.UniversityInfo;
+import com.example.vova.applicant.model.UniversityInfo;
 
 import java.util.ArrayList;
 

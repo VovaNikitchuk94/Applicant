@@ -1,5 +1,7 @@
 package com.example.vova.applicant;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.jsoup.Jsoup;
@@ -18,6 +21,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class CitiesListActivity extends AppCompatActivity {
 
@@ -29,6 +33,7 @@ public class CitiesListActivity extends AppCompatActivity {
     private ArrayList<String> mCitiesLinks = new ArrayList<>();
 
     private TextView mTextView;
+//    private ProgressBar mProgressBar;
 
     private String yearsCodeLink = "";
 
@@ -42,6 +47,7 @@ public class CitiesListActivity extends AppCompatActivity {
         mListView = (ListView) findViewById(R.id.listViewCitiesListActivity);
         mTextView = (TextView) findViewById(R.id.textViewСhooseCityMainActivity);
         mTextView.setText(getText(R.string.chooseCityMainActivity));
+//        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         Intent intent = getIntent();
         if (intent != null){
@@ -71,11 +77,26 @@ public class CitiesListActivity extends AppCompatActivity {
         });
     }
 
-    public class ParseCitiesList extends AsyncTask<String, Void, String> {
+    public class ParseCitiesList extends AsyncTask<String, Integer, String> {
+
+//        int progress_status;
+        ProgressDialog progDailog = new ProgressDialog(CitiesListActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            progDailog.setMessage(getString(R.string.textResourceLoading));
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(true);
+            progDailog.show();
+        }
 
         @Override
         protected String doInBackground(String... params) {
             String html = yearsCodeLink;
+
             Document document;
             try {
                 document = Jsoup.connect(html).get();
@@ -86,10 +107,15 @@ public class CitiesListActivity extends AppCompatActivity {
                 mCitiesArray.clear();
                 mCitiesLinks.clear();
 
+
                 for (Element link : links) {
+
                     mCitiesLinks.add(link.attr("abs:href"));
                     mCitiesArray.add(link.text());
+
+
                 }
+
 
                 Log.d("My", "CitiesListActivity doInBackground   mCitiesLinks ->" + mCitiesLinks);
                 Log.d("My", "CitiesListActivity doInBackground   mCitiesArray ->" + mCitiesArray);
@@ -97,13 +123,14 @@ public class CitiesListActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
             return null;
         }
 
         @Override
-        protected void onPostExecute(String srt) {
+        protected void onPostExecute(String v) {
             mListView.setAdapter(mAdapter);
+            progDailog.dismiss();
         }
+
     }
 }
