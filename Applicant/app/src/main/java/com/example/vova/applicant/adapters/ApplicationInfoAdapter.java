@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.vova.applicant.R;
 import com.example.vova.applicant.model.ApplicationsInfo;
@@ -41,15 +40,15 @@ public class ApplicationInfoAdapter extends ArrayAdapter<ApplicationsInfo> {
         TextView applicantNumberTextView = (TextView)convertView.findViewById(R.id.textViewSequenceNumberApplicantInfo);
         TextView applicantNameTextView = (TextView)convertView.findViewById(R.id.textViewNameApplicantsApplicantInfo);
         TextView applicantScoresTextView = (TextView)convertView.findViewById(R.id.textViewCompetitionScoresApplicantInfo);
-        TextView applicantBDOTextView = (TextView)convertView.findViewById(R.id.textViewBDOScoreApplicantsApplicantInfo);
-        TextView applicantZNOTextView = (TextView)convertView.findViewById(R.id.textViewZNOScoreApplicantsApplicantInfo);
+//        TextView applicantBDOTextView = (TextView)convertView.findViewById(R.id.textViewBDOScoreApplicantsApplicantInfo);
+//        TextView applicantZNOTextView = (TextView)convertView.findViewById(R.id.textViewZNOScoreApplicantsApplicantInfo);
 
         try {
             applicantNumberTextView.setText(applicationsInfo.getStrApplicantNumber());
             applicantNameTextView.setText(applicationsInfo.getStrApplicantName());
-            applicantScoresTextView.setText(applicationsInfo.getStrApplicantScores());
-            applicantBDOTextView.setText(applicationsInfo.getStrApplicantBDO());
-            applicantZNOTextView.setText(applicationsInfo.getStrApplicantZNO());
+            applicantScoresTextView.setText(applicationsInfo.getStrApplicantTotalScores());
+//            applicantBDOTextView.setText(applicationsInfo.getStrApplicantBDO());
+//            applicantZNOTextView.setText(applicationsInfo.getStrApplicantZNO());
         } catch (NullPointerException e){
             e.printStackTrace();
         }

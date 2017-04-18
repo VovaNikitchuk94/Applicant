@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.vova.applicant.activities.AboutUniversityActivity;
+
 public class UniversityPageActivity extends AppCompatActivity implements View.OnClickListener{
 
     public static final String KEY_UNIVERSITY_TITLE = "KEY_UNIVERSITY_TITLE";
@@ -103,6 +105,7 @@ public class UniversityPageActivity extends AppCompatActivity implements View.On
             startActivity(intent);
         }else {
             Toast.makeText(this, "Error", Toast.LENGTH_LONG).show();
+            finish();
         }
 
 

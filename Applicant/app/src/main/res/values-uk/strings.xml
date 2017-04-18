@@ -17,4 +17,6 @@
     <string name="textSpecialistDegreeTimeFormPageActivity">Спеціаліст</string>
     <string name="textJuniorSpecialistDegreeTimeFormPageActivity">Молодший спеціаліст</string>
     <string name="textResourceLoading">Завантаження...</string>
+    <string name="textMsgIsEmpty">" не має даних."</string>
+    <string name="error">Полимлка</string>
 </resources>

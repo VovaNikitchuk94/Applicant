@@ -1,6 +1,5 @@
-package com.example.vova.applicant;
+package com.example.vova.applicant.activities;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -11,8 +10,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.example.vova.applicant.R;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -21,7 +21,6 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 public class CitiesListActivity extends AppCompatActivity {
 
@@ -79,7 +78,6 @@ public class CitiesListActivity extends AppCompatActivity {
 
     public class ParseCitiesList extends AsyncTask<String, Integer, String> {
 
-//        int progress_status;
         ProgressDialog progDailog = new ProgressDialog(CitiesListActivity.this);
 
         @Override
@@ -112,11 +110,7 @@ public class CitiesListActivity extends AppCompatActivity {
 
                     mCitiesLinks.add(link.attr("abs:href"));
                     mCitiesArray.add(link.text());
-
-
                 }
-
-
                 Log.d("My", "CitiesListActivity doInBackground   mCitiesLinks ->" + mCitiesLinks);
                 Log.d("My", "CitiesListActivity doInBackground   mCitiesArray ->" + mCitiesArray);
 

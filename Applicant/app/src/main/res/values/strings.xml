@@ -16,4 +16,6 @@
     <string name="textMasterDegreeTimeFormPageActivity">Master</string>
     <string name="textJuniorSpecialistDegreeTimeFormPageActivity">Junior Specialist</string>
     <string name="textResourceLoading">Loading...</string>
+    <string name="error">Error</string>
+    <string name="textMsgIsEmpty">" is empty."</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.vova.applicant;
+package com.example.vova.applicant.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -6,10 +6,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.vova.applicant.R;
 import com.example.vova.applicant.adapters.ApplicationInfoAdapter;
 import com.example.vova.applicant.model.ApplicationsInfo;
 
@@ -26,9 +25,6 @@ public class ApplicationListActivity extends AppCompatActivity {
     public static final String INTENT_KEY_APPLICANT_ACTIVITY = "INTENT_KEY_APPLICANT_ACTIVITY";
 
     private ListView mListView;
-//    private ArrayAdapter<String> mAdapter;
-//    private ArrayList<String> mApplicantArray = new ArrayList<>();
-
     private ArrayList<ApplicationsInfo> mApplicationsInfos = new ArrayList<>();
     private ApplicationInfoAdapter mApplicationInfoAdapter;
 
@@ -86,8 +82,8 @@ public class ApplicationListActivity extends AppCompatActivity {
             String number;
             String name;
             String score;
-            String scoreBDO;
-            String scoreZNO;
+//            String scoreBDO;
+//            String scoreZNO;
 
             Document document;
             try {
@@ -97,7 +93,7 @@ public class ApplicationListActivity extends AppCompatActivity {
                 Elements elements = links.select("tbody");
                 Elements selectTr = elements.select("tr");
 
-//                mApplicantArray.clear();
+                mApplicationsInfos.clear();
 //                mAdapter.notifyDataSetChanged();
 
                 for (Element link : selectTr) {
@@ -108,13 +104,13 @@ public class ApplicationListActivity extends AppCompatActivity {
                     Elements tds = link.select("td");
                     number = tds.get(0).text();
                     name = tds.get(1).text();
-                    score = tds.get(2).text();
-                    scoreBDO = tds.get(3).text();
-                    scoreZNO = tds.get(4).text();
+                    score = tds.get(3).text();
+//                    scoreBDO = tds.get(3).text();
+//                    scoreZNO = tds.get(4).text();
 
 //
-//                    mApplicationsInfos.add(new ApplicationsInfo(number, name, score));
-                    mApplicationsInfos.add(new ApplicationsInfo(number, name, score, scoreBDO, scoreZNO));
+                    mApplicationsInfos.add(new ApplicationsInfo(number, name, score));
+//                    mApplicationsInfos.add(new ApplicationsInfo(number, name, score, scoreBDO, scoreZNO));
 //                    mApplicantArray.add(link.text());
                 }
 
@@ -133,7 +129,6 @@ public class ApplicationListActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String srt) {
-//            mListView.setAdapter(mAdapter);
             mListView.setAdapter(mApplicationInfoAdapter);
             progDailog.dismiss();
         }

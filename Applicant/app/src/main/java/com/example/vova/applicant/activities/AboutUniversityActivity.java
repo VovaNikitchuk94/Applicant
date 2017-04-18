@@ -1,4 +1,4 @@
-package com.example.vova.applicant;
+package com.example.vova.applicant.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.vova.applicant.R;
 import com.example.vova.applicant.adapters.UniversityInfoAdapter;
 import com.example.vova.applicant.model.UniversityInfo;
 
@@ -85,6 +86,7 @@ public class AboutUniversityActivity extends AppCompatActivity {
                         intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + myPosition.getStrInfoData()));
                         break;
                     case "E-mail:":
+                        //TODO обработать несколько имейлов
                         intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + myPosition.getStrInfoData()));
                         break;
                 }
@@ -116,7 +118,7 @@ public class AboutUniversityActivity extends AppCompatActivity {
             String type;
             String data;
             String wrongDog = " [ at ] ";
-
+            String correctDog = "@";
             Document document;
             try {
                 document = Jsoup.connect(mAboutUniversityLink).get();
@@ -130,7 +132,7 @@ public class AboutUniversityActivity extends AppCompatActivity {
                     data = link.select("td").last().text();
 
                     if (!data.isEmpty()){
-                        data = data.replace(wrongDog, "@");
+                        data = data.replace(wrongDog, correctDog);
                         mUniversityInfos.add(new UniversityInfo(
                                 type, data));
                         Log.d("My", "doInBackground   link.select(\"td\").first().text() ->" + link.select("td").first().text());

@@ -1,4 +1,4 @@
-package com.example.vova.applicant;
+package com.example.vova.applicant.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +9,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.vova.applicant.R;
+import com.example.vova.applicant.activities.CitiesListActivity;
 
 public class TopLevelActivity extends AppCompatActivity implements View.OnClickListener{
 

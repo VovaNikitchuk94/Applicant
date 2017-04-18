@@ -1,4 +1,4 @@
-package com.example.vova.applicant;
+package com.example.vova.applicant.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -11,6 +11,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.example.vova.applicant.R;
+import com.example.vova.applicant.UniversityPageActivity;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -57,10 +60,15 @@ public class UniversitiesListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 
-                Intent intent = new Intent(UniversitiesListActivity.this, UniversityPageActivity.class);
-                intent.putExtra(UniversityPageActivity.KEY_UNIVERSITY_LINK,
+                Intent intent = new Intent(UniversitiesListActivity.this, UniversitiesDetailListActivity.class);
+//                intent.putExtra(UniversityPageActivity.KEY_UNIVERSITY_LINK,
+//                        mUniversityLinks.get(position));
+//                intent.putExtra(UniversityPageActivity.KEY_UNIVERSITY_TITLE,
+//                        mUniversitiesName.get(position));
+
+                intent.putExtra(UniversitiesDetailListActivity.KEY_UNIVERSITY_LINK,
                         mUniversityLinks.get(position));
-                intent.putExtra(UniversityPageActivity.KEY_UNIVERSITY_TITLE,
+                intent.putExtra(UniversitiesDetailListActivity.KEY_UNIVERSITY_TITLE,
                         mUniversitiesName.get(position));
                 startActivity(intent);
                 Log.d("My", "position = " + position + "id = " + id);
