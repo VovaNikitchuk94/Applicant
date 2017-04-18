@@ -13,7 +13,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.vova.applicant.R;
-import com.example.vova.applicant.UniversityPageActivity;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
