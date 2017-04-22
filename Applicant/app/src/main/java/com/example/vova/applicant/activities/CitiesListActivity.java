@@ -32,7 +32,6 @@ public class CitiesListActivity extends AppCompatActivity {
     private ArrayList<String> mCitiesLinks = new ArrayList<>();
 
     private TextView mTextView;
-//    private ProgressBar mProgressBar;
 
     private String yearsCodeLink = "";
 
@@ -46,7 +45,6 @@ public class CitiesListActivity extends AppCompatActivity {
         mListView = (ListView) findViewById(R.id.listViewCitiesListActivity);
         mTextView = (TextView) findViewById(R.id.textViewСhooseCityMainActivity);
         mTextView.setText(getText(R.string.chooseCityMainActivity));
-//        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         Intent intent = getIntent();
         if (intent != null){
@@ -67,7 +65,7 @@ public class CitiesListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 
-                //try use id for intent
+                // TODO try use id for intent
                             Intent intent = new Intent(CitiesListActivity.this, UniversitiesListActivity.class);
                             intent.putExtra(UniversitiesListActivity.INTENT_KEY_UNIVERSITY_ACTIVITY, mCitiesLinks.get((int) id));
                             startActivity(intent);

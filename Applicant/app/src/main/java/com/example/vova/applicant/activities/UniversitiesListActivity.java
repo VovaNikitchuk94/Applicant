@@ -38,7 +38,9 @@ public class UniversitiesListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_universities);
+        //TODO refresh layout and listView
+//        setContentView(R.layout.activity_universities);
+        setContentView(R.layout.activity_universal_list_view);
 
         Log.d("OnCreate", "UniversitiesListActivity -> OnCreate");
 
@@ -47,24 +49,20 @@ public class UniversitiesListActivity extends AppCompatActivity {
 
             Bundle bundle = intent.getExtras();
             if (bundle != null){
-
                 link = bundle.getString(INTENT_KEY_UNIVERSITY_ACTIVITY);
             }
         }
 
-        mListView = (ListView)findViewById(R.id.listViewUniversityActivity);
-        mTextViewHeadText = (TextView)findViewById(R.id.textViewHeadAboutUniversityActivity);
+//        mListView = (ListView)findViewById(R.id.listViewUniversityActivity);
+        mListView = (ListView)findViewById(R.id.listViewUniversal);
+        mTextViewHeadText = (TextView)findViewById(R.id.textViewHeadUniversalListView);
+        mTextViewHeadText.setText(R.string.textChooseYouUniversity);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 
                 Intent intent = new Intent(UniversitiesListActivity.this, UniversitiesDetailListActivity.class);
-//                intent.putExtra(UniversityPageActivity.KEY_UNIVERSITY_LINK,
-//                        mUniversityLinks.get(position));
-//                intent.putExtra(UniversityPageActivity.KEY_UNIVERSITY_TITLE,
-//                        mUniversitiesName.get(position));
-
                 intent.putExtra(UniversitiesDetailListActivity.KEY_UNIVERSITY_LINK,
                         mUniversityLinks.get(position));
                 intent.putExtra(UniversitiesDetailListActivity.KEY_UNIVERSITY_TITLE,
@@ -99,21 +97,28 @@ public class UniversitiesListActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
 
+            // TODO правильно обработать и распарсить данныем по ВНЗ
             Document document;
             try {
                 document = Jsoup.connect(link).get();
                 Log.d("My", "UniversitiesListActivity -> ParseUniversityList - > documentLink"  + document.text());
 
-                Element elementUnivers = document.getElementById("okrArea");
-                Elements links = elementUnivers.getElementsByTag("a");
-
-                mUniversityLinks.clear();
-                mUniversitiesName.clear();
-
-                for (Element link : links) {
-                    mUniversityLinks.add(link.attr("abs:href"));
-                    mUniversitiesName.add(link.text());
+                Elements elementsByClass = document.getElementsByClass("accordion-inner");
+                Elements elementsText = elementsByClass.select("a");
+                for (Element element: elementsText){
+                    mUniversitiesName.add(element.text());
+                    mUniversityLinks.add(element.attr("abs:href"));
                 }
+//                Element elementUnivers = document.getElementById("okrArea");
+//                Elements links = elementUnivers.getElementsByTag("a");
+//
+//                mUniversityLinks.clear();
+//                mUniversitiesName.clear();
+//
+//                for (Element link : links) {
+//                    mUniversityLinks.add(link.attr("abs:href"));
+//                    mUniversitiesName.add(link.text());
+//                }
 
                 Log.d("My", "doInBackground   mUniversitiesName ->" + mUniversitiesName);
                 Log.d("My", "doInBackground   mUniversityLinks ->" + mUniversityLinks);

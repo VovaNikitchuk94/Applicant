@@ -19,4 +19,5 @@
     <string name="textResourceLoading">Завантаження...</string>
     <string name="textMsgIsEmpty">" не має даних."</string>
     <string name="error">Полимлка</string>
+    <string name="textChooseYouUniversity">Будь-ласка, виберіть ВНЗ</string>
 </resources>

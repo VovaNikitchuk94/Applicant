@@ -79,6 +79,7 @@ public class ApplicationListActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
 
+            //TODO update for many years
             String number;
             String name;
             String score;

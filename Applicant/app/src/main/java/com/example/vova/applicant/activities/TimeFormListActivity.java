@@ -56,7 +56,7 @@ public class TimeFormListActivity extends AppCompatActivity {
     private String mStrFullTimeLink;
     private int mIntTimeForm = 0;
 
-    private Intent intent;
+//    private Intent intent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,74 +79,84 @@ public class TimeFormListActivity extends AppCompatActivity {
         mListView = (ListView) findViewById(R.id.listViewUniversal);
         mTextViewHeadText = (TextView) findViewById(R.id.textViewHeadUniversalListView);
         mTextViewHeadText.setText(mStrFullTimeName);
-
-
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Intent intent = null;
-                String errorMsg = getString(R.string.error);
-                switch (position){
-                    case 0:
-                        intent = createIntent(mStrFullTimeName, mStrFullTimeLink, 5);
-                        if (mIntTimeForm == INT_FULL_TIME_FORM) {
-                            intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_BACHELOR_FULL_TIME);
-                        } else {
-                            intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_BACHELOR_EXTERNAL);
-                        }
-                        break;
-                    case 1:
-                        intent = createIntent(mStrFullTimeName, mStrFullTimeLink, 6);
-                        if (mIntTimeForm == INT_FULL_TIME_FORM) {
-                            intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_SPECIALIST_FULL_TIME);
-                        } else {
-                            intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_SPECIALIST_EXTERNAL);
-                        }
-                        break;
-                    case 2:
-                        intent = createIntent(mStrFullTimeName, mStrFullTimeLink, 7);
-                        if (mIntTimeForm == INT_FULL_TIME_FORM) {
-                            intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_MASTER_FULL_TIME);
-                        } else {
-                            intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_MASTER_EXTERNAL);
-                        }
-                        break;
-                    case 3:
-                        intent = createIntent(mStrFullTimeName, mStrFullTimeLink, 8);
-                        if (mIntTimeForm == INT_FULL_TIME_FORM) {
-                            intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_JUNIOR_SPECIALIST_FULL_TIME);
-                        } else {
-                            intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_JUNIOR_SPECIALIST_EXTERNAL);
-                        }
-                        break;
-
-                }
-                if (intent != null){
-                    startActivity(intent);
-                }else {
-                    Toast.makeText(TimeFormListActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        Log.d("My", "onCreate   mStrFullTimeName ->" + mStrFullTimeName);
 
         ParseTimeForm parseTimeForm = new ParseTimeForm();
         parseTimeForm.execute();
         mAdapter = new ArrayAdapter<>(TimeFormListActivity.this, android.R.layout.simple_list_item_1,
                 mTimeFormArray);
         Log.d("My", "onCreate   mCitiesArray ->" + mTimeFormArray);
+
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+
+                Intent intent = new Intent(TimeFormListActivity.this, SpecialtiesListActivity.class);
+                intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_LINK, mTimeFormlLinks.get(position));
+                startActivity(intent);
+                Log.d("My", "position = " + position + " id = " + id);
+                Log.d("My", "mTimeFormlLinks.get((int) id) = " +  mTimeFormlLinks.get(position));
+
+
+//                Intent intent = null;
+//                String errorMsg = getString(R.string.error);
+//                switch (position){
+//                    case 0:
+//                        intent = createIntent(mStrFullTimeName, mStrFullTimeLink, 5);
+//                        if (mIntTimeForm == INT_FULL_TIME_FORM) {
+//                            intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_BACHELOR_FULL_TIME);
+//                        } else {
+//                            intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_BACHELOR_EXTERNAL);
+//                        }
+//                        break;
+//                    case 1:
+//                        intent = createIntent(mStrFullTimeName, mStrFullTimeLink, 6);
+//                        if (mIntTimeForm == INT_FULL_TIME_FORM) {
+//                            intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_SPECIALIST_FULL_TIME);
+//                        } else {
+//                            intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_SPECIALIST_EXTERNAL);
+//                        }
+//                        break;
+//                    case 2:
+//                        intent = createIntent(mStrFullTimeName, mStrFullTimeLink, 7);
+//                        if (mIntTimeForm == INT_FULL_TIME_FORM) {
+//                            intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_MASTER_FULL_TIME);
+//                        } else {
+//                            intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_MASTER_EXTERNAL);
+//                        }
+//                        break;
+//                    case 3:
+//                        intent = createIntent(mStrFullTimeName, mStrFullTimeLink, 8);
+//                        if (mIntTimeForm == INT_FULL_TIME_FORM) {
+//                            intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_JUNIOR_SPECIALIST_FULL_TIME);
+//                        } else {
+//                            intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_CATEGORY, KEY_JUNIOR_SPECIALIST_EXTERNAL);
+//                        }
+//                        break;
+//
+//                }
+//                if (intent != null){
+//                    startActivity(intent);
+//                }else {
+//                    Toast.makeText(TimeFormListActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
+//                }
+//                startActivity(intent);
+            }
+        });
     }
 
-    @NonNull
-    public Intent createIntent(String timeName, String link, int degree) {
-        intent = new Intent(this, SpecialtiesListActivity.class);
-        intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_TITLE, timeName);
-        intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_LINK, link + KEY_BACHELOR_FULL_TIME);
-        intent.putExtra(SpecialtiesListActivity.KEY_DEGREE, degree);
-        Log.d("My", "KEY_SPECIALITIES_TITLE, timeName); -> " + timeName);
-        Log.d("My", "KEY_SPECIALITIES_LINK, link); -> " + link);
-        Log.d("My", "KEY_DEGREE, degree -> " + degree);
-        return intent;
-    }
+//    @NonNull
+//    public Intent createIntent(String timeName, String link, int degree) {
+//        intent = new Intent(this, SpecialtiesListActivity.class);
+//        intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_TITLE, timeName);
+//        intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_LINK, link + KEY_BACHELOR_FULL_TIME);
+//        intent.putExtra(SpecialtiesListActivity.KEY_DEGREE, degree);
+//        Log.d("My", "KEY_SPECIALITIES_TITLE, timeName); -> " + timeName);
+//        Log.d("My", "KEY_SPECIALITIES_LINK, link); -> " + link);
+//        Log.d("My", "KEY_DEGREE, degree -> " + degree);
+//        return intent;
+//    }
 
     public class ParseTimeForm extends AsyncTask<Void, Void, Void> {
 
@@ -184,7 +194,7 @@ public class TimeFormListActivity extends AppCompatActivity {
                         loopElementsParse(elements);
                         break;
                     case 2:
-                        elements =elementsSelectId.get(1).select("li");
+                        elements = elementsSelectId.get(1).select("li");
                         loopElementsParse(elements);
                         break;
                     case 3:
@@ -205,9 +215,9 @@ public class TimeFormListActivity extends AppCompatActivity {
         }
 
         private void loopElementsParse(Elements elements) {
-            for (Element element111 : elements) {
-                mTimeFormArray.add(element111.select("a").text());
-                mTimeFormlLinks.add(element111.select("a").attr("abs:href"));
+            for (Element element : elements) {
+                mTimeFormArray.add(element.select("a").text());
+                mTimeFormlLinks.add(element.select("a").attr("abs:href"));
             }
         }
 

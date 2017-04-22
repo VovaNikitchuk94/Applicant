@@ -18,4 +18,5 @@
     <string name="textResourceLoading">Loading...</string>
     <string name="error">Error</string>
     <string name="textMsgIsEmpty">" is empty."</string>
+    <string name="textChooseYouUniversity">Please, choose university</string>
 </resources>

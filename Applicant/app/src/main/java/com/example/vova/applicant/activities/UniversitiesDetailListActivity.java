@@ -125,7 +125,6 @@ public class UniversitiesDetailListActivity extends AppCompatActivity {
                     startActivity(intent);
                 }else {
                     Toast.makeText(UniversitiesDetailListActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
-//                    finish();
                 }
             }
         });
@@ -145,7 +144,7 @@ public class UniversitiesDetailListActivity extends AppCompatActivity {
             super.onPreExecute();
 
             progDailog.setMessage(getString(R.string.textResourceLoading));
-            progDailog.setIndeterminate(false);
+            progDailog.setIndeterminate(true);
             progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             progDailog.setCancelable(true);
             progDailog.show();

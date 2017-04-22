@@ -20,6 +20,13 @@ public class SpecialtiesInfo {
         mStrAmount = strAmount;
     }
 
+    public SpecialtiesInfo(String strSpecialty, String strApplications, String strAmount) {
+
+        mStrSpecialty = strSpecialty;
+        mStrApplications = strApplications;
+        mStrAmount = strAmount;
+    }
+
     public String getStrSpecialty() {
         return mStrSpecialty;
     }

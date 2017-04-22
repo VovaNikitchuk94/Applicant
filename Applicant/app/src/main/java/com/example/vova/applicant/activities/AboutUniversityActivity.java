@@ -70,24 +70,28 @@ public class AboutUniversityActivity extends AppCompatActivity {
 
                 UniversityInfo myPosition = mUniversityInfos.get(position);
                 Intent intent = null;
+                String dataLink = myPosition.getStrInfoData();
 
                 switch (myPosition.getStrInfoType()){
                     case "Веб-сайт:":
-                        //TODO сделать проверку как записан сайт
-                        intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + myPosition.getStrInfoData()));
+                        if ((!dataLink.contains("http://"))){
+                            dataLink = "http://" + dataLink;
+                        }
+                        intent = new Intent(Intent.ACTION_VIEW, Uri.parse(dataLink));
                         break;
                     case "Адреса:":
-                        Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + myPosition.getStrInfoData());
+                        Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + dataLink);
                         intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                        //open for google Maps
 //                        intent.setPackage("com.google.android.apps.maps");
                         break;
                     case "Телефони:":
 //                        TODO обработка нескольких номером и правильность написания номера
-                        intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + myPosition.getStrInfoData()));
+                        intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + dataLink));
                         break;
                     case "E-mail:":
                         //TODO обработать несколько имейлов
-                        intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + myPosition.getStrInfoData()));
+                        intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + dataLink));
                         break;
                 }
                 startActivity(intent);
