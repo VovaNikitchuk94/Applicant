@@ -124,8 +124,7 @@ public class SpecialtiesListActivity extends AppCompatActivity {
                     Elements elements = link.getElementsByClass("button button-mini");
                     Elements tds = link.select("td");
 
-//                    assert accepted != null;
-                    if (isContainse2015()) {
+                    if (isContains2015()) {
                         specialty = tds.get(0).text();
                         applications = tds.get(1).text();
                         amount = "ліцензований обсяг: " + tds.get(2).text();
@@ -135,47 +134,28 @@ public class SpecialtiesListActivity extends AppCompatActivity {
                         accepted = tds.get(1).select("nobr").text();
                         amount = tds.get(2).text();
                     }
-                    Log.d("My", "doInBackground + + specialty + applications + accepted + amount" + specialty + ";" + applications + ";" + accepted + ";" + amount + ";");
+                    Log.d("My", "doInBackground + + specialty + applications + accepted + amount" + specialty +
+                            ";" + applications + ";" + accepted + ";" + amount + ";");
 
                     switch (intDegree) {
                         case 1:
                             if (link.text().contains("Бакалавр")) {
-                                if (isContainse2015()) {
-                                    addNameAndLink(specialty, applications, amount, elements);
-                                } else {
-                                    addNameAndLink(specialty, applications, accepted,
-                                            amount, elements);
-                                }
+                                parseDataOfDegree(specialty, applications, accepted, amount, elements);
                             }
                             break;
                         case 3:
                             if (link.text().contains("Спеціаліст")) {
-                                if (isContainse2015()) {
-                                    addNameAndLink(specialty, applications, amount, elements);
-                                } else {
-                                    addNameAndLink(specialty, applications, accepted,
-                                            amount, elements);
-                                }
+                                parseDataOfDegree(specialty, applications, accepted, amount, elements);
                             }
                             break;
                         case 2:
                             if (link.text().contains("Магістр")) {
-                                if (isContainse2015()) {
-                                    addNameAndLink(specialty, applications, amount, elements);
-                                } else {
-                                    addNameAndLink(specialty, applications, accepted,
-                                            amount, elements);
-                                }
+                                parseDataOfDegree(specialty, applications, accepted, amount, elements);
                             }
                             break;
                         case 4:
                             if (link.text().contains("Молодший спеціаліст")) {
-                                if (isContainse2015()) {
-                                    addNameAndLink(specialty, applications, amount, elements);
-                                } else {
-                                    addNameAndLink(specialty, applications, accepted,
-                                            amount, elements);
-                                }
+                                parseDataOfDegree(specialty, applications, accepted, amount, elements);
                             }
                             break;
                     }
@@ -188,7 +168,17 @@ public class SpecialtiesListActivity extends AppCompatActivity {
             return null;
         }
 
-        private boolean isContainse2015() {
+        private void parseDataOfDegree(String specialty, String applications, String accepted,
+                                       String amount, Elements elements) {
+            if (isContains2015()) {
+                addNameAndLink(specialty, applications, amount, elements);
+            } else {
+                addNameAndLink(specialty, applications, accepted,
+                        amount, elements);
+            }
+        }
+
+        private boolean isContains2015() {
             if (mStrSpecialtiesLink.contains("2015")) {
                 return true;
             } else {

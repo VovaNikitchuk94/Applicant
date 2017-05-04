@@ -14,9 +14,12 @@
         android:layout_height="wrap_content"
         android:text="@string/textViewChooseUniversityUniversityActivity"/>
 
-    <ListView
-        android:id="@+id/listViewUniversityActivity"
+    <android.support.v7.widget.RecyclerView
+
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></ListView>
+        android:layout_height="wrap_content"
+        android:id="@+id/recyclerViewUniversitiesListActivity">
+
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

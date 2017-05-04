@@ -1,20 +1,49 @@
 package com.example.vova.applicant.model;
 
-public class UniversityInfo {
+import android.content.ContentValues;
+import android.database.Cursor;
 
-    private String mStrInfoType;
-    private String mStrInfoData;
+import com.example.vova.applicant.toolsAndConstans.DBConstans.UniversityTable;
 
-    public UniversityInfo(String strInfoType, String strInfoData) {
-        mStrInfoType = strInfoType;
-        mStrInfoData = strInfoData;
+public class UniversityInfo extends BaseEntity{
+
+    private String mStrUniversityName;
+    private String mStrUniversityLink;
+
+    public UniversityInfo(String strUniversityName, String strUniversityLink) {
+        mStrUniversityName = strUniversityName;
+        mStrUniversityLink = strUniversityLink;
     }
 
-    public String getStrInfoType() {
-        return mStrInfoType;
+    public UniversityInfo(Cursor cursor) {
+        setId(cursor.getLong(cursor.getColumnIndex(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_ID)));
+        mStrUniversityName = cursor.getString(cursor.getColumnIndex(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_NAME));
+        mStrUniversityLink = cursor.getString(cursor.getColumnIndex(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_LINK));
+
     }
 
-    public String getStrInfoData() {
-        return mStrInfoData;
+    public String getStrUniversityName() {
+        return mStrUniversityName;
+    }
+
+    public String getStrUniversityLink() {
+        return mStrUniversityLink;
+    }
+
+    public void setStrUniversityName(String strUniversityName) {
+        mStrUniversityName = strUniversityName;
+    }
+
+    public void setStrUniversityLink(String strUniversityLink) {
+        mStrUniversityLink = strUniversityLink;
+    }
+
+    @Override
+    public ContentValues getContentValues() {
+        ContentValues values = new ContentValues();
+        values.put(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_NAME, getStrUniversityName());
+        values.put(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_LINK, getStrUniversityLink());
+
+        return values;
     }
 }

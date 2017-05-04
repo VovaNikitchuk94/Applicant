@@ -6,24 +6,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.vova.applicant.activities.CitiesListActivity">
+    tools:context=".activities.CitiesListActivity">
 
     <TextView
+        style="@style/headTextViewStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textViewСhooseCityMainActivity"
-        android:text="@string/chooseCityMainActivity"
-        style="@style/headTextViewStyle"/>
+        android:id="@+id/textViewСhooseCityCitiesActivity"/>
 
-    <!--<ProgressBar-->
-        <!--android:id="@+id/progressBar"-->
-        <!--style="?android:attr/progressBarStyleInverse"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"/>-->
+    <android.support.v7.widget.RecyclerView
 
-    <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/listViewCitiesListActivity"/>
+        android:id="@+id/recyclerViewCitiesListActivity">
+
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

@@ -11,7 +11,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.vova.applicant.R;
-import com.example.vova.applicant.activities.CitiesListActivity;
 
 public class TopLevelActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -33,7 +32,6 @@ public class TopLevelActivity extends AppCompatActivity implements View.OnClickL
         Log.d("OnCreate", "TopLevelActivity -> OnCreate");
 
         initializeView();
-
     }
 
     private void initializeView() {

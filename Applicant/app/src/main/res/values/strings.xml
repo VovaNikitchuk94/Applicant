@@ -19,4 +19,5 @@
     <string name="error">Error</string>
     <string name="textMsgIsEmpty">" is empty."</string>
     <string name="textChooseYouUniversity">Please, choose university</string>
+    <string name="connection_error">Connection error</string>
 </resources>

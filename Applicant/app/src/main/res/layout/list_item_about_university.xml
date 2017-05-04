@@ -6,14 +6,14 @@
               android:padding="16dp">
 
     <TextView
-        android:id="@+id/textViewTypeUniversityInfo"
-        android:layout_width="wrap_content"
+        android:id="@+id/textViewTextTypeAboutUniversity"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textStyle="bold"/>
 
-    <!--<TextView-->
-        <!--android:id="@+id/textViewDataUniversityInfo"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"/>-->
+    <TextView
+        android:id="@+id/textViewTextDataAboutUniversity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

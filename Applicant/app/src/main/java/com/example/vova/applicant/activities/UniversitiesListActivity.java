@@ -3,16 +3,19 @@ package com.example.vova.applicant.activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.vova.applicant.R;
+import com.example.vova.applicant.adapters.UniversitiesInfoAdapter;
+import com.example.vova.applicant.model.CitiesInfo;
+import com.example.vova.applicant.model.UniversityInfo;
+import com.example.vova.applicant.model.engines.CitiesInfoEngine;
+import com.example.vova.applicant.model.engines.UniversityInfoEngine;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -22,14 +25,14 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class UniversitiesListActivity extends AppCompatActivity {
+public class UniversitiesListActivity extends AppCompatActivity implements
+        UniversitiesInfoAdapter.OnClickUniversityItem {
 
-    private String link;
+    private long universityLink;
 
-    private ListView mListView;
-    private ArrayAdapter<String> mAdapter;
-    private ArrayList<String> mUniversitiesName = new ArrayList<>();
-    private ArrayList<String> mUniversityLinks = new ArrayList<>();
+    private RecyclerView mRecyclerView;
+    private UniversitiesInfoAdapter mUniversitiesInfoAdapter;
+    private ArrayList<UniversityInfo> mUniversityInfos = new ArrayList<>();
 
     private TextView mTextViewHeadText;
 
@@ -38,45 +41,53 @@ public class UniversitiesListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //TODO refresh layout and listView
-//        setContentView(R.layout.activity_universities);
-        setContentView(R.layout.activity_universal_list_view);
+        setContentView(R.layout.activity_universities_list);
 
         Log.d("OnCreate", "UniversitiesListActivity -> OnCreate");
 
         Intent intent = getIntent();
-        if (intent != null){
+        if (intent != null) {
 
             Bundle bundle = intent.getExtras();
-            if (bundle != null){
-                link = bundle.getString(INTENT_KEY_UNIVERSITY_ACTIVITY);
+            if (bundle != null) {
+                universityLink = bundle.getLong(INTENT_KEY_UNIVERSITY_ACTIVITY, -1);
             }
         }
 
-//        mListView = (ListView)findViewById(R.id.listViewUniversityActivity);
-        mListView = (ListView)findViewById(R.id.listViewUniversal);
-        mTextViewHeadText = (TextView)findViewById(R.id.textViewHeadUniversalListView);
-        mTextViewHeadText.setText(R.string.textChooseYouUniversity);
+        Log.d("My", "onCreate   link ->" + universityLink);
 
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 
-                Intent intent = new Intent(UniversitiesListActivity.this, UniversitiesDetailListActivity.class);
-                intent.putExtra(UniversitiesDetailListActivity.KEY_UNIVERSITY_LINK,
-                        mUniversityLinks.get(position));
-                intent.putExtra(UniversitiesDetailListActivity.KEY_UNIVERSITY_TITLE,
-                        mUniversitiesName.get(position));
-                startActivity(intent);
-                Log.d("My", "position = " + position + "id = " + id);
+        mTextViewHeadText = (TextView) findViewById(R.id.textViewHeadUniversalListView);
 
-            }
-        });
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewUniversitiesListActivity);
+        LinearLayoutManager layoutManager
+                = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(layoutManager);
+
+//        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+//
+//                Intent intent = new Intent(UniversitiesListActivity.this, DetailUniversListActivity.class);
+//                intent.putExtra(DetailUniversListActivity.KEY_DETAIL_UNIVERSITY_LINK,
+//                        mUniversityLinks.get(position));
+//                intent.putExtra(DetailUniversListActivity.KEY_UNIVERSITY_TITLE,
+//                        mUniversitiesName.get(position));
+//                startActivity(intent);
+//                Log.d("My", "position = " + position + "id = " + id);
+//
+//            }
+//        });
 
         new ParseUniversityList().execute();
-        mAdapter = new ArrayAdapter<>(UniversitiesListActivity.this, android.R.layout.simple_list_item_1,
-                mUniversitiesName);
-        Log.d("My", "onCreate   link ->" + link);
+
+    }
+
+    @Override
+    public void onClickUniversityItem(long nIdUniversity) {
+        Intent intent = new Intent(this, DetailUniversListActivity.class);
+        intent.putExtra(DetailUniversListActivity.KEY_DETAIL_UNIVERSITY_LINK, nIdUniversity);
+        startActivity(intent);
     }
 
     public class ParseUniversityList extends AsyncTask<String, Integer, String> {
@@ -86,7 +97,6 @@ public class UniversitiesListActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
             progDailog.setMessage(getString(R.string.textResourceLoading));
             progDailog.setIndeterminate(false);
             progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -95,46 +105,50 @@ public class UniversitiesListActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground(String... params) {
+        protected String doInBackground(String... urls) {
+            String html = "";
+            CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
 
-            // TODO правильно обработать и распарсить данныем по ВНЗ
-            Document document;
-            try {
-                document = Jsoup.connect(link).get();
-                Log.d("My", "UniversitiesListActivity -> ParseUniversityList - > documentLink"  + document.text());
+            UniversityInfoEngine universityInfoEngine = new UniversityInfoEngine(getApplication());
 
-                Elements elementsByClass = document.getElementsByClass("accordion-inner");
-                Elements elementsText = elementsByClass.select("a");
-                for (Element element: elementsText){
-                    mUniversitiesName.add(element.text());
-                    mUniversityLinks.add(element.attr("abs:href"));
+            if (universityInfoEngine.getAllUniversities().isEmpty()) {
+
+                CitiesInfo citiesInfo = citiesInfoEngine.getCityById(universityLink);
+                if (universityLink > -1 && citiesInfo != null) {
+                    html = citiesInfo.getStrCityLink();
+                    Document document;
+                    try {
+                        document = Jsoup.connect(html).get();
+                        Log.d("My", "UniversitiesListActivity -> ParseUniversityList - > documentLink" + document.text());
+
+                        Elements elementsByClass = document.getElementsByClass("accordion-inner");
+                        Elements elementsText = elementsByClass.select("a");
+                        for (Element element : elementsText) {
+
+                            String universityName = element.text();
+                            String universityLink = element.attr("abs:href");
+
+                            universityInfoEngine.addUniversity(new UniversityInfo(universityName, universityLink));
+                            Log.d("My", "ParseUniversities doInBackground   link ->" + element.attr("abs:href"));
+                            Log.d("My", "ParseUniversities doInBackground    name ->" + element.text());
+
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-//                Element elementUnivers = document.getElementById("okrArea");
-//                Elements links = elementUnivers.getElementsByTag("a");
-//
-//                mUniversityLinks.clear();
-//                mUniversitiesName.clear();
-//
-//                for (Element link : links) {
-//                    mUniversityLinks.add(link.attr("abs:href"));
-//                    mUniversitiesName.add(link.text());
-//                }
-
-                Log.d("My", "doInBackground   mUniversitiesName ->" + mUniversitiesName);
-                Log.d("My", "doInBackground   mUniversityLinks ->" + mUniversityLinks);
-
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-
             return null;
         }
 
         @Override
-        protected void onPostExecute(String srt) {
-            mListView.setAdapter(mAdapter);
+        protected void onPostExecute(String result) {
+            final UniversityInfoEngine universityInfoEngine = new UniversityInfoEngine(getApplication());
+            mUniversityInfos = universityInfoEngine.getAllUniversities();
+            mUniversitiesInfoAdapter = new UniversitiesInfoAdapter(mUniversityInfos);
+            mUniversitiesInfoAdapter.setOnClickUniversityItem(UniversitiesListActivity.this);
+            mRecyclerView.setAdapter(mUniversitiesInfoAdapter);
             progDailog.dismiss();
-
         }
     }
 }
