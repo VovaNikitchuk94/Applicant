@@ -23,6 +23,7 @@ public class CitiesInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void setOnClickCityInfoItem(OnClickCityItem onClickCityInfoItem){
         mOnClickCityItem = onClickCityInfoItem;
     }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder viewHolder = null;
@@ -38,7 +39,7 @@ public class CitiesInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         CitiesInfoViewHolder citiesInfoViewHolder = (CitiesInfoViewHolder) holder;
         final CitiesInfo citiesInfo = mCitiesInfos.get(position);
         citiesInfoViewHolder.nameTextView.setText(citiesInfo.getStrCityName());
-//        citiesInfoViewHolder.linkTextView.setText(citiesInfo.getStrCityLink());
+//        citiesInfoViewHolder.linkTextView.setText(citiesInfo.getStrTimeFormLink());
         citiesInfoViewHolder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

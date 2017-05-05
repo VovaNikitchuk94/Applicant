@@ -40,7 +40,7 @@ public class DetailUniversAdapter extends RecyclerView.Adapter<RecyclerView.View
         DetailUniversInfoViewHolder detailUniversInfoViewHolder = (DetailUniversInfoViewHolder) holder;
         final DetailUniverInfo detailUniverInfo = mDetailUniverInfos.get(position);
         detailUniversInfoViewHolder.nameTextView.setText(detailUniverInfo.getStrDetailText());
-//        citiesInfoViewHolder.linkTextView.setText(citiesInfo.getStrCityLink());
+//        citiesInfoViewHolder.linkTextView.setText(citiesInfo.getStrTimeFormLink());
         detailUniversInfoViewHolder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

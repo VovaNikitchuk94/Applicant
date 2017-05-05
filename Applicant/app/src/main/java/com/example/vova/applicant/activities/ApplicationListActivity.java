@@ -6,11 +6,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ListView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 import com.example.vova.applicant.R;
-import com.example.vova.applicant.adapters.ApplicationInfoAdapter;
+import com.example.vova.applicant.adapters.ApplicationAdapter;
 import com.example.vova.applicant.model.ApplicationsInfo;
+import com.example.vova.applicant.model.engines.ApplicationInfoEngine;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -24,41 +26,31 @@ public class ApplicationListActivity extends AppCompatActivity {
 
     public static final String INTENT_KEY_APPLICANT_ACTIVITY = "INTENT_KEY_APPLICANT_ACTIVITY";
 
-    private ListView mListView;
+    private RecyclerView mRecyclerView;
     private ArrayList<ApplicationsInfo> mApplicationsInfos = new ArrayList<>();
-    private ApplicationInfoAdapter mApplicationInfoAdapter;
+    private ApplicationAdapter mAdapter;
 
     private String mStrApplicantCode = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_universal_list_view);
-
-        mListView = (ListView) findViewById(R.id.listViewUniversal);
+        setContentView(R.layout.activity_applcation_list);
 
         Intent intent = getIntent();
         if (intent != null) {
-
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
-
                 mStrApplicantCode = bundle.getString(INTENT_KEY_APPLICANT_ACTIVITY);
             }
         }
 
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewApplicationListActivity);
+        LinearLayoutManager layoutManager
+                = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(layoutManager);
+
         new ParseApplicantsList().execute();
-
-        mApplicationInfoAdapter = new ApplicationInfoAdapter(ApplicationListActivity.this,
-                R.layout.list_item_application_info, mApplicationsInfos);
-//        mAdapter = new ArrayAdapter<>(ApplicationListActivity.this, android.R.layout.simple_list_item_1,
-//                mApplicantArray);
-//
-//        Log.d("My", "onCreate   mApplicantArray ->" + mApplicantArray);
-//        Log.d("My", "ApplicationListActivity onCreate   mApplicantArray ->" + mApplicantArray);
-//        Log.d("My", "ApplicationListActivity onCreate   mApplicantArray.size ->" + mApplicantArray.size());
-//        Log.d("My", "ApplicationListActivity onCreate   mListView.getCount() ->" + mListView.getCount());
-
     }
 
     public class ParseApplicantsList extends AsyncTask<String, String, String> {
@@ -68,7 +60,6 @@ public class ApplicationListActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
             progDailog.setMessage(getString(R.string.textResourceLoading));
             progDailog.setIndeterminate(false);
             progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -79,50 +70,48 @@ public class ApplicationListActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
 
-            //TODO update for many years
-            String number;
-            String name;
-            String score;
+            ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
+            if (applicationInfoEngine.getAllApplicantions().isEmpty()) {
+                //TODO update for many years
+                String number;
+                String name;
+                String score;
+                String someLink;
 //            String scoreBDO;
 //            String scoreZNO;
 
-            Document document;
-            try {
-                document = Jsoup.connect(mStrApplicantCode).get();
+                Document document;
+                try {
+                    document = Jsoup.connect(mStrApplicantCode).get();
 
-                Elements links = document.getElementsByClass("tablesaw tablesaw-stack tablesaw-sortable");
-                Elements elements = links.select("tbody");
-                Elements selectTr = elements.select("tr");
+                    Elements links = document.getElementsByClass("tablesaw tablesaw-stack tablesaw-sortable");
+                    Elements elements = links.select("tbody");
+                    Elements selectTr = elements.select("tr");
 
-                mApplicationsInfos.clear();
+                    mApplicationsInfos.clear();
 //                mAdapter.notifyDataSetChanged();
 
-                for (Element link : selectTr) {
+                    for (Element link : selectTr) {
 
 //                    number = link.select("td").first().text();
 //                    name = link.select("td").last().text();
 
-                    Elements tds = link.select("td");
-                    number = tds.get(0).text();
-                    name = tds.get(1).text();
-                    score = tds.get(3).text();
+                        Elements tds = link.select("td");
+                        number = tds.get(0).text();
+                        name = tds.get(1).text();
+                        score = tds.get(3).text();
+                        someLink = tds.attr("abs:href");
 //                    scoreBDO = tds.get(3).text();
 //                    scoreZNO = tds.get(4).text();
 
 //
-                    mApplicationsInfos.add(new ApplicationsInfo(number, name, score));
+                        applicationInfoEngine.addApplication(new ApplicationsInfo(number, name, score, someLink));
 //                    mApplicationsInfos.add(new ApplicationsInfo(number, name, score, scoreBDO, scoreZNO));
 //                    mApplicantArray.add(link.text());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-
-//                Log.d("My", "CitiesListActivity doInBackground   mCitiesLinks ->" + mCitiesLinks);
-//                Log.d("My", "ApplicationListActivity doInBackground   mApplicantArray ->" + mApplicantArray);
-//                Log.d("My", "ApplicationListActivity doInBackground   mApplicantArray.size ->" + mApplicantArray.size());
-//                Log.d("My", "ApplicationListActivity doInBackground   mAdapter.getCount ->" + mAdapter.getCount());
-//                Log.d("My", "ApplicationListActivity doInBackground  mListView ->" + mListView);
-
-            } catch (IOException e) {
-                e.printStackTrace();
             }
 
             return null;
@@ -130,7 +119,11 @@ public class ApplicationListActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String srt) {
-            mListView.setAdapter(mApplicationInfoAdapter);
+            final ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
+            mApplicationsInfos = applicationInfoEngine.getAllApplicantions();
+            mAdapter = new ApplicationAdapter(mApplicationsInfos);
+//            mAdapter.setOnClickSpecialityItem(SpecialtiesListActivity.this);
+            mRecyclerView.setAdapter(mAdapter);
             progDailog.dismiss();
         }
     }

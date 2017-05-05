@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string strUniversityName="app_name">Абітурієнт</string>
-    <string strUniversityName="SearchTopLevelActivity">Пошук</string>
-    <string strUniversityName="headTextAboutUniversityActivity">Інформація про ВНЗ</string>
-    <string strUniversityName="textButton2015YearTopLevelActivity">2015 Рік</string>
-    <string strUniversityName="textButton2016YearTopLevelActivity">2016 Рік</string>
-    <string strUniversityName="textButton2017YearTopLevelActivity">2017 Рік</string>
-    <string strUniversityName="textExternalFormUniversityPageActivity">Заочна форма</string>
-    <string strUniversityName="textFullTimeFormUniversityPageActivity">Денна форма</string>
-    <string strUniversityName="textViewChooseUniversityUniversityActivity">Будь-ласка, виберіть навчальний заклад</string>
-    <string strUniversityName="textAboutUniversityPageActivity">Про ВНЗ</string>
-    <string strUniversityName="chooseCityMainActivity">Виберіть місто</string>
-    <string strUniversityName="textChooseDegreeTimeFormPageActivity">Виберіть ступінь</string>
-    <string strUniversityName="textMasterDegreeTimeFormPageActivity">Магістр</string>
-    <string strUniversityName="textBachelorDegreeTimeFormPageActivity">Бакалавр</string>
-    <string strUniversityName="textSpecialistDegreeTimeFormPageActivity">Спеціаліст</string>
-    <string strUniversityName="textJuniorSpecialistDegreeTimeFormPageActivity">Молодший спеціаліст</string>
-    <string strUniversityName="textResourceLoading">Завантаження...</string>
-    <string strUniversityName="textMsgIsEmpty">" не має даних."</string>
-    <string strUniversityName="error">Полимлка</string>
-    <string strUniversityName="textChooseYouUniversity">Будь-ласка, виберіть ВНЗ</string>
+    <string name="app_name">Абітурієнт</string>
+    <string name="SearchTopLevelActivity">Пошук</string>
+    <string name="headTextAboutUniversityActivity">Інформація про ВНЗ</string>
+    <string name="textButton2015YearTopLevelActivity">2015 Рік</string>
+    <string name="textButton2016YearTopLevelActivity">2016 Рік</string>
+    <string name="textButton2017YearTopLevelActivity">2017 Рік</string>
+    <string name="textExternalFormUniversityPageActivity">Заочна форма</string>
+    <string name="textFullTimeFormUniversityPageActivity">Денна форма</string>
+    <string name="textViewChooseUniversityUniversityActivity">Будь-ласка, виберіть навчальний заклад</string>
+    <string name="textAboutUniversityPageActivity">Про ВНЗ</string>
+    <string name="chooseCityMainActivity">Виберіть місто</string>
+    <string name="textChooseDegreeTimeFormPageActivity">Виберіть ступінь</string>
+    <string name="textMasterDegreeTimeFormPageActivity">Магістр</string>
+    <string name="textBachelorDegreeTimeFormPageActivity">Бакалавр</string>
+    <string name="textSpecialistDegreeTimeFormPageActivity">Спеціаліст</string>
+    <string name="textJuniorSpecialistDegreeTimeFormPageActivity">Молодший спеціаліст</string>
+    <string name="textResourceLoading">Завантаження...</string>
+    <string name="textMsgIsEmpty">" не має даних."</string>
+    <string name="error">Полимлка</string>
+    <string name="textChooseYouUniversity">Будь-ласка, виберіть ВНЗ</string>
 </resources>

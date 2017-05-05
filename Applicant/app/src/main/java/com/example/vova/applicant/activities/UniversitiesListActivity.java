@@ -57,27 +57,12 @@ public class UniversitiesListActivity extends AppCompatActivity implements
         Log.d("My", "onCreate   link ->" + universityLink);
 
 
-        mTextViewHeadText = (TextView) findViewById(R.id.textViewHeadUniversalListView);
+//        mTextViewHeadText = (TextView) findViewById(R.id.textViewHeadUniversalListView);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewUniversitiesListActivity);
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
-
-//        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-//
-//                Intent intent = new Intent(UniversitiesListActivity.this, DetailUniversListActivity.class);
-//                intent.putExtra(DetailUniversListActivity.KEY_DETAIL_UNIVERSITY_LINK,
-//                        mUniversityLinks.get(position));
-//                intent.putExtra(DetailUniversListActivity.KEY_UNIVERSITY_TITLE,
-//                        mUniversitiesName.get(position));
-//                startActivity(intent);
-//                Log.d("My", "position = " + position + "id = " + id);
-//
-//            }
-//        });
 
         new ParseUniversityList().execute();
 
@@ -106,7 +91,7 @@ public class UniversitiesListActivity extends AppCompatActivity implements
 
         @Override
         protected String doInBackground(String... urls) {
-            String html = "";
+            String html;
             CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
 
             UniversityInfoEngine universityInfoEngine = new UniversityInfoEngine(getApplication());

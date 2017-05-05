@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 
 import com.example.vova.applicant.toolsAndConstans.DBConstans;
+import com.example.vova.applicant.toolsAndConstans.DBConstans.CitiesTable;
 
 public class CitiesInfo extends BaseEntity {
 
@@ -16,9 +17,9 @@ public class CitiesInfo extends BaseEntity {
     }
 
     public CitiesInfo(Cursor cursor) {
-        setId(cursor.getLong(cursor.getColumnIndex(DBConstans.CITIES_INFO_FIELD_ID)));
-        mStrCityName = cursor.getString(cursor.getColumnIndex(DBConstans.CITIES_INFO_FIELD_NAME));
-        mStrCityLink = cursor.getString(cursor.getColumnIndex(DBConstans.CITIES_INFO_FIELD_LINK));
+        setId(cursor.getLong(cursor.getColumnIndex(CitiesTable.Cols.CITIES_INFO_FIELD_ID)));
+        mStrCityName = cursor.getString(cursor.getColumnIndex(CitiesTable.Cols.CITIES_INFO_FIELD_NAME));
+        mStrCityLink = cursor.getString(cursor.getColumnIndex(CitiesTable.Cols.CITIES_INFO_FIELD_LINK));
 
     }
 
@@ -41,8 +42,8 @@ public class CitiesInfo extends BaseEntity {
     @Override
     public ContentValues getContentValues() {
         ContentValues values = new ContentValues();
-        values.put(DBConstans.CITIES_INFO_FIELD_NAME, getStrCityName());
-        values.put(DBConstans.CITIES_INFO_FIELD_LINK, getStrCityLink());
+        values.put(CitiesTable.Cols.CITIES_INFO_FIELD_NAME, getStrCityName());
+        values.put(CitiesTable.Cols.CITIES_INFO_FIELD_LINK, getStrCityLink());
 
         return values;
     }

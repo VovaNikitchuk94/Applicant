@@ -11,10 +11,6 @@ import com.example.vova.applicant.model.UniversityInfo;
 
 import java.util.ArrayList;
 
-/**
- * Created by vovan on 28.04.2017.
- */
-
 public class UniversitiesInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<UniversityInfo> mUniversityInfos;
@@ -42,7 +38,7 @@ public class UniversitiesInfoAdapter extends RecyclerView.Adapter<RecyclerView.V
         UniversitiesInfoViewHolder universitiesInfoViewHolder = (UniversitiesInfoViewHolder) holder;
         final UniversityInfo universityInfo = mUniversityInfos.get(position);
         universitiesInfoViewHolder.nameTextView.setText(universityInfo.getStrUniversityName());
-//        citiesInfoViewHolder.linkTextView.setText(citiesInfo.getStrCityLink());
+//        citiesInfoViewHolder.linkTextView.setText(citiesInfo.getStrTimeFormLink());
         universitiesInfoViewHolder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

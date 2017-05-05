@@ -5,31 +5,30 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.example.vova.applicant.model.CitiesInfo;
-import com.example.vova.applicant.toolsAndConstans.DBConstans;
-import com.example.vova.applicant.toolsAndConstans.DBConstans.CitiesTable;
+import com.example.vova.applicant.model.TimeFormInfo;
+import com.example.vova.applicant.toolsAndConstans.DBConstans.TimeFormTable;
 
 import java.util.ArrayList;
 
-public class CitiesInfoDBWrapper extends BaseDBWrapper {
+public class TimeFormDBWrapper extends BaseDBWrapper {
 
-    public CitiesInfoDBWrapper(Context context) {
-        super(context, CitiesTable.TABLE_NAME);
+    public TimeFormDBWrapper(Context context) {
+        super(context, TimeFormTable.TABLE_NAME);
     }
 
-    public ArrayList<CitiesInfo> getAllCities() {
-        ArrayList<CitiesInfo> arrResult = new ArrayList<>();
+    public ArrayList<TimeFormInfo> getAllTimeForms() {
+        ArrayList<TimeFormInfo> arrResult = new ArrayList<>();
         SQLiteDatabase database = getReadable();
         Cursor cursor = database.query(getTableName(), null, null, null, null, null, null);
         try {
             if (cursor != null && cursor.moveToFirst()) {
                 do {
-                    CitiesInfo citiesInfo = new CitiesInfo(cursor);
-                    arrResult.add(citiesInfo);
+                    TimeFormInfo timeFormInfo = new TimeFormInfo(cursor);
+                    arrResult.add(timeFormInfo);
 
-                    Log.d("My", "id -> " + citiesInfo.getId());
-                    Log.d("My", "name -> " + citiesInfo.getStrCityName());
-                    Log.d("My", "sname -> " + citiesInfo.getStrCityLink());
+                    Log.d("My", "id  ArrayList<TimeFormInfo>-> " + timeFormInfo.getId());
+                    Log.d("My", "name - ArrayList<TimeFormInfo>> " + timeFormInfo.getStrTimeFormName());
+                    Log.d("My", "sname  ArrayList<TimeFormInfo>-> " + timeFormInfo.getStrTimeFormLink());
                 } while (cursor.moveToNext());
             }
         } finally {
@@ -41,21 +40,21 @@ public class CitiesInfoDBWrapper extends BaseDBWrapper {
         return arrResult;
     }
 
-    public void addCity(CitiesInfo citiesInfo) {
+    public void addTimeForm(TimeFormInfo timeFormInfo) {
         SQLiteDatabase database = getWritable();
-        database.insert(getTableName(), null, citiesInfo.getContentValues());
+        database.insert(getTableName(), null, timeFormInfo.getContentValues());
         database.close();
     }
 
-    public CitiesInfo getCityById(long nId) {
-        CitiesInfo citiesInfo = null;
+    public TimeFormInfo getTimeFormById(long nId) {
+        TimeFormInfo timeFormInfo = null;
         SQLiteDatabase database = getReadable();
-        String strRequest = CitiesTable.Cols.CITIES_INFO_FIELD_ID + "=?";
+        String strRequest = TimeFormTable.Cols.TIME_FORM_INFO_FIELD_ID + "=?";
         String arrArgs[] = new String[]{Long.toString(nId)};
         Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
         try{
             if (cursor!=null && cursor.moveToFirst()){
-                citiesInfo = new CitiesInfo(cursor);
+                timeFormInfo = new TimeFormInfo(cursor);
             }
         } finally {
             if (cursor!=null){
@@ -63,6 +62,6 @@ public class CitiesInfoDBWrapper extends BaseDBWrapper {
             }
             database.close();
         }
-        return citiesInfo;
+        return timeFormInfo;
     }
 }

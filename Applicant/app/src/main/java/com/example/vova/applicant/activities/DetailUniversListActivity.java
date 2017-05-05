@@ -56,7 +56,7 @@ public class DetailUniversListActivity extends AppCompatActivity implements
 
         Log.d("My", "UniversityPageActivity -> OnCreate -> universityDetailLink : " + universityDetailLink);
 
-        TextView mTextViewHeadText = (TextView) findViewById(R.id.textViewHeadUniversalListView);
+        TextView mTextViewHeadText = (TextView) findViewById(R.id.textViewChooseUniversityDetailUniversityActivity);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewDetailUniversListActivity);
         LinearLayoutManager layoutManager
@@ -142,7 +142,7 @@ public class DetailUniversListActivity extends AppCompatActivity implements
 
         @Override
         protected Void doInBackground(Void... voids) {
-            String html = "";
+            String html;
             UniversityInfoEngine universityInfoEngine = new UniversityInfoEngine(getApplication());
             DetailUniverInfoEngine detailUniverInfoEngine = new DetailUniverInfoEngine(getApplication());
             if (detailUniverInfoEngine.getAllDetailUnivers().isEmpty()) {
