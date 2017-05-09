@@ -9,7 +9,7 @@ import com.example.vova.applicant.toolsAndConstans.DBConstans.ApplicationTable;
 
 import java.util.ArrayList;
 
-public class ApplicationDBWrapper extends BaseDBWrapper {
+public class ApplicationDBWrapper extends BaseDBWrapper<ApplicationsInfo> {
 
     public ApplicationDBWrapper(Context context) {
         super(context, ApplicationTable.TABLE_NAME);
@@ -24,10 +24,6 @@ public class ApplicationDBWrapper extends BaseDBWrapper {
                 do {
                     ApplicationsInfo applicationsInfo = new ApplicationsInfo(cursor);
                     arrResult.add(applicationsInfo);
-
-//                    Log.d("My", "id  ArrayList<SpecialtiesInfo>>-> " + specialtiesInfo.getId());
-//                    Log.d("My", "name - ArrayList<SpecialtiesInfo>>> " + specialtiesInfo.getStrSpecialty());
-//                    Log.d("My", "sname  ArrayList<SpecialtiesInfo>> " + specialtiesInfo.getStrLink());
                 } while (cursor.moveToNext());
             }
         } finally {
@@ -39,7 +35,29 @@ public class ApplicationDBWrapper extends BaseDBWrapper {
         return arrResult;
     }
 
-    public void addApplication(ApplicationsInfo applicationsInfo) {
+    public ArrayList<ApplicationsInfo> getAllApplicantionsById(long nId) {
+        ArrayList<ApplicationsInfo> arrResult = new ArrayList<>();
+        SQLiteDatabase database = getReadable();
+        String strRequest = ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECILITY_ID + "=?";
+        String arrArgs[] = new String[]{Long.toString(nId)};
+        Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    ApplicationsInfo applicationsInfo = new ApplicationsInfo(cursor);
+                    arrResult.add(applicationsInfo);
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            database.close();
+        }
+        return arrResult;
+    }
+
+    public void addItem(ApplicationsInfo applicationsInfo) {
         SQLiteDatabase database = getWritable();
         database.insert(getTableName(), null, applicationsInfo.getContentValues());
         database.close();
@@ -52,11 +70,11 @@ public class ApplicationDBWrapper extends BaseDBWrapper {
         String arrArgs[] = new String[]{Long.toString(nId)};
         Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
         try{
-            if (cursor!=null && cursor.moveToFirst()){
+            if (cursor != null && cursor.moveToFirst()){
                 applicationsInfo = new ApplicationsInfo(cursor);
             }
         } finally {
-            if (cursor!=null){
+            if (cursor != null){
                 cursor.close();
             }
             database.close();

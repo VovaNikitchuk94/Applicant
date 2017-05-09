@@ -26,10 +26,28 @@ public class CitiesInfoDBWrapper extends BaseDBWrapper {
                 do {
                     CitiesInfo citiesInfo = new CitiesInfo(cursor);
                     arrResult.add(citiesInfo);
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            database.close();
+        }
+        return arrResult;
+    }
 
-                    Log.d("My", "id -> " + citiesInfo.getId());
-                    Log.d("My", "name -> " + citiesInfo.getStrCityName());
-                    Log.d("My", "sname -> " + citiesInfo.getStrCityLink());
+    public ArrayList<CitiesInfo> getAllCitiesById(long nId) {
+        ArrayList<CitiesInfo> arrResult = new ArrayList<>();
+        SQLiteDatabase database = getReadable();
+        String strRequest = CitiesTable.Cols.CITIES_INFO_FIELD_YEAR_ID + "=?";
+        String arrArgs[] = new String[]{Long.toString(nId)};
+        Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    CitiesInfo citiesInfo = new CitiesInfo(cursor);
+                    arrResult.add(citiesInfo);
                 } while (cursor.moveToNext());
             }
         } finally {

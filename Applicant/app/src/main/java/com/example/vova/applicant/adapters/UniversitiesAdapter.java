@@ -11,12 +11,12 @@ import com.example.vova.applicant.model.UniversityInfo;
 
 import java.util.ArrayList;
 
-public class UniversitiesInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class UniversitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private ArrayList<UniversityInfo> mUniversityInfos;
+    private ArrayList<UniversityInfo> mUniversityInfos = new ArrayList<>();
     private OnClickUniversityItem mOnClickUniversityItem = null;
 
-    public UniversitiesInfoAdapter(ArrayList<UniversityInfo> arrUniversities) {
+    public UniversitiesAdapter(ArrayList<UniversityInfo> arrUniversities) {
         mUniversityInfos = arrUniversities;
     }
 
@@ -43,7 +43,7 @@ public class UniversitiesInfoAdapter extends RecyclerView.Adapter<RecyclerView.V
             @Override
             public void onClick(View view) {
                 if (mOnClickUniversityItem != null){
-                    mOnClickUniversityItem.onClickUniversityItem(universityInfo.getId());
+                    mOnClickUniversityItem.onClickUniversityItem(universityInfo);
                 }
             }
         });
@@ -69,6 +69,6 @@ public class UniversitiesInfoAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
     public interface OnClickUniversityItem{
-        void onClickUniversityItem(long nIdUniversity);
+        void onClickUniversityItem(UniversityInfo universityInfo);
     }
 }

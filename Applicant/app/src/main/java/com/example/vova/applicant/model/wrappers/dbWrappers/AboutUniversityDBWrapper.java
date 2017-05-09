@@ -25,11 +25,28 @@ public class AboutUniversityDBWrapper extends BaseDBWrapper {
                 do {
                     AboutUniversityInfo aboutUniversityInfo = new AboutUniversityInfo(cursor);
                     arrResult.add(aboutUniversityInfo);
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            database.close();
+        }
+        return arrResult;
+    }
 
-                    Log.d("My", "id  AboutUniversityDBWrapper detailUniverInfo.getId()-> " + aboutUniversityInfo.getId());
-                    Log.d("My", "name AboutUniversityDBWrapper detailUniverInfo.getStrDetailText()-> " + aboutUniversityInfo.getStrAboutUniversType());
-                    Log.d("My", "sname AboutUniversityDBWrapper detailUniverInfo.getStrDetailLink()-> " + aboutUniversityInfo.getStrAboutUniversData());
-
+    public ArrayList<AboutUniversityInfo> getAboutAllUnivesitiesById(long nId) {
+        ArrayList<AboutUniversityInfo> arrResult = new ArrayList<>();
+        SQLiteDatabase database = getReadable();
+        String strRequest = AboutUniversityTable.Cols.ABOUT_UNIVERSITY_INFO_FIELD_DETAIL_UNV_ID + "=?";
+        String arrArgs[] = new String[]{Long.toString(nId)};
+        Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    AboutUniversityInfo universityInfo = new AboutUniversityInfo(cursor);
+                    arrResult.add(universityInfo);
                 } while (cursor.moveToNext());
             }
         } finally {

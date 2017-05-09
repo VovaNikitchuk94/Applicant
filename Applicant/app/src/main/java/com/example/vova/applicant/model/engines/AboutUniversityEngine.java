@@ -18,6 +18,11 @@ public class AboutUniversityEngine extends BaseEngine {
         return aboutUniversityDBWrapper.getAboutAllUnivesities();
     }
 
+    public ArrayList<AboutUniversityInfo> getAboutAllUnivesitiesById(long nId) {
+        AboutUniversityDBWrapper aboutUniversityDBWrapper = new AboutUniversityDBWrapper(getContext());
+        return aboutUniversityDBWrapper.getAboutAllUnivesitiesById(nId);
+    }
+
     public void addAboutUniversity(AboutUniversityInfo aboutUniversityInfo) {
         AboutUniversityDBWrapper aboutUniversityDBWrapper = new AboutUniversityDBWrapper(getContext());
         aboutUniversityDBWrapper.addAboutUniversity(aboutUniversityInfo);
@@ -25,7 +30,6 @@ public class AboutUniversityEngine extends BaseEngine {
 
     public AboutUniversityInfo getAboutUniversityById(long nId) {
         AboutUniversityDBWrapper aboutUniversityDBWrapper = new AboutUniversityDBWrapper(getContext());
-        AboutUniversityInfo aboutUniversityInfo = aboutUniversityDBWrapper.getAboutUniversityById(nId);
-        return aboutUniversityInfo;
+        return aboutUniversityDBWrapper.getAboutUniversityById(nId);
     }
 }

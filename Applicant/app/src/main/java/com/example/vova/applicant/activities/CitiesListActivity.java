@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.example.vova.applicant.R;
@@ -25,6 +27,7 @@ import java.util.ArrayList;
 public class CitiesListActivity extends AppCompatActivity implements CitiesInfoAdapter.OnClickCityItem {
 
     public static final String KEY_YEARS_CITIES_LIST_ACTIVITY = "KEY_YEARS_CITIES_LIST_ACTIVITY";
+
     private TextView mTextView;
     private RecyclerView mRecyclerView;
     private CitiesInfoAdapter mCitiesInfoAdapter;
@@ -37,9 +40,6 @@ public class CitiesListActivity extends AppCompatActivity implements CitiesInfoA
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cities_list);
 
-        mTextView = (TextView) findViewById(R.id.textViewСhooseCityCitiesActivity);
-        mTextView.setText(getText(R.string.chooseCityMainActivity));
-
         Intent intent = getIntent();
         if (intent != null) {
             Bundle bundle = intent.getExtras();
@@ -48,24 +48,32 @@ public class CitiesListActivity extends AppCompatActivity implements CitiesInfoA
             }
         }
 
+        mTextView = (TextView) findViewById(R.id.textViewСhooseCityCitiesActivity);
+        mTextView.setText(getText(R.string.chooseCityMainActivity));
+
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewCitiesListActivity);
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
+                layoutManager.getOrientation());
+        mRecyclerView.addItemDecoration(dividerItemDecoration);
 
         new ParseCitiesList().execute();
     }
 
     @Override
-    public void onClickCityItem(long nIdCity) {
+    public void onClickCityItem(CitiesInfo citiesInfo) {
         Intent intent = new Intent(this, UniversitiesListActivity.class);
-        intent.putExtra(UniversitiesListActivity.INTENT_KEY_UNIVERSITY_ACTIVITY, nIdCity);
+        intent.putExtra(UniversitiesListActivity.INTENT_KEY_UNIVERSITY_ACTIVITY, citiesInfo);
         startActivity(intent);
     }
 
-    public class ParseCitiesList extends AsyncTask<Void, Void, Void> {
+    private class ParseCitiesList extends AsyncTask<Void, Void, Void> {
 
         ProgressDialog progressDialog = new ProgressDialog(CitiesListActivity.this);
+        long mLongYearId = Long.parseLong(yearsCodeLink.
+                substring(yearsCodeLink.length() - 2, yearsCodeLink.length() - 1));
 
         @Override
         protected void onPreExecute() {
@@ -83,29 +91,38 @@ public class CitiesListActivity extends AppCompatActivity implements CitiesInfoA
             final CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
 
             if (citiesInfoEngine.getAllCities().isEmpty()) {
-                Document document;
-                try {
-                    document = Jsoup.connect(yearsCodeLink).get();
-                    Element elementRegion = document.getElementById("region");
-                    Elements links = elementRegion.getElementsByTag("a");
-                    for (Element link : links) {
-
-                        String citiesName = link.text();
-                        String citiesLink = link.attr("abs:href");
-
-                        citiesInfoEngine.addCity(new CitiesInfo(citiesName, citiesLink));
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                parse(mLongYearId, citiesInfoEngine);
+            } else {
+                if (citiesInfoEngine.getAllCitiesById(mLongYearId).isEmpty()){
+                    parse(mLongYearId, citiesInfoEngine);
                 }
             }
             return null;
         }
 
+        private void parse(long yearsId, CitiesInfoEngine citiesInfoEngine) {
+            Document document;
+            try {
+                document = Jsoup.connect(yearsCodeLink).get();
+                Element elementRegion = document.getElementById("region");
+                Elements links = elementRegion.getElementsByTag("a");
+                for (Element link : links) {
+
+                    String citiesName = link.text();
+                    String citiesLink = link.attr("abs:href");
+
+                    citiesInfoEngine.addCity(new CitiesInfo(yearsId, citiesName, citiesLink));
+                    Log.d("My","yearsId -> " + yearsId);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         @Override
         protected void onPostExecute(Void aVoid) {
             final CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
-            mCitiesInfos = citiesInfoEngine.getAllCities();
+            mCitiesInfos = citiesInfoEngine.getAllCitiesById(mLongYearId);
             mCitiesInfoAdapter = new CitiesInfoAdapter(mCitiesInfos);
             mCitiesInfoAdapter.setOnClickCityInfoItem(CitiesListActivity.this);
             mRecyclerView.setAdapter(mCitiesInfoAdapter);

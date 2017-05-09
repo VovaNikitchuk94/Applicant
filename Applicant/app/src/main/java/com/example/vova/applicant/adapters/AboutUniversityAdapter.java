@@ -12,12 +12,12 @@ import com.example.vova.applicant.model.AboutUniversityInfo;
 
 import java.util.ArrayList;
 
-public class AboutUniversityInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class AboutUniversityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private ArrayList<AboutUniversityInfo> mAboutUniversityInfos;
+    private ArrayList<AboutUniversityInfo> mAboutUniversityInfos = new ArrayList<>();
     private  OnClickAboutUniversityItem mUniversityItem = null;
 
-    public AboutUniversityInfoAdapter(ArrayList<AboutUniversityInfo> arrDetailUnivers) {
+    public AboutUniversityAdapter(ArrayList<AboutUniversityInfo> arrDetailUnivers) {
         mAboutUniversityInfos = arrDetailUnivers;
     }
 
@@ -53,7 +53,7 @@ public class AboutUniversityInfoAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public int getItemCount() {
-        Log.d("My", "AboutUniversityInfoAdapter mAboutUniversityInfos.size() -> " + mAboutUniversityInfos.size());
+        Log.d("My", "AboutUniversityAdapter mAboutUniversityInfos.size() -> " + mAboutUniversityInfos.size());
         return mAboutUniversityInfos.size();
     }
 

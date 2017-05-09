@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class CitiesInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private ArrayList<CitiesInfo> mCitiesInfos;
+    private ArrayList<CitiesInfo> mCitiesInfos = new ArrayList<>();
     private OnClickCityItem mOnClickCityItem = null;
 
     public CitiesInfoAdapter(ArrayList<CitiesInfo> arrCities) {
@@ -44,7 +44,7 @@ public class CitiesInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             @Override
             public void onClick(View view) {
                 if (mOnClickCityItem != null){
-                    mOnClickCityItem.onClickCityItem(citiesInfo.getId());
+                    mOnClickCityItem.onClickCityItem(citiesInfo);
                 }
             }
         });
@@ -70,6 +70,7 @@ public class CitiesInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     public interface OnClickCityItem{
-        void onClickCityItem(long nIdCity);
+//        void onClickCityItem(long nIdCity);
+        void onClickCityItem(CitiesInfo citiesInfo);
     }
 }

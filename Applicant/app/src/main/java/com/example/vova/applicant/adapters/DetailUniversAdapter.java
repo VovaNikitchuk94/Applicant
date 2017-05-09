@@ -14,15 +14,15 @@ import java.util.ArrayList;
 
 public class DetailUniversAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private ArrayList<DetailUniverInfo> mDetailUniverInfos;
+    private ArrayList<DetailUniverInfo> mDetailUniverInfos = new ArrayList<>();
     private OnClickDetailUniversItem mOnClickDetailUniversItem = null;
 
     public DetailUniversAdapter(ArrayList<DetailUniverInfo> arrDetailUnivers) {
         mDetailUniverInfos = arrDetailUnivers;
     }
 
-    public void setOnClickDetailUniversItem(OnClickDetailUniversItem OnClickDetailUniversItem){
-        mOnClickDetailUniversItem = OnClickDetailUniversItem;
+    public void setOnClickDetailUniversItem(OnClickDetailUniversItem onClickDetailUniversItem){
+        mOnClickDetailUniversItem = onClickDetailUniversItem;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class DetailUniversAdapter extends RecyclerView.Adapter<RecyclerView.View
             @Override
             public void onClick(View view) {
                 if (mOnClickDetailUniversItem != null){
-                    mOnClickDetailUniversItem.onClickDetailUniversItem(detailUniverInfo.getId());
+                    mOnClickDetailUniversItem.onClickDetailUniversItem(detailUniverInfo);
                 }
             }
         });
@@ -71,6 +71,6 @@ public class DetailUniversAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public interface OnClickDetailUniversItem{
-        void onClickDetailUniversItem(long nIddetailUnivers);
+        void onClickDetailUniversItem(DetailUniverInfo detailUniverInfo);
     }
 }

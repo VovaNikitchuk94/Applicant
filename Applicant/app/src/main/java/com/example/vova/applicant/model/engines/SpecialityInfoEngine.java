@@ -18,6 +18,11 @@ public class SpecialityInfoEngine extends BaseEngine {
         return specialityDBWrapper.getAllSpecialities();
     }
 
+    public ArrayList<SpecialtiesInfo> getAllSpecialitiesById(long nId) {
+        SpecialityDBWrapper specialityDBWrapper = new SpecialityDBWrapper(getContext());
+        return specialityDBWrapper.getAllSpecialitiesById(nId);
+    }
+
     public void addSpeciality(SpecialtiesInfo specialtiesInfo) {
         SpecialityDBWrapper specialityDBWrapper = new SpecialityDBWrapper(getContext());
         specialityDBWrapper.addSpeciality(specialtiesInfo);
@@ -25,8 +30,7 @@ public class SpecialityInfoEngine extends BaseEngine {
 
     public SpecialtiesInfo getSpecialityById(long nId){
         SpecialityDBWrapper specialityDBWrapper = new SpecialityDBWrapper(getContext());
-        SpecialtiesInfo specialtiesInfo = specialityDBWrapper.getSpecialityById(nId);
-        return specialtiesInfo;
+        return specialityDBWrapper.getSpecialityById(nId);
     }
 
 }

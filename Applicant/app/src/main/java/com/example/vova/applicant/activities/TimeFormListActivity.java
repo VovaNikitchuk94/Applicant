@@ -6,17 +6,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.vova.applicant.R;
 import com.example.vova.applicant.adapters.TimeFormAdapter;
+import com.example.vova.applicant.model.DetailUniverInfo;
 import com.example.vova.applicant.model.TimeFormInfo;
 import com.example.vova.applicant.model.engines.TimeFormEngine;
 
@@ -29,15 +27,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class TimeFormListActivity extends AppCompatActivity implements
-        TimeFormAdapter.OnClickTimeFormItem{
+        TimeFormAdapter.OnClickTimeFormItem {
 
-    public static final String KEY_DEGREE_TITLE = "KEY_DEGREE_TITLE";
-    public static final String KEY_DEGREE_LINK = "KEY_DEGREE_LINK";
-    public static final String KEY_TIME_FORM = "KEY_TIME_FORM";
+    private DetailUniverInfo mDetailUniverInfo;
 
-    public static final int INT_FULL_TIME_FORM = 1;
-    public static final int INT_EXTERNAL_FORM = 2;
-    public static final int INT_DISTANCE_FORM = 3;
+    public static final String KEY_TIME_FORM_LINK = "KEY_TIME_FORM_LINK";
+
+    public static final String INT_FULL_TIME_FORM = "den";
+    public static final String INT_EXTERNAL_FORM = "zao";
+    //TODO find in site constant distance form
+    public static final String INT_DISTANCE_FORM = "";
 
     private RecyclerView mRecyclerView;
     private TimeFormAdapter mFormAdapter;
@@ -45,8 +44,6 @@ public class TimeFormListActivity extends AppCompatActivity implements
 
     private TextView mTextViewHeadText;
 
-    private String mStrFullTimeName;
-    private String mStrFullTimeLink;
     private int mIntTimeForm = 0;
 
     @Override
@@ -61,39 +58,38 @@ public class TimeFormListActivity extends AppCompatActivity implements
 
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
-                mStrFullTimeName = bundle.getString(KEY_DEGREE_TITLE);
-                mStrFullTimeLink = bundle.getString(KEY_DEGREE_LINK, null);
-                mIntTimeForm = bundle.getInt(KEY_TIME_FORM);
+                mDetailUniverInfo = (DetailUniverInfo) bundle.get(KEY_TIME_FORM_LINK);
             }
         }
 
         mTextViewHeadText = (TextView) findViewById(R.id.textViewСhooseTimeFormTimeFormActivity);
-        mTextViewHeadText.setText(mStrFullTimeName);
-        Log.d("My", "onCreate   mStrFullTimeName ->" + mStrFullTimeName);
+        mTextViewHeadText.setText(mDetailUniverInfo.getStrDetailText());
+        Log.d("My", "onCreate   mStrFullTimeLink ->" + mDetailUniverInfo.getStrDetailText());
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewTimeFormListActivity);
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
+                layoutManager.getOrientation());
+        mRecyclerView.addItemDecoration(dividerItemDecoration);
 
         new ParseTimeForm().execute();
 
     }
 
     @Override
-    public void onClickTimeFormItem(long nIdTimeForm) {
-        final TimeFormEngine timeFormEngine = new TimeFormEngine(getApplication());
-        TimeFormInfo timeFormInfo = timeFormEngine.getTimeFormById(nIdTimeForm);
-
+    public void onClickTimeFormItem(TimeFormInfo timeFormInfo) {
         Intent intent = new Intent(TimeFormListActivity.this, SpecialtiesListActivity.class);
-                intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_LINK, timeFormInfo.getStrTimeFormLink());
-                startActivity(intent);
-
+        intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_LINK, timeFormInfo);
+        startActivity(intent);
     }
 
     private class ParseTimeForm extends AsyncTask<Void, Void, Void> {
 
         private ProgressDialog progDailog = new ProgressDialog(TimeFormListActivity.this);
+        long mLongDetailUNVId = mDetailUniverInfo.getId();
+        final TimeFormEngine timeFormEngine = new TimeFormEngine(getApplication());
 
         @Override
         protected void onPreExecute() {
@@ -108,57 +104,62 @@ public class TimeFormListActivity extends AppCompatActivity implements
         @Override
         protected Void doInBackground(Void... voids) {
 
-//            DetailUniverInfoEngine detailUniverInfoEngine = new DetailUniverInfoEngine(getApplication());
             TimeFormEngine timeFormEngine = new TimeFormEngine(getApplication());
-            if (timeFormEngine.getAllTimeForms().isEmpty() && mStrFullTimeLink != null){
-                Document document;
-                try {
-                    document = Jsoup.connect(mStrFullTimeLink).get();
 
-                    //TODO обработать дистаниционную форму обучения и посмотреть если ли еще другие формы
-
-                    Element elementById = document.getElementById("okrArea");
-                    Elements elementsSelectId = elementById.select("ul#myTab");
-
-                    //TODO доделать этот кошмар
-                    Elements elements;
-
-                    switch (mIntTimeForm) {
-                        case 1:
-                            elements = elementsSelectId.get(0).select("li");
-                            loopElementsParse(elements);
-                            break;
-                        case 2:
-                            elements = elementsSelectId.get(1).select("li");
-                            loopElementsParse(elements);
-                            break;
-                        case 3:
-                            elements = elementsSelectId.get(2).select("li");
-                            loopElementsParse(elements);
-                            break;
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+            if (timeFormEngine.getAllTimeForms().isEmpty()){
+                parse();
+            } else {
+                if (timeFormEngine.getAllTimeFormsById(mLongDetailUNVId).isEmpty()){
+                    parse();
                 }
             }
-
             return null;
         }
 
+        private void parse() {
+            String html;
+            html = mDetailUniverInfo.getStrDetailLink();
+            Document document;
+            try {
+                document = Jsoup.connect(html).get();
+                //TODO обработать дистаниционную форму обучения и посмотреть если ли еще другие формы
+                Element elementById = document.getElementById("okrArea");
+                Elements elementsSelectId = elementById.select("ul#myTab");
+                //TODO доделать этот кошмар
+                Elements elements;
+                String[] findConstant = mDetailUniverInfo.getStrDetailLink().split("#");
+                String s = findConstant[1].substring(0 , 3);
+                Log.d("My","s -_----------------- > " + s);
+                switch (s) {
+                    case INT_FULL_TIME_FORM:
+                        elements = elementsSelectId.get(0).select("li");
+                        loopElementsParse(elements);
+                        break;
+                    case INT_EXTERNAL_FORM:
+                        elements = elementsSelectId.get(1).select("li");
+                        loopElementsParse(elements);
+                        break;
+                    case INT_DISTANCE_FORM:
+                        elements = elementsSelectId.get(2).select("li");
+                        loopElementsParse(elements);
+                        break;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         private void loopElementsParse(Elements elements) {
-            TimeFormEngine timeFormEngine = new TimeFormEngine(getApplication());
             for (Element element : elements) {
                 String text = element.select("a").text();
                 String link = element.select("a").attr("abs:href");
-
-                timeFormEngine.addTimeForm(new TimeFormInfo(text, link));
+                timeFormEngine.addTimeForm(new TimeFormInfo(mLongDetailUNVId, text, link));
             }
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            final TimeFormEngine timeFormEngine = new TimeFormEngine(getApplication());
-            mTimeFormInfos = timeFormEngine.getAllTimeForms();
+            mTimeFormInfos = timeFormEngine.getAllTimeFormsById(mLongDetailUNVId);
             mFormAdapter = new TimeFormAdapter(mTimeFormInfos);
             mFormAdapter.setOnClickTimeFormItem(TimeFormListActivity.this);
             mRecyclerView.setAdapter(mFormAdapter);

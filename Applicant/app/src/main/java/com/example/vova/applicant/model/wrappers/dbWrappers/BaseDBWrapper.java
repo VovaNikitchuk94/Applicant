@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.vova.applicant.db.DBHelper;
 
-public abstract class BaseDBWrapper {
+public abstract class BaseDBWrapper<T> {
 
     private DBHelper mDBHelper;
     private String mStrTableName;
@@ -26,4 +26,11 @@ public abstract class BaseDBWrapper {
     public SQLiteDatabase getReadable() {
         return mDBHelper.getReadableDatabase();
     }
+
+//    ContentValues mContentValues = new ContentValues();
+//    public void addItem(T itemT) {
+//        SQLiteDatabase database = getWritable();
+//        database.insert(getTableName(), null, mContentValues);
+//        database.close();
+//    }
 }

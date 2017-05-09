@@ -1,10 +1,8 @@
 package com.example.vova.applicant.model;
 
 import android.content.ContentValues;
+import android.os.Parcelable;
 
-/**
- * Created by vovan on 26.04.2017.
- */
 
 public abstract class BaseEntity {
 

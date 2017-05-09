@@ -1,5 +1,6 @@
 package com.example.vova.applicant.adapters;
 
+import android.content.pm.ApplicationInfo;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,15 +15,15 @@ import java.util.ArrayList;
 public class ApplicationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<ApplicationsInfo> mApplicationsInfos = new ArrayList<>();
-//    private OnClickSpecialityItem mOnClickSpecialityItem = null;
+    private OnClickApplicationItem mOnClickApplicationItem = null;
 
     public ApplicationAdapter(ArrayList<ApplicationsInfo> arrayList) {
         mApplicationsInfos = arrayList;
     }
 
-//    public void setOnClickSpecialityItem(OnClickSpecialityItem specialityItem){
-//        mOnClickSpecialityItem = specialityItem;
-//    }
+    public void setOnClickApplicationItem(OnClickApplicationItem applicationItem){
+        mOnClickApplicationItem = applicationItem;
+    }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -41,14 +42,14 @@ public class ApplicationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         applicationsInfoViewHolder.numberTextView.setText(applicationsInfo.getStrApplicantNumber());
         applicationsInfoViewHolder.nameTextView.setText(applicationsInfo.getStrApplicantName());
         applicationsInfoViewHolder.totalScoreTextView.setText(applicationsInfo.getStrApplicantTotalScores());
-//        applicationsInfoViewHolder.rootView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (mOnClickSpecialityItem != null){
-//                    mOnClickSpecialityItem.onClickSpecialityItem(specialtiesInfo.getId());
-//                }
-//            }
-//        });
+        applicationsInfoViewHolder.rootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mOnClickApplicationItem != null){
+                    mOnClickApplicationItem.onClickApplicationItem(applicationsInfo);
+                }
+            }
+        });
     }
 
     @Override
@@ -56,14 +57,14 @@ public class ApplicationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         return mApplicationsInfos.size();
     }
 
-    public class ApplicationsInfoViewHolder extends RecyclerView.ViewHolder {
+    private class ApplicationsInfoViewHolder extends RecyclerView.ViewHolder {
 
         View rootView;
         TextView numberTextView;
         TextView nameTextView;
         TextView totalScoreTextView;
 
-        public ApplicationsInfoViewHolder(View itemView) {
+        ApplicationsInfoViewHolder(View itemView) {
             super(itemView);
             rootView = itemView;
             numberTextView = (TextView) itemView.findViewById(R.id.textViewSequenceNumberApplicantInfo);
@@ -72,7 +73,7 @@ public class ApplicationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-//    public interface OnClickSpecialityItem{
-//        void onClickSpecialityItem(long nIdSpeciality);
-//    }
+    public interface OnClickApplicationItem {
+        void onClickApplicationItem(ApplicationsInfo applicationsInfo);
+    }
 }

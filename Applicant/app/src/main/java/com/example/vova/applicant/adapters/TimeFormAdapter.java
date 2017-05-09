@@ -43,7 +43,7 @@ public class TimeFormAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             @Override
             public void onClick(View view) {
                 if (mOnClickTimeFormItem != null){
-                    mOnClickTimeFormItem.onClickTimeFormItem(timeFormInfo.getId());
+                    mOnClickTimeFormItem.onClickTimeFormItem(timeFormInfo);
                 }
             }
         });
@@ -67,6 +67,6 @@ public class TimeFormAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public interface OnClickTimeFormItem{
-        void onClickTimeFormItem(long nIdTimeForm);
+        void onClickTimeFormItem(TimeFormInfo timeFormInfo);
     }
 }

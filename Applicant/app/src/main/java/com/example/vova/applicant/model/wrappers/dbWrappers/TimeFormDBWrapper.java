@@ -25,10 +25,28 @@ public class TimeFormDBWrapper extends BaseDBWrapper {
                 do {
                     TimeFormInfo timeFormInfo = new TimeFormInfo(cursor);
                     arrResult.add(timeFormInfo);
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            database.close();
+        }
+        return arrResult;
+    }
 
-                    Log.d("My", "id  ArrayList<TimeFormInfo>-> " + timeFormInfo.getId());
-                    Log.d("My", "name - ArrayList<TimeFormInfo>> " + timeFormInfo.getStrTimeFormName());
-                    Log.d("My", "sname  ArrayList<TimeFormInfo>-> " + timeFormInfo.getStrTimeFormLink());
+    public ArrayList<TimeFormInfo> getAllTimeFormsById(long nId) {
+        ArrayList<TimeFormInfo> arrResult = new ArrayList<>();
+        SQLiteDatabase database = getReadable();
+        String strRequest = TimeFormTable.Cols.TIME_FORM_INFO_FIELD_DETAIL_UNV_ID + "=?";
+        String arrArgs[] = new String[]{Long.toString(nId)};
+        Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    TimeFormInfo timeFormInfo = new TimeFormInfo(cursor);
+                    arrResult.add(timeFormInfo);
                 } while (cursor.moveToNext());
             }
         } finally {

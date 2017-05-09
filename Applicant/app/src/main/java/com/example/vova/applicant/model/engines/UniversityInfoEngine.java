@@ -20,6 +20,11 @@ public class UniversityInfoEngine extends BaseEngine {
         return universitiesInfoDBWrapper.getAllUniversities();
     }
 
+    public ArrayList<UniversityInfo> getAllUniversitiesById(long nId) {
+        UniversitiesInfoDBWrapper universitiesInfoDBWrapper = new UniversitiesInfoDBWrapper(getContext());
+        return universitiesInfoDBWrapper.getAllUniversitiesById(nId);
+    }
+
     public void addUniversity(UniversityInfo universityInfo) {
         UniversitiesInfoDBWrapper universitiesInfoDBWrapper = new UniversitiesInfoDBWrapper(getContext());
         universitiesInfoDBWrapper.addUniversity(universityInfo);

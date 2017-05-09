@@ -26,10 +26,28 @@ public class SpecialityDBWrapper extends BaseDBWrapper {
                 do {
                     SpecialtiesInfo specialtiesInfo = new SpecialtiesInfo(cursor);
                     arrResult.add(specialtiesInfo);
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            database.close();
+        }
+        return arrResult;
+    }
 
-//                    Log.d("My", "id  ArrayList<SpecialtiesInfo>>-> " + specialtiesInfo.getId());
-//                    Log.d("My", "name - ArrayList<SpecialtiesInfo>>> " + specialtiesInfo.getStrSpecialty());
-//                    Log.d("My", "sname  ArrayList<SpecialtiesInfo>> " + specialtiesInfo.getStrLink());
+    public ArrayList<SpecialtiesInfo> getAllSpecialitiesById(long nId) {
+        ArrayList<SpecialtiesInfo> arrResult = new ArrayList<>();
+        SQLiteDatabase database = getReadable();
+        String strRequest = SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_TIME_FORM_ID + "=?";
+        String arrArgs[] = new String[]{Long.toString(nId)};
+        Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    SpecialtiesInfo specialtiesInfo = new SpecialtiesInfo(cursor);
+                    arrResult.add(specialtiesInfo);
                 } while (cursor.moveToNext());
             }
         } finally {

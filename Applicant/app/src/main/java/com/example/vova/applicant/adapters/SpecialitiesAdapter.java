@@ -46,7 +46,7 @@ public class SpecialitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             @Override
             public void onClick(View view) {
                 if (mOnClickSpecialityItem != null){
-                    mOnClickSpecialityItem.onClickSpecialityItem(specialtiesInfo.getId());
+                    mOnClickSpecialityItem.onClickSpecialityItem(specialtiesInfo);
                 }
             }
         });
@@ -76,6 +76,6 @@ public class SpecialitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public interface OnClickSpecialityItem{
-        void onClickSpecialityItem(long nIdSpeciality);
+        void onClickSpecialityItem(SpecialtiesInfo specialtiesInfo);
     }
 }

@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import com.example.vova.applicant.R;
 import com.example.vova.applicant.adapters.SpecialitiesAdapter;
 import com.example.vova.applicant.model.SpecialtiesInfo;
+import com.example.vova.applicant.model.TimeFormInfo;
 import com.example.vova.applicant.model.engines.SpecialityInfoEngine;
 
 import org.jsoup.Jsoup;
@@ -31,7 +33,7 @@ public class SpecialtiesListActivity extends AppCompatActivity implements
 
     public static final String KEY_SPECIALITIES_LINK = "KEY_SPECIALITIES_LINK";
 
-    private String mStrSpecialtiesLink = "";
+    private TimeFormInfo mTimeFormInfo;
 
     private RecyclerView mRecyclerView;
     private SpecialitiesAdapter mSpecialitiesAdapter;
@@ -49,34 +51,36 @@ public class SpecialtiesListActivity extends AppCompatActivity implements
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
                 // TODO rename all fields
-                mStrSpecialtiesLink = bundle.getString(KEY_SPECIALITIES_LINK, null);
+                mTimeFormInfo = (TimeFormInfo) bundle.get(KEY_SPECIALITIES_LINK);
             }
         }
-        Log.d("My", "SpecialtiesListActivity -> OnCreate mStrSpecialtiesLink -> " + mStrSpecialtiesLink);
 
         TextView textView = (TextView) findViewById(R.id.textViewHeadAboutUniversityActivity);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewSpecialityListActivity);
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
+                layoutManager.getOrientation());
+        mRecyclerView.addItemDecoration(dividerItemDecoration);
 
         new ParseSpecialitiesList().execute();
 
     }
 
     @Override
-    public void onClickSpecialityItem(long nIdSpeciality) {
-        SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplication());
-        SpecialtiesInfo position = specialityInfoEngine.getSpecialityById(nIdSpeciality);
-
+    public void onClickSpecialityItem(SpecialtiesInfo specialtiesInfo) {
         Intent intent = new Intent(SpecialtiesListActivity.this, ApplicationListActivity.class);
-        intent.putExtra(ApplicationListActivity.INTENT_KEY_APPLICANT_ACTIVITY,
-                position.getStrLink());
+        intent.putExtra(ApplicationListActivity.INTENT_KEY_APPLICANT_ACTIVITY, specialtiesInfo);
         startActivity(intent);
     }
 
     private class ParseSpecialitiesList extends AsyncTask<String, Void, String> {
         ProgressDialog progDailog = new ProgressDialog(SpecialtiesListActivity.this);
+        final SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplication());
+
+        long mLongTimeFormId = mTimeFormInfo.getId();
+        String html = mTimeFormInfo.getStrTimeFormLink();
 
         @Override
         protected void onPreExecute() {
@@ -92,8 +96,17 @@ public class SpecialtiesListActivity extends AppCompatActivity implements
         @Override
         protected String doInBackground(String... params) {
             Log.d("My", "SpecialtiesListActivity -> ParseSpecialistList - > doInBackground");
-            SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplication());
-//            if (specialityInfoEngine.getAllSpecialities().isEmpty() && mStrSpecialtiesLink != null) {
+            if (specialityInfoEngine.getAllSpecialities().isEmpty()) {
+                parse();
+            } else {
+                if (specialityInfoEngine.getAllSpecialitiesById(mLongTimeFormId).isEmpty()){
+                    parse();
+                }
+            }
+            return null;
+        }
+
+        private void parse() {
             Document document;
             String specialty;
             String applications;
@@ -101,15 +114,14 @@ public class SpecialtiesListActivity extends AppCompatActivity implements
             String amount;
             String newLink;
 
-            String strCategory = mStrSpecialtiesLink.substring(mStrSpecialtiesLink.length() - 5,
-                    mStrSpecialtiesLink.length());
-            int intDegree = Integer.parseInt(mStrSpecialtiesLink.substring(mStrSpecialtiesLink.length() - 1));
+            String strCategory = html.substring(html.length() - 5, html.length());
+            int intDegree = Integer.parseInt(html.substring(html.length() - 1));
 
             try {
-                document = Jsoup.connect(mStrSpecialtiesLink).get();
+                document = Jsoup.connect(html).get();
 
                 Log.d("My", "SpecialtiesListActivity -> ParseSpecialistList - > documentLink" + document.text());
-                Log.d("My", "SpecialtiesListActivity -> ParseSpecialistList - > html -> " + mStrSpecialtiesLink);
+                Log.d("My", "SpecialtiesListActivity -> ParseSpecialistList - > html -> " + html);
 
                 Element form = document.getElementById(strCategory);
                 Elements links = form.select("tbody > tr");
@@ -120,55 +132,48 @@ public class SpecialtiesListActivity extends AppCompatActivity implements
                     Elements elements = link.getElementsByClass("button button-mini");
                     Elements tds = link.select("td");
 
-                        if (isContains2015()) {
-                            specialty = tds.get(0).text();
-                            applications = tds.get(1).text();
-                            amount = "ліцензований обсяг: " + tds.get(2).text();
-                            newLink = elements.attr("abs:href");
-                        } else {
-                    specialty = tds.get(0).text();
-                    applications = tds.get(1).select("span").text();
-                    accepted = tds.get(1).select("nobr").text();
-                    amount = tds.get(2).text();
-                    newLink = elements.attr("abs:href");
-                        }
+                    if (isContains2015()) {
+                        specialty = tds.get(0).text();
+                        applications = tds.get(1).text();
+                        amount = "ліцензований обсяг: " + tds.get(2).text();
+                        newLink = elements.attr("abs:href");
+                    } else {
+                        specialty = tds.get(0).text();
+                        applications = tds.get(1).select("span").text();
+                        accepted = tds.get(1).select("nobr").text();
+                        amount = tds.get(2).text();
+                        newLink = elements.attr("abs:href");
+                    }
                     Log.d("My", "doInBackground + + specialty + applications + accepted + amount + newLink" + specialty +
                             ";" + applications + ";" + accepted + ";" + amount + newLink + ";");
-//                    specialityInfoEngine.addSpeciality(new SpecialtiesInfo(specialty, applications, accepted, amount, newLink));
 
-                        switch (intDegree) {
-                            case 1:
-                                if (link.text().contains("Бакалавр")) {
-                                    parseDataOfDegree(specialty, applications, accepted, amount, newLink);
-                                }
-                                break;
-                            case 3:
-                                if (link.text().contains("Спеціаліст")) {
-                                    parseDataOfDegree(specialty, applications, accepted, amount, newLink);
-                                }
-                                break;
-                            case 2:
-                                if (link.text().contains("Магістр")) {
-                                    parseDataOfDegree(specialty, applications, accepted, amount, newLink);
-                                }
-                                break;
-                            case 4:
-                                if (link.text().contains("Молодший спеціаліст")) {
-                                    parseDataOfDegree(specialty, applications, accepted, amount, newLink);
-                                }
-                                break;
-                        }
+                    switch (intDegree) {
+                        case 1:
+                            if (link.text().contains("Бакалавр")) {
+                                parseDataOfDegree(specialty, applications, accepted, amount, newLink);
+                            }
+                            break;
+                        case 3:
+                            if (link.text().contains("Спеціаліст")) {
+                                parseDataOfDegree(specialty, applications, accepted, amount, newLink);
+                            }
+                            break;
+                        case 2:
+                            if (link.text().contains("Магістр")) {
+                                parseDataOfDegree(specialty, applications, accepted, amount, newLink);
+                            }
+                            break;
+                        case 4:
+                            if (link.text().contains("Молодший спеціаліст")) {
+                                parseDataOfDegree(specialty, applications, accepted, amount, newLink);
+                            }
+                            break;
+                    }
                 }
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
-//            } else {
-////                  mSpecialtiesInfos = specialityInfoEngine.getAllSpecialities();
-//                Log.d("My", "mSpecialtiesInfosmSpecialtiesInfosmSpecialtiesInfosmSpecialtiesInfos" + mSpecialtiesInfos.size());
-//            }
-
-            return null;
         }
 
         private void parseDataOfDegree(String specialty, String applications, String accepted,
@@ -181,28 +186,26 @@ public class SpecialtiesListActivity extends AppCompatActivity implements
         }
 
         private boolean isContains2015() {
-            return mStrSpecialtiesLink.contains("2015");
+            return html.contains("2015");
         }
 
         private void addNameAndLink(String specialty, String applications, String amount, String newLink) {
-            SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplication());
             if (!newLink.equals("")) {
-                specialityInfoEngine.addSpeciality(new SpecialtiesInfo(specialty, applications, amount, newLink));
+                specialityInfoEngine.addSpeciality(new SpecialtiesInfo(mLongTimeFormId, specialty, applications, amount, newLink));
             }
         }
 
         private void addNameAndLink(String specialty, String applications, String accepted,
                                     String amount, String newLink) {
-            SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplication());
             if (!newLink.equals("")) {
-                specialityInfoEngine.addSpeciality(new SpecialtiesInfo(specialty, applications, accepted, amount, newLink));
+                specialityInfoEngine.addSpeciality(new SpecialtiesInfo(mLongTimeFormId, specialty, applications, accepted, amount, newLink));
             }
 
         }
 
         @Override
         protected void onPostExecute(String srt) {
-            final SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplication());
+
             mSpecialtiesInfos = specialityInfoEngine.getAllSpecialities();
             mSpecialitiesAdapter = new SpecialitiesAdapter(mSpecialtiesInfos);
             mSpecialitiesAdapter.setOnClickSpecialityItem(SpecialtiesListActivity.this);
