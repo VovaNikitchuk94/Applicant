@@ -90,13 +90,9 @@ public class CitiesListActivity extends AppCompatActivity implements CitiesInfoA
 
             final CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
 
-            if (citiesInfoEngine.getAllCities().isEmpty()) {
-                parse(mLongYearId, citiesInfoEngine);
-            } else {
                 if (citiesInfoEngine.getAllCitiesById(mLongYearId).isEmpty()){
                     parse(mLongYearId, citiesInfoEngine);
                 }
-            }
             return null;
         }
 

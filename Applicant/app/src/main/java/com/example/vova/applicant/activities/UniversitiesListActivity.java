@@ -99,14 +99,9 @@ public class UniversitiesListActivity extends AppCompatActivity implements
 
             UniversityInfoEngine universityInfoEngine = new UniversityInfoEngine(getApplication());
 
-            Log.d("My", "mCitiesInfo.getId() -> " + mLongUniversityCityId);
-            if (universityInfoEngine.getAllUniversities().isEmpty()) {
-                parse(mLongUniversityCityId, universityInfoEngine);
-            } else {
                 if (universityInfoEngine.getAllUniversitiesById(mLongUniversityCityId).isEmpty()){
                     parse(mLongUniversityCityId, universityInfoEngine);
                 }
-            }
             return null;
         }
 

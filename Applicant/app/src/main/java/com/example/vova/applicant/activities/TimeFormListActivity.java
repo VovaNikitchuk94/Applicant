@@ -35,8 +35,8 @@ public class TimeFormListActivity extends AppCompatActivity implements
 
     public static final String INT_FULL_TIME_FORM = "den";
     public static final String INT_EXTERNAL_FORM = "zao";
-    //TODO find in site constant distance form
-    public static final String INT_DISTANCE_FORM = "";
+    public static final String INT_DISTANCE_FORM = "dis";
+    public static final String INT_EVENING_FORM = "vec";
 
     private RecyclerView mRecyclerView;
     private TimeFormAdapter mFormAdapter;
@@ -106,13 +106,10 @@ public class TimeFormListActivity extends AppCompatActivity implements
 
             TimeFormEngine timeFormEngine = new TimeFormEngine(getApplication());
 
-            if (timeFormEngine.getAllTimeForms().isEmpty()){
-                parse();
-            } else {
                 if (timeFormEngine.getAllTimeFormsById(mLongDetailUNVId).isEmpty()){
                     parse();
                 }
-            }
+
             return null;
         }
 
@@ -122,10 +119,9 @@ public class TimeFormListActivity extends AppCompatActivity implements
             Document document;
             try {
                 document = Jsoup.connect(html).get();
-                //TODO обработать дистаниционную форму обучения и посмотреть если ли еще другие формы
                 Element elementById = document.getElementById("okrArea");
                 Elements elementsSelectId = elementById.select("ul#myTab");
-                //TODO доделать этот кошмар
+                //TODO доделать этот кошмар/ правильно обработать формы обучения
                 Elements elements;
                 String[] findConstant = mDetailUniverInfo.getStrDetailLink().split("#");
                 String s = findConstant[1].substring(0 , 3);
@@ -139,8 +135,12 @@ public class TimeFormListActivity extends AppCompatActivity implements
                         elements = elementsSelectId.get(1).select("li");
                         loopElementsParse(elements);
                         break;
-                    case INT_DISTANCE_FORM:
+                    case INT_EVENING_FORM:
                         elements = elementsSelectId.get(2).select("li");
+                        loopElementsParse(elements);
+                        break;
+                    case INT_DISTANCE_FORM:
+                        elements = elementsSelectId.get(3).select("li");
                         loopElementsParse(elements);
                         break;
                 }

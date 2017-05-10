@@ -53,8 +53,6 @@ public class DetailUniversListActivity extends AppCompatActivity implements
             }
         }
 
-        Log.d("My", "DetailUniversListActivity -> OnCreate -> universityDetailLink : " + mUniversityInfo.getStrUniversityLink() + "\n" + mUniversityInfo.getId() + "\n" + mUniversityInfo.getId());
-
         TextView mTextViewHeadText = (TextView) findViewById(R.id.textViewChooseUniversityDetailUniversityActivity);
         mTextViewHeadText.setText(mUniversityInfo.getStrUniversityName());
 
@@ -71,33 +69,16 @@ public class DetailUniversListActivity extends AppCompatActivity implements
 
     @Override
     public void onClickDetailUniversItem(DetailUniverInfo detailUniverInfo) {
+        Intent intent;
 
-        //TODO setClickListener for all items
-        final DetailUniverInfoEngine detailUniverInfoEngine = new DetailUniverInfoEngine(getApplication());
-        Intent intent = null;
-        String errorMsg = getString(R.string.error);
-
-
-        //TODO обраотать нажатие
-        Log.d("My", "onClickDetailUniversItem + detailUniverInfo.getId() -> " + detailUniverInfo.getId());
-        switch ((int) detailUniverInfo.getId()) {
-            case 1:
-                intent = new Intent(this, AboutUniversityActivity.class);
-                intent.putExtra(AboutUniversityActivity.KEY_ABOUT_UNIVERSITY_ACTIVITY, detailUniverInfo);
-                break;
-            case 2:
-               intent = new Intent(this, TimeFormListActivity.class);
-                intent.putExtra(TimeFormListActivity.KEY_TIME_FORM_LINK, detailUniverInfo);
-                break;
-            case 3:
-                intent = new Intent(this, TimeFormListActivity.class);
-                intent.putExtra(TimeFormListActivity.KEY_TIME_FORM_LINK, detailUniverInfo);
-                break;
-        }
-        if (intent != null) {
+        if (detailUniverInfo == mDetailUniverInfos.get(0)){
+            intent = new Intent(this, AboutUniversityActivity.class);
+            intent.putExtra(AboutUniversityActivity.KEY_ABOUT_UNIVERSITY_ACTIVITY, detailUniverInfo);
             startActivity(intent);
         } else {
-            Toast.makeText(DetailUniversListActivity.this, errorMsg + " when start intent", Toast.LENGTH_SHORT).show();
+            intent = new Intent(this, TimeFormListActivity.class);
+            intent.putExtra(TimeFormListActivity.KEY_TIME_FORM_LINK, detailUniverInfo);
+            startActivity(intent);
         }
     }
 
@@ -121,13 +102,9 @@ public class DetailUniversListActivity extends AppCompatActivity implements
 
             DetailUniverInfoEngine detailUniverInfoEngine = new DetailUniverInfoEngine(getApplication());
 
-            if (detailUniverInfoEngine.getAllDetailUnivers().isEmpty()) {
-                parse(mLongDetailUNVId, detailUniverInfoEngine);
-            } else {
                 if (detailUniverInfoEngine.getAllDetailUniversById(mLongDetailUNVId).isEmpty()) {
                     parse(mLongDetailUNVId, detailUniverInfoEngine);
                 }
-            }
             return null;
         }
 
@@ -155,7 +132,6 @@ public class DetailUniversListActivity extends AppCompatActivity implements
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
 
         @Override

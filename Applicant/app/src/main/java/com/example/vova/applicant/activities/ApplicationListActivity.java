@@ -81,13 +81,10 @@ public class ApplicationListActivity extends AppCompatActivity implements Applic
         @Override
         protected String doInBackground(String... params) {
             ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
-            if (applicationInfoEngine.getAllApplicantions().isEmpty()) {
-                parse(applicationInfoEngine);
-            } else {
+
                 if (applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId).isEmpty()){
                     parse(applicationInfoEngine);
                 }
-            }
 
             return null;
         }

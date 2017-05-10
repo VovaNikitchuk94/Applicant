@@ -56,6 +56,8 @@ public class SpecialtiesListActivity extends AppCompatActivity implements
         }
 
         TextView textView = (TextView) findViewById(R.id.textViewHeadAboutUniversityActivity);
+        textView.setText(mTimeFormInfo.getStrTimeFormName());
+
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewSpecialityListActivity);
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -95,13 +97,8 @@ public class SpecialtiesListActivity extends AppCompatActivity implements
 
         @Override
         protected String doInBackground(String... params) {
-            Log.d("My", "SpecialtiesListActivity -> ParseSpecialistList - > doInBackground");
-            if (specialityInfoEngine.getAllSpecialities().isEmpty()) {
+            if (specialityInfoEngine.getAllSpecialitiesById(mLongTimeFormId).isEmpty()) {
                 parse();
-            } else {
-                if (specialityInfoEngine.getAllSpecialitiesById(mLongTimeFormId).isEmpty()){
-                    parse();
-                }
             }
             return null;
         }
@@ -144,8 +141,6 @@ public class SpecialtiesListActivity extends AppCompatActivity implements
                         amount = tds.get(2).text();
                         newLink = elements.attr("abs:href");
                     }
-                    Log.d("My", "doInBackground + + specialty + applications + accepted + amount + newLink" + specialty +
-                            ";" + applications + ";" + accepted + ";" + amount + newLink + ";");
 
                     switch (intDegree) {
                         case 1:
@@ -170,7 +165,6 @@ public class SpecialtiesListActivity extends AppCompatActivity implements
                             break;
                     }
                 }
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -200,13 +194,11 @@ public class SpecialtiesListActivity extends AppCompatActivity implements
             if (!newLink.equals("")) {
                 specialityInfoEngine.addSpeciality(new SpecialtiesInfo(mLongTimeFormId, specialty, applications, accepted, amount, newLink));
             }
-
         }
 
         @Override
         protected void onPostExecute(String srt) {
-
-            mSpecialtiesInfos = specialityInfoEngine.getAllSpecialities();
+            mSpecialtiesInfos = specialityInfoEngine.getAllSpecialitiesById(mLongTimeFormId);
             mSpecialitiesAdapter = new SpecialitiesAdapter(mSpecialtiesInfos);
             mSpecialitiesAdapter.setOnClickSpecialityItem(SpecialtiesListActivity.this);
             mRecyclerView.setAdapter(mSpecialitiesAdapter);

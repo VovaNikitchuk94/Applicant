@@ -124,14 +124,9 @@ public class AboutUniversityActivity extends AppCompatActivity implements
 
             AboutUniversityEngine aboutUniversityEngine = new AboutUniversityEngine(getApplicationContext());
 
-            if (aboutUniversityEngine.getAboutAllUnivesities().isEmpty()){
-                parse(mLongDetailUNVId, aboutUniversityEngine);
-            } else {
                 if (aboutUniversityEngine.getAboutAllUnivesitiesById(mLongDetailUNVId).isEmpty()){
                     parse(mLongDetailUNVId, aboutUniversityEngine);
                 }
-            }
-
             return null;
         }
 
@@ -169,7 +164,6 @@ public class AboutUniversityActivity extends AppCompatActivity implements
         protected void onPostExecute(String srt) {
             AboutUniversityEngine aboutUniversityEngine = new AboutUniversityEngine(getApplication());
             mAboutUniversityInfos = aboutUniversityEngine.getAboutAllUnivesitiesById(mLongDetailUNVId);
-            Log.d("My", "mAboutUniversityInfos.toString()\n" + mAboutUniversityInfos.toString());
             mUniversityInfoAdapter = new AboutUniversityAdapter(mAboutUniversityInfos);
             mUniversityInfoAdapter.setOnClickListenerAdapter(AboutUniversityActivity.this);
             mRecyclerView.setAdapter(mUniversityInfoAdapter);
