@@ -25,6 +25,11 @@ public class DetailUniverInfoEngine extends BaseEngine {
         return detailUniverDBWrapper.getAllDetailUniversById(nId);
     }
 
+    public void updateDetailUniver(DetailUniverInfo detailUniverInfo) {
+        DetailUniverDBWrapper detailUniverDBWrapper = new DetailUniverDBWrapper(getContext());
+        detailUniverDBWrapper.updateDetailUniver(detailUniverInfo);
+    }
+
     public void addDetailUniver(DetailUniverInfo detailUniverInfo) {
         DetailUniverDBWrapper detailUniverDBWrapper = new DetailUniverDBWrapper(getContext());
         detailUniverDBWrapper.addDetailUniver(detailUniverInfo);

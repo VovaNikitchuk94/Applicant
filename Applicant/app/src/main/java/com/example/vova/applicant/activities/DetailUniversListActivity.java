@@ -4,7 +4,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.vova.applicant.R;
+import com.example.vova.applicant.Utils;
 import com.example.vova.applicant.adapters.DetailUniversAdapter;
 import com.example.vova.applicant.model.DetailUniverInfo;
 import com.example.vova.applicant.model.UniversityInfo;
@@ -32,11 +35,13 @@ public class DetailUniversListActivity extends AppCompatActivity implements
 
     public static final String KEY_DETAIL_UNIVERSITY_LINK = "KEY_DETAIL_UNIVERSITY_LINK";
 
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
-    private DetailUniversAdapter mDetailUniversAdapter;
     private ArrayList<DetailUniverInfo> mDetailUniverInfos = new ArrayList<>();
 
     private UniversityInfo mUniversityInfo;
+
+    private long mLongDetailUNVId = 0L;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,6 +58,22 @@ public class DetailUniversListActivity extends AppCompatActivity implements
             }
         }
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_detail_university_swipe_refresh_layout);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(true);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        new ParseUniversitiesDetail().execute();
+                    }
+                }, 0);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
         TextView mTextViewHeadText = (TextView) findViewById(R.id.textViewChooseUniversityDetailUniversityActivity);
         mTextViewHeadText.setText(mUniversityInfo.getStrUniversityName());
 
@@ -64,28 +85,47 @@ public class DetailUniversListActivity extends AppCompatActivity implements
                 layoutManager.getOrientation());
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
-        new ParseUniversitiesDetail().execute();
+        setData();
+    }
+
+    private void setData() {
+        mLongDetailUNVId = mUniversityInfo.getId();
+        DetailUniverInfoEngine detailUniverInfoEngine = new DetailUniverInfoEngine(getApplication());
+        if (detailUniverInfoEngine.getAllDetailUniversById(mLongDetailUNVId).isEmpty()) {
+            new ParseUniversitiesDetail().execute();
+        } else {
+            getData(detailUniverInfoEngine);
+        }
+    }
+
+    private void getData(DetailUniverInfoEngine detailUniverInfoEngine) {
+        mDetailUniverInfos = detailUniverInfoEngine.getAllDetailUniversById(mLongDetailUNVId);
+        DetailUniversAdapter detailUniversAdapter = new DetailUniversAdapter(mDetailUniverInfos);
+        detailUniversAdapter.setOnClickDetailUniversItem(DetailUniversListActivity.this);
+        mRecyclerView.setAdapter(detailUniversAdapter);
     }
 
     @Override
     public void onClickDetailUniversItem(DetailUniverInfo detailUniverInfo) {
         Intent intent;
 
-        if (detailUniverInfo == mDetailUniverInfos.get(0)){
+        if (detailUniverInfo.equals(mDetailUniverInfos.get(0))) {
             intent = new Intent(this, AboutUniversityActivity.class);
             intent.putExtra(AboutUniversityActivity.KEY_ABOUT_UNIVERSITY_ACTIVITY, detailUniverInfo);
             startActivity(intent);
         } else {
-            intent = new Intent(this, TimeFormListActivity.class);
-            intent.putExtra(TimeFormListActivity.KEY_TIME_FORM_LINK, detailUniverInfo);
-            startActivity(intent);
+            if (detailUniverInfo.getStrDetailText().contains("(0)")){
+                Toast.makeText(this, "Data is empty", Toast.LENGTH_SHORT).show();
+            } else {
+                intent = new Intent(this, TimeFormListActivity.class);
+                intent.putExtra(TimeFormListActivity.KEY_TIME_FORM_LINK, detailUniverInfo);
+                startActivity(intent);
+            }
         }
     }
 
     private class ParseUniversitiesDetail extends AsyncTask<Void, Void, Void> {
-
         ProgressDialog progDailog = new ProgressDialog(DetailUniversListActivity.this);
-        long mLongDetailUNVId = mUniversityInfo.getId();
 
         @Override
         protected void onPreExecute() {
@@ -102,32 +142,43 @@ public class DetailUniversListActivity extends AppCompatActivity implements
 
             DetailUniverInfoEngine detailUniverInfoEngine = new DetailUniverInfoEngine(getApplication());
 
-                if (detailUniverInfoEngine.getAllDetailUniversById(mLongDetailUNVId).isEmpty()) {
-                    parse(mLongDetailUNVId, detailUniverInfoEngine);
-                }
+            if (Utils.connectToData(mUniversityInfo.getStrUniversityLink()) && mLongDetailUNVId != 0) {
+                parse(mLongDetailUNVId, detailUniverInfoEngine);
+            }
             return null;
         }
 
         private void parse(long longDetailUNVId, DetailUniverInfoEngine detailUniverInfoEngine) {
             String html;
             html = mUniversityInfo.getStrUniversityLink();
-            Log.d("My", "ParseUniversities doInBackground  html ->" + html);
+            Log.d("My", "ParseUniversities doInBackground  mHtml ->" + html);
             Document document;
             try {
                 document = Jsoup.connect(html).get();
 
                 Elements elementsByClass = document.getElementsByClass("accordion-heading togglize");
                 Elements elementsText = elementsByClass.select("a");
-                for (Element element : elementsText) {
+                if (detailUniverInfoEngine.getAllDetailUniversById(mLongDetailUNVId).isEmpty()) {
+                    for (Element element : elementsText) {
 
-                    String detailUniversityName = element.text();
-                    String detailUniversityLink = element.attr("abs:href");
+                        String detailUniversityName = element.text();
+                        String detailUniversityLink = element.attr("abs:href");
 
-                    detailUniverInfoEngine.addDetailUniver(new DetailUniverInfo(longDetailUNVId, detailUniversityName,
-                            detailUniversityLink));
-                    Log.d("My", "ParseUniversities doInBackground  addDetailUniver link ->" + element.attr("abs:href"));
-                    Log.d("My", "ParseUniversities doInBackground  addDetailUniver  name ->" + element.text());
+                        detailUniverInfoEngine.addDetailUniver(new DetailUniverInfo(longDetailUNVId, detailUniversityName,
+                                detailUniversityLink));
+                        Log.d("My", "ParseUniversities doInBackground  addDetailUniver link ->" + element.attr("abs:href"));
+                        Log.d("My", "ParseUniversities doInBackground  addDetailUniver  detailUniversityLink ->" + detailUniversityLink);
+                    }
+                } else {
+                    for (Element element : elementsText) {
+                        String detailUniversityName = element.text();
+                        String detailUniversityLink = element.attr("abs:href");
 
+                        detailUniverInfoEngine.updateDetailUniver(new DetailUniverInfo(longDetailUNVId, detailUniversityName,
+                                detailUniversityLink));
+                        Log.d("My", "ParseUniversities doInBackground  addDetailUniver link ->" + element.attr("abs:href"));
+                        Log.d("My", "ParseUniversities doInBackground  addDetailUniver  detailUniversityLink ->" + detailUniversityLink);
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -136,11 +187,8 @@ public class DetailUniversListActivity extends AppCompatActivity implements
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            final DetailUniverInfoEngine detailUniverInfoEngine = new DetailUniverInfoEngine(getApplication());
-            mDetailUniverInfos = detailUniverInfoEngine.getAllDetailUniversById(mLongDetailUNVId);
-            mDetailUniversAdapter = new DetailUniversAdapter(mDetailUniverInfos);
-            mDetailUniversAdapter.setOnClickDetailUniversItem(DetailUniversListActivity.this);
-            mRecyclerView.setAdapter(mDetailUniversAdapter);
+            DetailUniverInfoEngine detailUniverInfoEngine = new DetailUniverInfoEngine(getApplication());
+            getData(detailUniverInfoEngine);
             progDailog.dismiss();
         }
     }

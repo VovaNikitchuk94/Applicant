@@ -23,6 +23,11 @@ public class ApplicationInfoEngine extends BaseEngine {
         return applicationDBWrapper.getAllApplicantionsById(nId);
     }
 
+    public void updateApplicant(ApplicationsInfo applicationsInfo) {
+        ApplicationDBWrapper applicationDBWrapper = new ApplicationDBWrapper(getContext());
+        applicationDBWrapper.updateApplicant(applicationsInfo);
+    }
+
     public void addApplication(ApplicationsInfo applicationsInfo) {
         ApplicationDBWrapper applicationDBWrapper = new ApplicationDBWrapper(getContext());
         applicationDBWrapper.addItem(applicationsInfo);

@@ -23,6 +23,11 @@ public class TimeFormEngine extends BaseEngine {
         return timeFormDBWrapper.getAllTimeFormsById(nId);
     }
 
+    public void updateTimeForm(TimeFormInfo timeFormInfo) {
+        TimeFormDBWrapper timeFormDBWrapper = new TimeFormDBWrapper(getContext());
+        timeFormDBWrapper.updateTimeForm(timeFormInfo);
+    }
+
     public void addTimeForm(TimeFormInfo timeFormInfo) {
         TimeFormDBWrapper timeFormDBWrapper = new TimeFormDBWrapper(getContext());
         timeFormDBWrapper.addTimeForm(timeFormInfo);

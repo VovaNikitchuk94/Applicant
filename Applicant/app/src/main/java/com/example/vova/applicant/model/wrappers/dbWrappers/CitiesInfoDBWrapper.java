@@ -48,6 +48,8 @@ public class CitiesInfoDBWrapper extends BaseDBWrapper {
                 do {
                     CitiesInfo citiesInfo = new CitiesInfo(cursor);
                     arrResult.add(citiesInfo);
+
+                    Log.d("My", "CitiesInfo getAllCitiesById citiesInfo.getId() - >  " + citiesInfo.getId());
                 } while (cursor.moveToNext());
             }
         } finally {
@@ -57,6 +59,14 @@ public class CitiesInfoDBWrapper extends BaseDBWrapper {
             database.close();
         }
         return arrResult;
+    }
+
+    public void updateCity(CitiesInfo citiesInfo) {
+        SQLiteDatabase database = getWritable();
+        String strRequest = CitiesTable.Cols.CITIES_INFO_FIELD_YEAR_ID + "=?";
+        String arrArgs[] = new String[]{Long.toString(citiesInfo.getId())};
+        database.update(getTableName(), citiesInfo.getContentValues(), strRequest, arrArgs);
+        database.close();
     }
 
     public void addCity(CitiesInfo citiesInfo) {
@@ -74,6 +84,8 @@ public class CitiesInfoDBWrapper extends BaseDBWrapper {
         try{
             if (cursor!=null && cursor.moveToFirst()){
                 citiesInfo = new CitiesInfo(cursor);
+
+                Log.d("My", "CitiesInfo getCityById citiesInfo.getId() - >  " + citiesInfo.getId());
             }
         } finally {
             if (cursor!=null){

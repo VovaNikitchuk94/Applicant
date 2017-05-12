@@ -27,11 +27,6 @@ public class UniversitiesInfoDBWrapper extends BaseDBWrapper {
                 do {
                     UniversityInfo universityInfo = new UniversityInfo(cursor);
                     arrResult.add(universityInfo);
-
-                    Log.d("My", "id -> " + universityInfo.getId());
-                    Log.d("My", "id city -> " + universityInfo.getLongCityId());
-                    Log.d("My", "name -> " + universityInfo.getStrUniversityName());
-                    Log.d("My", "link -> " + universityInfo.getStrUniversityLink());
                 } while (cursor.moveToNext());
             }
         } finally {
@@ -63,6 +58,14 @@ public class UniversitiesInfoDBWrapper extends BaseDBWrapper {
             database.close();
         }
         return arrResult;
+    }
+
+    public void updateUniversity(UniversityInfo universityInfo) {
+        SQLiteDatabase database = getWritable();
+        String strRequest = UniversityTable.Cols.UNIVERSITY_INFO_FIELD_CITIES_ID + "=?";
+        String arrArgs[] = new String[]{Long.toString(universityInfo.getId())};
+        database.update(getTableName(), universityInfo.getContentValues(), strRequest, arrArgs);
+        database.close();
     }
 
     public void addUniversity(UniversityInfo universityInfo) {

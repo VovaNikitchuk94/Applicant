@@ -23,6 +23,11 @@ public class CitiesInfoEngine extends BaseEngine {
         return citiesInfoDBWrapper.getAllCitiesById(nId);
     }
 
+    public void updateCity(CitiesInfo citiesInfo) {
+        CitiesInfoDBWrapper citiesInfoDBWrapper = new CitiesInfoDBWrapper(getContext());
+        citiesInfoDBWrapper.updateCity(citiesInfo);
+    }
+
     public void addCity(CitiesInfo citiesInfo) {
         CitiesInfoDBWrapper citiesInfoDBWrapper = new CitiesInfoDBWrapper(getContext());
         citiesInfoDBWrapper.addCity(citiesInfo);
@@ -30,8 +35,7 @@ public class CitiesInfoEngine extends BaseEngine {
 
     public CitiesInfo getCityById(long nId){
         CitiesInfoDBWrapper citiesInfoDBWrapper = new CitiesInfoDBWrapper(getContext());
-        CitiesInfo citiesInfo = citiesInfoDBWrapper.getCityById(nId);
-        return citiesInfo;
+        return citiesInfoDBWrapper.getCityById(nId);
     }
 
 

@@ -9,9 +9,9 @@ import com.example.vova.applicant.model.wrappers.dbWrappers.UniversitiesInfoDBWr
 
 import java.util.ArrayList;
 
-public class UniversityInfoEngine extends BaseEngine {
+public class UniversitiesInfoEngine extends BaseEngine {
 
-    public UniversityInfoEngine(Context context) {
+    public UniversitiesInfoEngine(Context context) {
         super(context);
     }
 
@@ -25,6 +25,11 @@ public class UniversityInfoEngine extends BaseEngine {
         return universitiesInfoDBWrapper.getAllUniversitiesById(nId);
     }
 
+    public void updateUniversity(UniversityInfo universityInfo) {
+        UniversitiesInfoDBWrapper universitiesInfoDBWrapper = new UniversitiesInfoDBWrapper(getContext());
+        universitiesInfoDBWrapper.updateUniversity(universityInfo);
+    }
+
     public void addUniversity(UniversityInfo universityInfo) {
         UniversitiesInfoDBWrapper universitiesInfoDBWrapper = new UniversitiesInfoDBWrapper(getContext());
         universitiesInfoDBWrapper.addUniversity(universityInfo);
@@ -32,8 +37,7 @@ public class UniversityInfoEngine extends BaseEngine {
 
     public UniversityInfo getUniversityById(long nId){
         UniversitiesInfoDBWrapper universitiesInfoDBWrapper = new UniversitiesInfoDBWrapper(getContext());
-        UniversityInfo universityInfo = universitiesInfoDBWrapper.getUniversityById(nId);
-        return universityInfo;
+        return universitiesInfoDBWrapper.getUniversityById(nId);
     }
 
 }

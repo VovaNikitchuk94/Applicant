@@ -4,18 +4,20 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.TextView;
 
 import com.example.vova.applicant.R;
+import com.example.vova.applicant.Utils;
 import com.example.vova.applicant.adapters.UniversitiesAdapter;
 import com.example.vova.applicant.model.CitiesInfo;
 import com.example.vova.applicant.model.UniversityInfo;
-import com.example.vova.applicant.model.engines.UniversityInfoEngine;
+import com.example.vova.applicant.model.engines.UniversitiesInfoEngine;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -30,11 +32,10 @@ public class UniversitiesListActivity extends AppCompatActivity implements
 
     private CitiesInfo mCitiesInfo;
 
-    private RecyclerView mRecyclerView;
-    private UniversitiesAdapter mUniversitiesAdapter;
-    private ArrayList<UniversityInfo> mUniversityInfos = new ArrayList<>();
+    private long mLongCityId = 0L;
 
-    private TextView mTextViewHeadText;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private RecyclerView mRecyclerView;
 
     public static final String INTENT_KEY_UNIVERSITY_ACTIVITY = "INTENT_KEY_UNIVERSITY_ACTIVITY";
 
@@ -42,8 +43,6 @@ public class UniversitiesListActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_universities_list);
-
-        Log.d("OnCreate", "UniversitiesListActivity -> OnCreate");
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -54,10 +53,24 @@ public class UniversitiesListActivity extends AppCompatActivity implements
             }
         }
 
-        Log.d("My", "onCreate   link ->" + mCitiesInfo);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_university_swipe_refresh_layout);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(true);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        new ParseUniversityList().execute();
+                    }
+                }, 0);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
 
-        mTextViewHeadText = (TextView) findViewById(R.id.textViewChooseUniversityDetailUniversityActivity);
-        mTextViewHeadText.setText(mCitiesInfo.getStrCityName());
+        TextView textViewHeadText = (TextView) findViewById(R.id.textViewChooseUniversityDetailUniversityActivity);
+        textViewHeadText.setText(mCitiesInfo.getStrCityName());
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewUniversitiesListActivity);
         LinearLayoutManager layoutManager
@@ -67,8 +80,24 @@ public class UniversitiesListActivity extends AppCompatActivity implements
                 layoutManager.getOrientation());
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
-        new ParseUniversityList().execute();
+        setData();
+    }
 
+    private void setData() {
+        mLongCityId = mCitiesInfo.getId();
+        UniversitiesInfoEngine universityInfoEngine = new UniversitiesInfoEngine(getApplication());
+        if (universityInfoEngine.getAllUniversitiesById(mLongCityId).isEmpty()){
+            new ParseUniversityList().execute();
+        } else {
+            getData(universityInfoEngine);
+        }
+    }
+
+    private void getData(UniversitiesInfoEngine universityInfoEngine) {
+        ArrayList<UniversityInfo> universityInfos = universityInfoEngine.getAllUniversitiesById(mLongCityId);
+        UniversitiesAdapter universitiesAdapter = new UniversitiesAdapter(universityInfos);
+        universitiesAdapter.setOnClickUniversityItem(UniversitiesListActivity.this);
+        mRecyclerView.setAdapter(universitiesAdapter);
     }
 
     @Override
@@ -79,10 +108,7 @@ public class UniversitiesListActivity extends AppCompatActivity implements
     }
 
     private class ParseUniversityList extends AsyncTask<String, Integer, String> {
-
         ProgressDialog progDailog = new ProgressDialog(UniversitiesListActivity.this);
-        long mLongUniversityCityId = mCitiesInfo.getId();
-
 
         @Override
         protected void onPreExecute() {
@@ -96,35 +122,35 @@ public class UniversitiesListActivity extends AppCompatActivity implements
 
         @Override
         protected String doInBackground(String... urls) {
+            UniversitiesInfoEngine universityInfoEngine = new UniversitiesInfoEngine(getApplication());
 
-            UniversityInfoEngine universityInfoEngine = new UniversityInfoEngine(getApplication());
-
-                if (universityInfoEngine.getAllUniversitiesById(mLongUniversityCityId).isEmpty()){
-                    parse(mLongUniversityCityId, universityInfoEngine);
-                }
+            if (Utils.connectToData(mCitiesInfo.getStrCityLink()) && mLongCityId != 0) {
+                parse(mLongCityId, universityInfoEngine);
+            }
             return null;
         }
 
-        private void parse(long universityCityId, UniversityInfoEngine universityInfoEngine) {
+        private void parse(long universityCityId, UniversitiesInfoEngine universityInfoEngine) {
             String html;
             html = mCitiesInfo.getStrCityLink();
             Document document;
             try {
                 document = Jsoup.connect(html).get();
-                Log.d("My", "UniversitiesListActivity -> ParseUniversityList - > mCitiesInfo.getStrCityLink()" + mCitiesInfo.getStrCityLink());
 
                 Elements elementsByClass = document.getElementsByClass("accordion-inner");
                 Elements elementsText = elementsByClass.select("a");
-                for (Element element : elementsText) {
-
-
-                    String universityName = element.text();
-                    String universityLink = element.attr("abs:href");
-
-                    universityInfoEngine.addUniversity(new UniversityInfo(universityCityId, universityName, universityLink));
-                    Log.d("My", "ParseUniversities doInBackground   link ->" + element.attr("abs:href"));
-                    Log.d("My", "ParseUniversities doInBackground    name ->" + element.text());
-
+                if (universityInfoEngine.getAllUniversitiesById(mLongCityId).isEmpty()) {
+                    for (Element element : elementsText) {
+                        String universityName = element.text();
+                        String universityLink = element.attr("abs:href");
+                        universityInfoEngine.addUniversity(new UniversityInfo(universityCityId, universityName, universityLink));
+                    }
+                } else {
+                    for (Element element : elementsText) {
+                        String universityName = element.text();
+                        String universityLink = element.attr("abs:href");
+                        universityInfoEngine.updateUniversity(new UniversityInfo(universityCityId, universityName, universityLink));
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -133,11 +159,8 @@ public class UniversitiesListActivity extends AppCompatActivity implements
 
         @Override
         protected void onPostExecute(String result) {
-            final UniversityInfoEngine universityInfoEngine = new UniversityInfoEngine(getApplication());
-            mUniversityInfos = universityInfoEngine.getAllUniversitiesById(mLongUniversityCityId);
-            mUniversitiesAdapter = new UniversitiesAdapter(mUniversityInfos);
-            mUniversitiesAdapter.setOnClickUniversityItem(UniversitiesListActivity.this);
-            mRecyclerView.setAdapter(mUniversitiesAdapter);
+            UniversitiesInfoEngine universityInfoEngine = new UniversitiesInfoEngine(getApplication());
+            getData(universityInfoEngine);
             progDailog.dismiss();
         }
     }

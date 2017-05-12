@@ -58,6 +58,14 @@ public class TimeFormDBWrapper extends BaseDBWrapper {
         return arrResult;
     }
 
+    public void updateTimeForm(TimeFormInfo timeFormInfo) {
+        SQLiteDatabase database = getWritable();
+        String strRequest = TimeFormTable.Cols.TIME_FORM_INFO_FIELD_DETAIL_UNV_ID + "=?";
+        String arrArgs[] = new String[]{Long.toString(timeFormInfo.getId())};
+        database.update(getTableName(), timeFormInfo.getContentValues(), strRequest, arrArgs);
+        database.close();
+    }
+
     public void addTimeForm(TimeFormInfo timeFormInfo) {
         SQLiteDatabase database = getWritable();
         database.insert(getTableName(), null, timeFormInfo.getContentValues());

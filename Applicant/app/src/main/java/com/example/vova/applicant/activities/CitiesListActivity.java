@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +14,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.example.vova.applicant.R;
+import com.example.vova.applicant.Utils;
 import com.example.vova.applicant.adapters.CitiesInfoAdapter;
 import com.example.vova.applicant.model.CitiesInfo;
 import com.example.vova.applicant.model.engines.CitiesInfoEngine;
@@ -28,11 +31,10 @@ public class CitiesListActivity extends AppCompatActivity implements CitiesInfoA
 
     public static final String KEY_YEARS_CITIES_LIST_ACTIVITY = "KEY_YEARS_CITIES_LIST_ACTIVITY";
 
-    private TextView mTextView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
-    private CitiesInfoAdapter mCitiesInfoAdapter;
-    private ArrayList<CitiesInfo> mCitiesInfos = new ArrayList<>();
 
+    long mLongYearId = 0L;
     private String yearsCodeLink = "";
 
     @Override
@@ -48,8 +50,24 @@ public class CitiesListActivity extends AppCompatActivity implements CitiesInfoA
             }
         }
 
-        mTextView = (TextView) findViewById(R.id.textViewСhooseCityCitiesActivity);
-        mTextView.setText(getText(R.string.chooseCityMainActivity));
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_cities_swipe_refresh_layout);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(true);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        new ParseCitiesList().execute(yearsCodeLink);
+                    }
+                }, 0);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        TextView textView = (TextView) findViewById(R.id.textViewСhooseCityCitiesActivity);
+        textView.setText(getText(R.string.chooseCityMainActivity));
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewCitiesListActivity);
         LinearLayoutManager layoutManager
@@ -59,7 +77,26 @@ public class CitiesListActivity extends AppCompatActivity implements CitiesInfoA
                 layoutManager.getOrientation());
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
-        new ParseCitiesList().execute();
+        setData();
+    }
+
+    //TODO modified method
+    private void setData() {
+        CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
+        mLongYearId = Long.parseLong(yearsCodeLink.
+                substring(yearsCodeLink.length() - 2, yearsCodeLink.length() - 1));
+        if (citiesInfoEngine.getAllCitiesById(mLongYearId).isEmpty()) {
+            new ParseCitiesList().execute(yearsCodeLink);
+        } else {
+            getData(citiesInfoEngine);
+        }
+    }
+
+    private void getData(CitiesInfoEngine citiesInfoEngine) {
+        ArrayList<CitiesInfo> citiesInfos = citiesInfoEngine.getAllCitiesById(mLongYearId);
+        CitiesInfoAdapter citiesInfoAdapter = new CitiesInfoAdapter(citiesInfos);
+        citiesInfoAdapter.setOnClickCityInfoItem(CitiesListActivity.this);
+        mRecyclerView.setAdapter(citiesInfoAdapter);
     }
 
     @Override
@@ -69,11 +106,8 @@ public class CitiesListActivity extends AppCompatActivity implements CitiesInfoA
         startActivity(intent);
     }
 
-    private class ParseCitiesList extends AsyncTask<Void, Void, Void> {
-
+    private class ParseCitiesList extends AsyncTask<String, Void, Void> {
         ProgressDialog progressDialog = new ProgressDialog(CitiesListActivity.this);
-        long mLongYearId = Long.parseLong(yearsCodeLink.
-                substring(yearsCodeLink.length() - 2, yearsCodeLink.length() - 1));
 
         @Override
         protected void onPreExecute() {
@@ -86,13 +120,15 @@ public class CitiesListActivity extends AppCompatActivity implements CitiesInfoA
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Void doInBackground(String... urls) {
+            if (urls.length < 1 || urls[0] == null) {
+                return null;
+            }
 
             final CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
-
-                if (citiesInfoEngine.getAllCitiesById(mLongYearId).isEmpty()){
-                    parse(mLongYearId, citiesInfoEngine);
-                }
+            if (Utils.connectToData(urls[0]) && mLongYearId != 0) {
+                parse(mLongYearId, citiesInfoEngine);
+            }
             return null;
         }
 
@@ -102,13 +138,28 @@ public class CitiesListActivity extends AppCompatActivity implements CitiesInfoA
                 document = Jsoup.connect(yearsCodeLink).get();
                 Element elementRegion = document.getElementById("region");
                 Elements links = elementRegion.getElementsByTag("a");
-                for (Element link : links) {
+                if (citiesInfoEngine.getAllCitiesById(mLongYearId).isEmpty()) {
+                    for (Element link : links) {
 
-                    String citiesName = link.text();
-                    String citiesLink = link.attr("abs:href");
+                        String citiesName = link.text();
+                        String citiesLink = link.attr("abs:href");
 
-                    citiesInfoEngine.addCity(new CitiesInfo(yearsId, citiesName, citiesLink));
-                    Log.d("My","yearsId -> " + yearsId);
+                        citiesInfoEngine.addCity(new CitiesInfo(yearsId, citiesName, citiesLink));
+
+                        Log.d("My", "parse isEmpty -> " + citiesInfoEngine.getCityById(yearsId));
+                        Log.d("My", "yearsId -> " + yearsId);
+                    }
+                } else {
+                    for (Element link : links) {
+
+                        String citiesName = link.text();
+                        String citiesLink = link.attr("abs:href");
+
+                        citiesInfoEngine.updateCity(new CitiesInfo(yearsId, citiesName, citiesLink));
+
+                        Log.d("My", "parse update -> " + citiesInfoEngine.getCityById(yearsId));
+                        Log.d("My", "yearsId -> " + yearsId);
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -118,10 +169,7 @@ public class CitiesListActivity extends AppCompatActivity implements CitiesInfoA
         @Override
         protected void onPostExecute(Void aVoid) {
             final CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
-            mCitiesInfos = citiesInfoEngine.getAllCitiesById(mLongYearId);
-            mCitiesInfoAdapter = new CitiesInfoAdapter(mCitiesInfos);
-            mCitiesInfoAdapter.setOnClickCityInfoItem(CitiesListActivity.this);
-            mRecyclerView.setAdapter(mCitiesInfoAdapter);
+            getData(citiesInfoEngine);
             progressDialog.dismiss();
 
         }

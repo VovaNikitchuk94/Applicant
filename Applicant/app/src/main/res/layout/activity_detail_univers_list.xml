@@ -14,6 +14,11 @@
         android:layout_height="wrap_content"
         android:text="@string/textViewChooseUniversityUniversityActivity"/>
 
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/activity_detail_university_swipe_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
     <android.support.v7.widget.RecyclerView
 
         android:id="@+id/recyclerViewDetailUniversListActivity"
@@ -21,5 +26,7 @@
         android:layout_height="wrap_content">
 
     </android.support.v7.widget.RecyclerView>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>

@@ -55,6 +55,7 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("CREATE TABLE " + SpecialitiesTable.TABLE_NAME
                 + " (" + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_TIME_FORM_ID + " INTEGER NOT NULL, "
+                + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_DEGREE + " INTEGER NOT NULL, "
                 + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_SPECIALITY + " TEXT NOT NULL, "
                 + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_APPLICATION + " TEXT, "
                 + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_ACCEPTED + " TEXT, "
@@ -63,7 +64,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         sqLiteDatabase.execSQL("CREATE TABLE " + ApplicationTable.TABLE_NAME
                 + " (" + ApplicationTable.Cols.APPLICATION_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECILITY_ID + " INTEGER NOT NULL, "
+                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY_ID + " INTEGER NOT NULL, "
                 + ApplicationTable.Cols.APPLICATION_INFO_FIELD_NUMBER + " INTEGER NOT NULL, "
                 + ApplicationTable.Cols.APPLICATION_INFO_FIELD_NAME + " TEXT NOT NULL, "
                 + ApplicationTable.Cols.APPLICATION_INFO_FIELD_TOTAL_SCORE + " TEXT, "

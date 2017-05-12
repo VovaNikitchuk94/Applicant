@@ -4,13 +4,16 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.vova.applicant.R;
+import com.example.vova.applicant.Utils;
 import com.example.vova.applicant.adapters.ApplicationAdapter;
 import com.example.vova.applicant.model.ApplicationsInfo;
 import com.example.vova.applicant.model.SpecialtiesInfo;
@@ -29,10 +32,11 @@ public class ApplicationListActivity extends AppCompatActivity implements Applic
     public static final String INTENT_KEY_APPLICANT_ACTIVITY = "INTENT_KEY_APPLICANT_ACTIVITY";
 
     private RecyclerView mRecyclerView;
-    private ArrayList<ApplicationsInfo> mApplicationsInfos = new ArrayList<>();
-    private ApplicationAdapter mAdapter;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private SpecialtiesInfo mSpecialtiesInfo;
+
+    private long mLongSpecialityId = 0L;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,6 +51,22 @@ public class ApplicationListActivity extends AppCompatActivity implements Applic
             }
         }
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_applicant_swipe_refresh_layout);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(true);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        new ParseApplicantsList().execute();
+                    }
+                }, 0);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewApplicationListActivity);
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -55,7 +75,24 @@ public class ApplicationListActivity extends AppCompatActivity implements Applic
                 layoutManager.getOrientation());
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
-        new ParseApplicantsList().execute();
+        setData();
+    }
+
+    private void setData() {
+        mLongSpecialityId = mSpecialtiesInfo.getId();
+        ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
+        if (applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId).isEmpty()){
+            new ParseApplicantsList().execute();
+        } else {
+            getData(applicationInfoEngine);
+        }
+    }
+
+    private void getData(ApplicationInfoEngine applicationInfoEngine) {
+        ArrayList<ApplicationsInfo> applicationsInfos = applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId);
+        ApplicationAdapter adapter = new ApplicationAdapter(applicationsInfos);
+        adapter.setOnClickApplicationItem(ApplicationListActivity.this);
+        mRecyclerView.setAdapter(adapter);
     }
 
     @Override
@@ -64,9 +101,8 @@ public class ApplicationListActivity extends AppCompatActivity implements Applic
     }
 
     private class ParseApplicantsList extends AsyncTask<String, String, String> {
-
         ProgressDialog progDailog = new ProgressDialog(ApplicationListActivity.this);
-        long mLongSpecialityId = mSpecialtiesInfo.getId();
+        ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
 
         @Override
         protected void onPreExecute() {
@@ -80,17 +116,14 @@ public class ApplicationListActivity extends AppCompatActivity implements Applic
 
         @Override
         protected String doInBackground(String... params) {
-            ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
-
-                if (applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId).isEmpty()){
-                    parse(applicationInfoEngine);
-                }
-
+            if (Utils.connectToData(mSpecialtiesInfo.getStrLink()) && mLongSpecialityId != 0) {
+                parse(applicationInfoEngine);
+            }
             return null;
         }
 
         private void parse(ApplicationInfoEngine applicationInfoEngine) {
-            String html;//TODO update for many years
+            String html;
             String number;
             String name;
             String score;
@@ -105,18 +138,28 @@ public class ApplicationListActivity extends AppCompatActivity implements Applic
                 Elements elements = links.select("tbody");
                 Elements selectTr = elements.select("tr");
 
-                mApplicationsInfos.clear();
+                if (applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId).isEmpty()){
+                    for (Element link : selectTr) {
+                        Elements tds = link.select("td");
+                        number = tds.get(0).text();
+                        name = tds.get(1).text();
+                        score = tds.get(3).text();
+                        someLink = tds.attr("abs:href");
 
-                for (Element link : selectTr) {
+                        applicationInfoEngine.addApplication(new ApplicationsInfo(mLongSpecialityId,
+                                number, name, score, someLink));
+                    }
+                } else {
+                    for (Element link : selectTr) {
+                        Elements tds = link.select("td");
+                        number = tds.get(0).text();
+                        name = tds.get(1).text();
+                        score = tds.get(3).text();
+                        someLink = tds.attr("abs:href");
 
-                    Elements tds = link.select("td");
-                    number = tds.get(0).text();
-                    name = tds.get(1).text();
-                    score = tds.get(3).text();
-                    someLink = tds.attr("abs:href");
-
-                    applicationInfoEngine.addApplication(new ApplicationsInfo(mLongSpecialityId, number, name, score, someLink));
-
+                        applicationInfoEngine.updateApplicant(new ApplicationsInfo(mLongSpecialityId,
+                                number, name, score, someLink));
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -125,11 +168,7 @@ public class ApplicationListActivity extends AppCompatActivity implements Applic
 
         @Override
         protected void onPostExecute(String srt) {
-            final ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
-            mApplicationsInfos = applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId);
-            mAdapter = new ApplicationAdapter(mApplicationsInfos);
-            mAdapter.setOnClickApplicationItem(ApplicationListActivity.this);
-            mRecyclerView.setAdapter(mAdapter);
+            getData(applicationInfoEngine);
             progDailog.dismiss();
         }
     }

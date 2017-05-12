@@ -4,7 +4,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +15,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.example.vova.applicant.R;
+import com.example.vova.applicant.Utils;
 import com.example.vova.applicant.adapters.TimeFormAdapter;
 import com.example.vova.applicant.model.DetailUniverInfo;
 import com.example.vova.applicant.model.TimeFormInfo;
@@ -39,12 +42,9 @@ public class TimeFormListActivity extends AppCompatActivity implements
     public static final String INT_EVENING_FORM = "vec";
 
     private RecyclerView mRecyclerView;
-    private TimeFormAdapter mFormAdapter;
-    private ArrayList<TimeFormInfo> mTimeFormInfos = new ArrayList<>();
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private TextView mTextViewHeadText;
-
-    private int mIntTimeForm = 0;
+    private long mLongDetailUNVId = 0L;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,8 +62,24 @@ public class TimeFormListActivity extends AppCompatActivity implements
             }
         }
 
-        mTextViewHeadText = (TextView) findViewById(R.id.textViewСhooseTimeFormTimeFormActivity);
-        mTextViewHeadText.setText(mDetailUniverInfo.getStrDetailText());
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_time_form_swipe_refresh_layout);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(true);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        new ParseTimeForm().execute();
+                    }
+                }, 0);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        TextView textViewHeadText = (TextView) findViewById(R.id.textViewСhooseTimeFormTimeFormActivity);
+        textViewHeadText.setText(mDetailUniverInfo.getStrDetailText());
         Log.d("My", "onCreate   mStrFullTimeLink ->" + mDetailUniverInfo.getStrDetailText());
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewTimeFormListActivity);
@@ -74,8 +90,24 @@ public class TimeFormListActivity extends AppCompatActivity implements
                 layoutManager.getOrientation());
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
-        new ParseTimeForm().execute();
+        setData();
+    }
 
+    private void setData() {
+        mLongDetailUNVId = mDetailUniverInfo.getId();
+        TimeFormEngine timeFormEngine = new TimeFormEngine(getApplication());
+        if (timeFormEngine.getAllTimeFormsById(mLongDetailUNVId).isEmpty()){
+            new ParseTimeForm().execute();
+        } else {
+            getData(timeFormEngine);
+        }
+    }
+
+    private void getData(TimeFormEngine timeFormEngine) {
+        ArrayList<TimeFormInfo> timeFormInfos = timeFormEngine.getAllTimeFormsById(mLongDetailUNVId);
+        TimeFormAdapter formAdapter = new TimeFormAdapter(timeFormInfos);
+        formAdapter.setOnClickTimeFormItem(TimeFormListActivity.this);
+        mRecyclerView.setAdapter(formAdapter);
     }
 
     @Override
@@ -86,10 +118,8 @@ public class TimeFormListActivity extends AppCompatActivity implements
     }
 
     private class ParseTimeForm extends AsyncTask<Void, Void, Void> {
-
         private ProgressDialog progDailog = new ProgressDialog(TimeFormListActivity.this);
-        long mLongDetailUNVId = mDetailUniverInfo.getId();
-        final TimeFormEngine timeFormEngine = new TimeFormEngine(getApplication());
+        TimeFormEngine timeFormEngine = new TimeFormEngine(getApplication());
 
         @Override
         protected void onPreExecute() {
@@ -103,13 +133,9 @@ public class TimeFormListActivity extends AppCompatActivity implements
 
         @Override
         protected Void doInBackground(Void... voids) {
-
-            TimeFormEngine timeFormEngine = new TimeFormEngine(getApplication());
-
-                if (timeFormEngine.getAllTimeFormsById(mLongDetailUNVId).isEmpty()){
-                    parse();
-                }
-
+            if (Utils.connectToData(mDetailUniverInfo.getStrDetailLink()) && mLongDetailUNVId != 0) {
+                parse();
+            }
             return null;
         }
 
@@ -150,19 +176,24 @@ public class TimeFormListActivity extends AppCompatActivity implements
         }
 
         private void loopElementsParse(Elements elements) {
-            for (Element element : elements) {
-                String text = element.select("a").text();
-                String link = element.select("a").attr("abs:href");
-                timeFormEngine.addTimeForm(new TimeFormInfo(mLongDetailUNVId, text, link));
+            if (timeFormEngine.getAllTimeFormsById(mLongDetailUNVId).isEmpty()){
+                for (Element element : elements) {
+                    String text = element.select("a").text();
+                    String link = element.select("a").attr("abs:href");
+                    timeFormEngine.addTimeForm(new TimeFormInfo(mLongDetailUNVId, text, link));
+                }
+            } else {
+                for (Element element : elements) {
+                    String text = element.select("a").text();
+                    String link = element.select("a").attr("abs:href");
+                    timeFormEngine.updateTimeForm(new TimeFormInfo(mLongDetailUNVId, text, link));
+                }
             }
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            mTimeFormInfos = timeFormEngine.getAllTimeFormsById(mLongDetailUNVId);
-            mFormAdapter = new TimeFormAdapter(mTimeFormInfos);
-            mFormAdapter.setOnClickTimeFormItem(TimeFormListActivity.this);
-            mRecyclerView.setAdapter(mFormAdapter);
+            getData(timeFormEngine);
             progDailog.dismiss();
         }
     }

@@ -58,6 +58,14 @@ public class AboutUniversityDBWrapper extends BaseDBWrapper {
         return arrResult;
     }
 
+    public void updateAboutUniversity(AboutUniversityInfo aboutUniversityInfo) {
+        SQLiteDatabase database = getWritable();
+        String strRequest = AboutUniversityTable.Cols.ABOUT_UNIVERSITY_INFO_FIELD_DETAIL_UNV_ID + "=?";
+        String arrArgs[] = new String[]{Long.toString(aboutUniversityInfo.getId())};
+        database.update(getTableName(), aboutUniversityInfo.getContentValues(), strRequest, arrArgs);
+        database.close();
+    }
+
     public void addAboutUniversity(AboutUniversityInfo aboutUniversityInfo) {
         SQLiteDatabase database = getWritable();
         database.insert(getTableName(), null, aboutUniversityInfo.getContentValues());
