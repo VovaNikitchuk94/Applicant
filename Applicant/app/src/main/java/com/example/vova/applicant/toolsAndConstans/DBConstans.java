@@ -81,10 +81,14 @@ public class DBConstans {
         public static final class Cols {
             public static final String APPLICATION_INFO_FIELD_ID = "_id";
             public static final String APPLICATION_INFO_FIELD_SPECIALITY_ID = "_speciality_id";
+            public static final String APPLICATION_INFO_FIELD_UNIVERSITY = "_university";
+            public static final String APPLICATION_INFO_FIELD_SPECIALITY = "_speciality";
+            public static final String APPLICATION_FIELD_INFO = "_info";
             public static final String APPLICATION_INFO_FIELD_NUMBER = "_number";
             public static final String APPLICATION_INFO_FIELD_NAME = "_name";
             public static final String APPLICATION_INFO_FIELD_TOTAL_SCORE = "_total_score";
             public static final String APPLICATION_INFO_FIELD_LINK = "_link";
         }
     }
+
 }

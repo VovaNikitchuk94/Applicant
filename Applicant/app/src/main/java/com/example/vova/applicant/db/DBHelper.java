@@ -8,6 +8,7 @@ import com.example.vova.applicant.toolsAndConstans.DBConstans;
 import com.example.vova.applicant.toolsAndConstans.DBConstans.AboutUniversityTable;
 import com.example.vova.applicant.toolsAndConstans.DBConstans.ApplicationTable;
 import com.example.vova.applicant.toolsAndConstans.DBConstans.CitiesTable;
+//import com.example.vova.applicant.toolsAndConstans.DBConstans.DetailApplicantTable;
 import com.example.vova.applicant.toolsAndConstans.DBConstans.SpecialitiesTable;
 import com.example.vova.applicant.toolsAndConstans.DBConstans.TimeFormTable;
 import com.example.vova.applicant.toolsAndConstans.DBConstans.UniversityDetailTable;
@@ -65,10 +66,22 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("CREATE TABLE " + ApplicationTable.TABLE_NAME
                 + " (" + ApplicationTable.Cols.APPLICATION_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY_ID + " INTEGER NOT NULL, "
+                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_UNIVERSITY + " TEXT NOT NULL, "
+                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY + " TEXT NOT NULL, "
+//                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_LAST_UPDATE + " TEXT, "
+                + ApplicationTable.Cols.APPLICATION_FIELD_INFO + " TEXT, "
                 + ApplicationTable.Cols.APPLICATION_INFO_FIELD_NUMBER + " INTEGER NOT NULL, "
                 + ApplicationTable.Cols.APPLICATION_INFO_FIELD_NAME + " TEXT NOT NULL, "
                 + ApplicationTable.Cols.APPLICATION_INFO_FIELD_TOTAL_SCORE + " TEXT, "
                 + ApplicationTable.Cols.APPLICATION_INFO_FIELD_LINK + " TEXT);");
+
+//        sqLiteDatabase.execSQL("CREATE TABLE " + DetailApplicantTable.TABLE_NAME
+//                + " (" + DetailApplicantTable.Cols.DETAIL_APPLICANT_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+//                + DetailApplicantTable.Cols.DETAIL_APPLICANT_INFO_FIELD_APPLICATION_ID + " INTEGER NOT NULL, "
+//                + DetailApplicantTable.Cols.DETAIL_APPLICANT_INFO_FIELD_UNIVERSITY + " TEXT NOT NULL, "
+//                + DetailApplicantTable.Cols.DETAIL_APPLICANT_INFO_FIELD_SPECIALITY + " TEXT NOT NULL, "
+//                + DetailApplicantTable.Cols.DETAIL_APPLICANT_INFO_FIELD_LAST_UPDATE + " TEXT, "
+//                + DetailApplicantTable.Cols.DETAIL_APPLICANT_FIELD_INFO + " TEXT);");
     }
 
     @Override

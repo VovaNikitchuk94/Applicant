@@ -11,10 +11,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import com.example.vova.applicant.R;
 import com.example.vova.applicant.Utils;
 import com.example.vova.applicant.adapters.ApplicationAdapter;
+import com.example.vova.applicant.fragments.DetailApplicantFragment;
 import com.example.vova.applicant.model.ApplicationsInfo;
 import com.example.vova.applicant.model.SpecialtiesInfo;
 import com.example.vova.applicant.model.engines.ApplicationInfoEngine;
@@ -97,7 +99,9 @@ public class ApplicationListActivity extends AppCompatActivity implements Applic
 
     @Override
     public void onClickApplicationItem(ApplicationsInfo applicationInfo) {
-
+        Intent intent = new Intent(this, DetailApplicantPagerActivity.class);
+        intent.putExtra(DetailApplicantPagerActivity.INTENT_KEY_APPLICANT_INFO, applicationInfo);
+        startActivity(intent);
     }
 
     private class ParseApplicantsList extends AsyncTask<String, String, String> {
@@ -124,6 +128,9 @@ public class ApplicationListActivity extends AppCompatActivity implements Applic
 
         private void parse(ApplicationInfoEngine applicationInfoEngine) {
             String html;
+            String university;
+            String speciality;
+            String applicantInfo;
             String number;
             String name;
             String score;
@@ -138,6 +145,9 @@ public class ApplicationListActivity extends AppCompatActivity implements Applic
                 Elements elements = links.select("tbody");
                 Elements selectTr = elements.select("tr");
 
+                Elements detailElements = document.getElementsByClass("title-page");
+                university = detailElements.select(".title-description").text();
+                speciality = detailElements.select("p").text();
                 if (applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId).isEmpty()){
                     for (Element link : selectTr) {
                         Elements tds = link.select("td");
@@ -145,9 +155,10 @@ public class ApplicationListActivity extends AppCompatActivity implements Applic
                         name = tds.get(1).text();
                         score = tds.get(3).text();
                         someLink = tds.attr("abs:href");
+                        applicantInfo = link.text();
 
-                        applicationInfoEngine.addApplication(new ApplicationsInfo(mLongSpecialityId,
-                                number, name, score, someLink));
+                        applicationInfoEngine.addApplication(new ApplicationsInfo(mLongSpecialityId, university,
+                                speciality, applicantInfo, number, name, score, someLink));
                     }
                 } else {
                     for (Element link : selectTr) {
@@ -156,9 +167,10 @@ public class ApplicationListActivity extends AppCompatActivity implements Applic
                         name = tds.get(1).text();
                         score = tds.get(3).text();
                         someLink = tds.attr("abs:href");
+                        applicantInfo = link.text();
 
-                        applicationInfoEngine.updateApplicant(new ApplicationsInfo(mLongSpecialityId,
-                                number, name, score, someLink));
+                        applicationInfoEngine.updateApplicant(new ApplicationsInfo(mLongSpecialityId, university,
+                                speciality, applicantInfo, number, name, score, someLink));
                     }
                 }
             } catch (IOException e) {
