@@ -27,7 +27,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class UniversitiesListActivity extends AppCompatActivity implements
+public class UniversitiesListActivity extends BaseActivity implements
         UniversitiesAdapter.OnClickUniversityItem {
 
     private CitiesInfo mCitiesInfo;
@@ -43,6 +43,8 @@ public class UniversitiesListActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_universities_list);
+
+        drawerAndToolbar();
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -81,6 +83,11 @@ public class UniversitiesListActivity extends AppCompatActivity implements
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
         setData();
+    }
+
+    @Override
+    public void drawerAndToolbar() {
+        super.drawerAndToolbar();
     }
 
     private void setData() {

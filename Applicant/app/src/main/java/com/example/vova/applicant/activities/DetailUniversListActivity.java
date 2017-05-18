@@ -30,7 +30,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class DetailUniversListActivity extends AppCompatActivity implements
+public class DetailUniversListActivity extends BaseActivity implements
         DetailUniversAdapter.OnClickDetailUniversItem {
 
     public static final String KEY_DETAIL_UNIVERSITY_LINK = "KEY_DETAIL_UNIVERSITY_LINK";
@@ -49,6 +49,8 @@ public class DetailUniversListActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_detail_univers_list);
 
         Log.d("My", "DetailUniversListActivity -> OnCreate");
+
+        drawerAndToolbar();
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -86,6 +88,11 @@ public class DetailUniversListActivity extends AppCompatActivity implements
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
         setData();
+    }
+
+    @Override
+    public void drawerAndToolbar() {
+        super.drawerAndToolbar();
     }
 
     private void setData() {

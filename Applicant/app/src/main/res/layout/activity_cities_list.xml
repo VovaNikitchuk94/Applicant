@@ -1,32 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".activities.CitiesListActivity">
-
-    <TextView
-        style="@style/headTextViewStyle"
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/textViewСhooseCityCitiesActivity"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".activities.CitiesListActivity">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/activity_cities_swipe_refresh_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.RecyclerView
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/recyclerViewCitiesListActivity">
+            android:background="?attr/colorPrimary"
+            app:titleTextColor="@color/md_white_1000"
+            android:elevation="4dp"
+            android:minHeight="?attr/actionBarSize"
+            android:paddingTop="@dimen/tool_bar_top_padding"
+            android:transitionName="actionBar" />
 
-        </android.support.v7.widget.RecyclerView>
+        <TextView
+            android:id="@+id/textViewСhooseCityCitiesActivity"
+            style="@style/headTextViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/activity_cities_swipe_refresh_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerViewCitiesListActivity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-</LinearLayout>
+            </android.support.v7.widget.RecyclerView>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+    </LinearLayout>

@@ -29,7 +29,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class AboutUniversityActivity extends AppCompatActivity implements
+public class AboutUniversityActivity extends BaseActivity implements
         AboutUniversityAdapter.OnClickAboutUniversityItem {
 
     public static final String KEY_ABOUT_UNIVERSITY_ACTIVITY =
@@ -48,6 +48,8 @@ public class AboutUniversityActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_about_university_list);
 
         Log.d("My", "AboutUniversityActivity -> OnCreate");
+
+        drawerAndToolbar();
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -86,6 +88,11 @@ public class AboutUniversityActivity extends AppCompatActivity implements
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
         setData();
+    }
+
+    @Override
+    public void drawerAndToolbar() {
+        super.drawerAndToolbar();
     }
 
     private void setData() {

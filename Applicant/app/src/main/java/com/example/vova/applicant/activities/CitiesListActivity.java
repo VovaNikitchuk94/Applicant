@@ -5,12 +5,16 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.vova.applicant.R;
@@ -27,7 +31,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class CitiesListActivity extends AppCompatActivity implements CitiesInfoAdapter.OnClickCityItem {
+public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapter.OnClickCityItem {
 
     public static final String KEY_YEARS_CITIES_LIST_ACTIVITY = "KEY_YEARS_CITIES_LIST_ACTIVITY";
 
@@ -42,6 +46,13 @@ public class CitiesListActivity extends AppCompatActivity implements CitiesInfoA
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cities_list);
 
+        drawerAndToolbar();
+//        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.DrawerLayoutCitiesActivity);
+//        View navigationDrawer = findViewById(R.id.NavigationDrawer);
+//
+//        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(mToolbar);
+//
         Intent intent = getIntent();
         if (intent != null) {
             Bundle bundle = intent.getExtras();
@@ -80,6 +91,11 @@ public class CitiesListActivity extends AppCompatActivity implements CitiesInfoA
         setData();
     }
 
+    @Override
+    public void drawerAndToolbar() {
+        super.drawerAndToolbar();
+    }
+
     //TODO modified method
     private void setData() {
         CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
@@ -108,10 +124,12 @@ public class CitiesListActivity extends AppCompatActivity implements CitiesInfoA
 
     private class ParseCitiesList extends AsyncTask<String, Void, Void> {
         ProgressDialog progressDialog = new ProgressDialog(CitiesListActivity.this);
+//        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+//            progressBar.setVisibility(ProgressBar.VISIBLE);
             progressDialog.setMessage(getString(R.string.textResourceLoading));
             progressDialog.setIndeterminate(false);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -170,6 +188,7 @@ public class CitiesListActivity extends AppCompatActivity implements CitiesInfoA
         protected void onPostExecute(Void aVoid) {
             final CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
             getData(citiesInfoEngine);
+//            progressBar.setVisibility(ProgressBar.INVISIBLE);
             progressDialog.dismiss();
 
         }

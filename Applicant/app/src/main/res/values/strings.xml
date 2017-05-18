@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Applicant</string>
+
     <string name="textViewChooseUniversityUniversityActivity">Please, choose university</string>
     <string name="headTextAboutUniversityActivity">Information about University</string>
     <string name="SearchTopLevelActivity">Search</string>
@@ -20,4 +21,22 @@
     <string name="textMsgIsEmpty">" is empty."</string>
     <string name="textChooseYouUniversity">Please, choose university</string>
     <string name="connection_error">Connection error</string>
+
+              <!--Material Drawer Text-->
+    <string name="action_settings">Settings</string>
+    <string name="drawer_item_favorite">Favorite</string>
+    <string name="drawer_item_free_play">Free Play</string>
+    <string name="drawer_item_custom">Custom</string>
+    <string name="drawer_item_settings">Settings</string>
+    <string name="drawer_item_help">Help</string>
+    <string name="drawer_item_open_source">Open Source</string>
+    <string name="drawer_item_contact">Contact</string>
+    <string name="share">Share</string>
+    <string name="writeToUs">Write to us</string>
+    <string name="estimate">Estimate</string>
+    <string name="aboutProject">About project</string>
+    <string name="others">Others</string>
+    <string name="recommendations">Recommendations</string>
 </resources>
+
+

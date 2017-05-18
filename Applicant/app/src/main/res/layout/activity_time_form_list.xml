@@ -8,6 +8,17 @@
     android:orientation="vertical"
     tools:context=".activities.TimeFormListActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        app:titleTextColor="@color/md_white_1000"
+        android:elevation="4dp"
+        android:minHeight="?attr/actionBarSize"
+        android:paddingTop="@dimen/tool_bar_top_padding"
+        android:transitionName="actionBar" />
+
     <TextView
         style="@style/headTextViewStyle"
         android:layout_width="match_parent"

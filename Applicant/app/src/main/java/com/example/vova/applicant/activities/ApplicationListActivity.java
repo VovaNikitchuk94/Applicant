@@ -29,7 +29,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class ApplicationListActivity extends AppCompatActivity implements ApplicationAdapter.OnClickApplicationItem{
+public class ApplicationListActivity extends BaseActivity implements ApplicationAdapter.OnClickApplicationItem{
 
     public static final String INTENT_KEY_APPLICANT_ACTIVITY = "INTENT_KEY_APPLICANT_ACTIVITY";
 
@@ -44,6 +44,8 @@ public class ApplicationListActivity extends AppCompatActivity implements Applic
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_applcation_list);
+
+        drawerAndToolbar();
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -78,6 +80,11 @@ public class ApplicationListActivity extends AppCompatActivity implements Applic
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
         setData();
+    }
+
+    @Override
+    public void drawerAndToolbar() {
+        super.drawerAndToolbar();
     }
 
     private void setData() {

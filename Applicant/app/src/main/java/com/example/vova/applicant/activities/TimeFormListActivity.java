@@ -29,7 +29,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class TimeFormListActivity extends AppCompatActivity implements
+public class TimeFormListActivity extends BaseActivity implements
         TimeFormAdapter.OnClickTimeFormItem {
 
     private DetailUniverInfo mDetailUniverInfo;
@@ -52,6 +52,8 @@ public class TimeFormListActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_time_form_list);
 
         Log.d("OnCreate", "UniversityPageActivity -> OnCreate");
+
+        drawerAndToolbar();
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -91,6 +93,11 @@ public class TimeFormListActivity extends AppCompatActivity implements
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
         setData();
+    }
+
+    @Override
+    public void drawerAndToolbar() {
+        super.drawerAndToolbar();
     }
 
     private void setData() {

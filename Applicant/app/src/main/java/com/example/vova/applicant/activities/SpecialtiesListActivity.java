@@ -30,7 +30,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class SpecialtiesListActivity extends AppCompatActivity implements
+public class SpecialtiesListActivity extends BaseActivity implements
         SpecialitiesAdapter.OnClickSpecialityItem {
 
     // TODO rename all fields
@@ -51,6 +51,8 @@ public class SpecialtiesListActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_speciality_list);
 
         Log.d("My", "SpecialtiesListActivity -> OnCreate");
+
+        drawerAndToolbar();
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -89,6 +91,11 @@ public class SpecialtiesListActivity extends AppCompatActivity implements
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
         setData();
+    }
+
+    @Override
+    public void drawerAndToolbar() {
+        super.drawerAndToolbar();
     }
 
     private void setData() {
