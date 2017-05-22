@@ -43,7 +43,7 @@ public class UniversitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             @Override
             public void onClick(View view) {
                 if (mOnClickUniversityItem != null){
-                    mOnClickUniversityItem.onClickUniversityItem(universityInfo);
+                    mOnClickUniversityItem.onClickCategoryUniversItem(universityInfo);
                 }
             }
         });
@@ -69,6 +69,6 @@ public class UniversitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public interface OnClickUniversityItem{
-        void onClickUniversityItem(UniversityInfo universityInfo);
+        void onClickCategoryUniversItem(UniversityInfo universityInfo);
     }
 }

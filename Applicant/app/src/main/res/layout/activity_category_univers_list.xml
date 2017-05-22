@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context="com.example.vova.applicant.activities.UniversitiesListActivity">
+    tools:context="com.example.vova.applicant.activities.CategoryUniversListActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -16,24 +16,23 @@
         app:titleTextColor="@color/md_white_1000"
         android:elevation="4dp"
         android:minHeight="?attr/actionBarSize"
-        android:paddingTop="@dimen/tool_bar_top_padding"
         android:transitionName="actionBar" />
 
     <TextView
-        android:id="@+id/textViewChooseUniversityDetailUniversityActivity"
+        android:id="@+id/textViewChooseUniverDetailCategoryUniversActivity"
         style="@style/headTextViewStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/textViewChooseUniversityUniversityActivity"/>
+        android:text="@string/text_choose_category"/>
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/activity_university_swipe_refresh_layout"
+        android:id="@+id/activity_category_univers_swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <android.support.v7.widget.RecyclerView
 
-            android:id="@+id/recyclerViewUniversitiesListActivity"
+            android:id="@+id/recyclerViewCategoryUniversListActivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 

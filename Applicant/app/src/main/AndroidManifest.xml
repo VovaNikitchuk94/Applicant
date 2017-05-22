@@ -18,7 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activities.UniversitiesListActivity"/>
+        <activity android:name=".activities.CategoryUniversListActivity"/>
         <activity android:name=".activities.AboutUniversityActivity"/>
         <activity android:name=".activities.CitiesListActivity"/>
         <activity android:name=".activities.SpecialtiesListActivity"/>
@@ -26,6 +26,7 @@
         <activity android:name=".activities.DetailUniversListActivity"/>
         <activity android:name=".activities.TimeFormListActivity"/>
         <activity android:name=".activities.DetailApplicantPagerActivity"/>
+        <activity android:name=".activities.UniversitiesListActivity"/>
     </application>
 
 </manifest>

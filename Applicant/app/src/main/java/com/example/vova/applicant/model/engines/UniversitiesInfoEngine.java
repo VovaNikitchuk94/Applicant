@@ -25,6 +25,23 @@ public class UniversitiesInfoEngine extends BaseEngine {
         return universitiesInfoDBWrapper.getAllUniversitiesById(nId);
     }
 
+    public ArrayList<UniversityInfo> getAllUniversitiesByDegree(long nId, String category) {
+        UniversitiesInfoDBWrapper universitiesInfoDBWrapper = new UniversitiesInfoDBWrapper(getContext());
+        return universitiesInfoDBWrapper.getAllUniversitiesByDegree(nId, category);
+    }
+
+//    public ArrayList<UniversityInfo> getAllUniversByCategory(long nId, String category) {
+//        UniversitiesInfoDBWrapper universitiesInfoDBWrapper = new UniversitiesInfoDBWrapper(getContext());
+//        ArrayList<UniversityInfo> infos = universitiesInfoDBWrapper.getAllUniversitiesById(nId);
+//        infos.retainAll(universitiesInfoDBWrapper.getAllUniversitiesByDegree(category));
+//        return universitiesInfoDBWrapper.getAllUniversitiesById(nId);
+//    }
+
+    public ArrayList<UniversityInfo> getAllDegree() {
+        UniversitiesInfoDBWrapper universitiesInfoDBWrapper = new UniversitiesInfoDBWrapper(getContext());
+        return universitiesInfoDBWrapper.getAllDegree();
+    }
+
     public void updateUniversity(UniversityInfo universityInfo) {
         UniversitiesInfoDBWrapper universitiesInfoDBWrapper = new UniversitiesInfoDBWrapper(getContext());
         universitiesInfoDBWrapper.updateUniversity(universityInfo);

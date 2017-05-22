@@ -19,6 +19,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         // Handle Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        toolbar.set
         setSupportActionBar(toolbar);
 
         Drawer result = new DrawerBuilder()
@@ -27,13 +28,13 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .withActionBarDrawerToggle(true)
                 .withHeader(R.layout.drawer_header)
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withName(R.string.drawer_item_favorite).withIcon(R.drawable.favorite_icon_24dp),
+                        new PrimaryDrawerItem().withName(R.string.favorite).withIcon(R.drawable.favorite_icon_24dp),
                         new PrimaryDrawerItem().withName(R.string.recommendations).withIcon(R.drawable.ic_priority_high_black_24dp),
 //                        new PrimaryDrawerItem().withName(R.string.drawer_item_free_play).withIcon(FontAwesome.Icon.faw_gamepad),
 //                        new PrimaryDrawerItem().withName(R.string.drawer_item_custom).withIcon(FontAwesome.Icon.faw_eye).withBadge("6").withIdentifier(2),
-                        new SectionDrawerItem().withName(R.string.drawer_item_settings),
-                        new SecondaryDrawerItem().withName(R.string.drawer_item_settings).withIcon(R.drawable.ic_settings_black_24dp),
-                        new SecondaryDrawerItem().withName(R.string.drawer_item_help).withIcon(R.drawable.ic_help_outline_black_24dp),
+                        new SectionDrawerItem().withName(R.string.settings),
+                        new SecondaryDrawerItem().withName(R.string.settings).withIcon(R.drawable.ic_settings_black_24dp),
+                        new SecondaryDrawerItem().withName(R.string.help).withIcon(R.drawable.ic_help_outline_black_24dp),
 //                        new SecondaryDrawerItem().withName(R.string.drawer_item_open_source).withIcon(FontAwesome.Icon.faw_question),
                         new SectionDrawerItem().withName(R.string.others),
                         new SecondaryDrawerItem().withName(R.string.share).withIcon(R.drawable.ic_share_black_24dp),

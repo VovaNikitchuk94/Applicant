@@ -10,11 +10,16 @@ import com.example.vova.applicant.toolsAndConstans.DBConstans.UniversityTable;
 public class UniversityInfo extends BaseEntity implements Parcelable {
 
     private long mLongCityId = -1;
+    private String mStrCategoryUniversName;
+    private String mStrCategoryUniversLink;
     private String mStrUniversityName;
     private String mStrUniversityLink;
 
-    public UniversityInfo(Long cityId, String strUniversityName, String strUniversityLink) {
-        mLongCityId = cityId;
+    public UniversityInfo(long longCityId, String strCategoryUniversName, String strCategoryUniversLink,
+                          String strUniversityName, String strUniversityLink) {
+        mLongCityId = longCityId;
+        mStrCategoryUniversName = strCategoryUniversName;
+        mStrCategoryUniversLink = strCategoryUniversLink;
         mStrUniversityName = strUniversityName;
         mStrUniversityLink = strUniversityLink;
     }
@@ -22,6 +27,8 @@ public class UniversityInfo extends BaseEntity implements Parcelable {
     public UniversityInfo(Cursor cursor) {
         setId(cursor.getLong(cursor.getColumnIndex(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_ID)));
         mLongCityId = cursor.getLong(cursor.getColumnIndex(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_CITIES_ID));
+        mStrCategoryUniversName = cursor.getString(cursor.getColumnIndex(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_CATEGORY_NAME));
+        mStrCategoryUniversLink = cursor.getString(cursor.getColumnIndex(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_CATEGORY_LINK));
         mStrUniversityName = cursor.getString(cursor.getColumnIndex(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_NAME));
         mStrUniversityLink = cursor.getString(cursor.getColumnIndex(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_LINK));
     }
@@ -29,6 +36,8 @@ public class UniversityInfo extends BaseEntity implements Parcelable {
     private UniversityInfo(Parcel parcel) {
         setId(parcel.readLong());
         mLongCityId = parcel.readLong();
+        mStrCategoryUniversName = parcel.readString();
+        mStrCategoryUniversLink = parcel.readString();
         mStrUniversityName = parcel.readString();
         mStrUniversityLink = parcel.readString();
     }
@@ -57,10 +66,28 @@ public class UniversityInfo extends BaseEntity implements Parcelable {
         mLongCityId = longCityId;
     }
 
+    public String getStrCategoryUniversName() {
+        return mStrCategoryUniversName;
+    }
+
+    public void setStrCategoryUniversName(String strCategoryUniversName) {
+        mStrCategoryUniversName = strCategoryUniversName;
+    }
+
+    public String getStrCategoryUniversLink() {
+        return mStrCategoryUniversLink;
+    }
+
+    public void setStrCategoryUniversLink(String strCategoryUniversLink) {
+        mStrCategoryUniversLink = strCategoryUniversLink;
+    }
+
     @Override
     public ContentValues getContentValues() {
         ContentValues values = new ContentValues();
         values.put(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_CITIES_ID, getLongCityId());
+        values.put(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_CATEGORY_NAME, getStrCategoryUniversName());
+        values.put(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_CATEGORY_LINK, getStrCategoryUniversLink());
         values.put(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_NAME, getStrUniversityName());
         values.put(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_LINK, getStrUniversityLink());
         return values;
@@ -75,6 +102,8 @@ public class UniversityInfo extends BaseEntity implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(getId());
         dest.writeLong(mLongCityId);
+        dest.writeString(mStrCategoryUniversName);
+        dest.writeString(mStrCategoryUniversLink);
         dest.writeString(mStrUniversityName);
         dest.writeString(mStrUniversityLink);
     }

@@ -118,12 +118,13 @@ public class SpecialtiesListActivity extends BaseActivity implements
 
     @Override
     public void onClickSpecialityItem(SpecialtiesInfo specialtiesInfo) {
-        if (specialtiesInfo.getStrApplications().contains("0")){
-            Toast.makeText(this, "Data is empty", Toast.LENGTH_SHORT).show();
-        } else {
+        Log.d("My", "specialtiesInfo.getStrLink().isEmpty()" + specialtiesInfo.getStrLink().isEmpty());
+        if (!specialtiesInfo.getStrLink().isEmpty()) {
             Intent intent = new Intent(SpecialtiesListActivity.this, ApplicationListActivity.class);
             intent.putExtra(ApplicationListActivity.INTENT_KEY_APPLICANT_ACTIVITY, specialtiesInfo);
             startActivity(intent);
+        } else {
+            Toast.makeText(this, "Data is empty", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -157,9 +158,9 @@ public class SpecialtiesListActivity extends BaseActivity implements
             Document document;
             String specialty;
             String applications;
-            String accepted = "";
+            String accepted;
             String amount;
-            String newLink = null;
+            String newLink;
 
             String strCategory = mHtml.substring(mHtml.length() - 5, mHtml.length());
 

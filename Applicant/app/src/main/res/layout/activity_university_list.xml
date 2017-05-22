@@ -1,43 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".activities.CitiesListActivity">
+    tools:context="com.example.vova.applicant.activities.CategoryUniversListActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
+        app:titleTextColor="@color/md_white_1000"
         android:elevation="4dp"
         android:minHeight="?attr/actionBarSize"
-        android:transitionName="actionBar"
-        app:titleTextColor="@color/md_white_1000"/>
-
-    <!--<ProgressBar-->
-        <!--android:id="@+id/progressBar"-->
-        <!--style="?android:attr/progressBarStyleSmall"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="center_horizontal|center_vertical"/>-->
+        android:transitionName="actionBar" />
 
     <TextView
-        android:id="@+id/textViewСhooseCityCitiesActivity"
+        android:id="@+id/textViewChooseUniversityDetailUniversityActivity"
         style="@style/headTextViewStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="@string/textViewChooseUniversityUniversityActivity"/>
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/activity_cities_swipe_refresh_layout"
+        android:id="@+id/activity_university_swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerViewCitiesListActivity"
+
+            android:id="@+id/recyclerViewUniversitiesListActivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 

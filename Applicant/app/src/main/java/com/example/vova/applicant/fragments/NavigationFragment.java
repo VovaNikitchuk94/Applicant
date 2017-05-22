@@ -1,4 +1,4 @@
-package com.example.vova.applicant.fragments;
+/*package com.example.vova.applicant.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,3 +19,4 @@ public class NavigationFragment extends Fragment {
         return rootView;
     }
 }
+*/

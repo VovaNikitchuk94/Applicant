@@ -20,4 +20,16 @@
     <string name="textMsgIsEmpty">" не має даних."</string>
     <string name="error">Полимлка</string>
     <string name="textChooseYouUniversity">Будь-ласка, виберіть ВНЗ</string>
+    <string name="writeToUs">Написати нам</string>
+    <string name="others">Інше</string>
+    <string name="recommendations">Рекомендацї</string>
+    <string name="share">Поділитись</string>
+    <string name="aboutProject">Про проект</string>
+    <string name="action_settings">Налаштування</string>
+    <string name="connection_error">Помилка підключення</string>
+    <string name="drawer_item_contact">Контакти</string>
+    <string name="estimate">Оцінити</string>
+    <string name="help">Допомога</string>
+    <string name="settings">Налаштування</string>
+    <string name="favorite">Улюблене</string>
 </resources>

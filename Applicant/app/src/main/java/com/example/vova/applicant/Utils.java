@@ -37,7 +37,7 @@ public final class Utils {
      * Tag for the log messages
      */
     public static final String My = Utils.class.getSimpleName();
-
+    private static final int INT_RESPONSE_CODE_OK = 200;
 
     public static boolean connectToData(String requestUrl) {
         // Create URL object
@@ -89,7 +89,7 @@ public final class Utils {
 
             // If the request was successful (response code 200),
             // then read the input stream and parse the response.
-            if (urlConnection.getResponseCode() == 200) {
+            if (urlConnection.getResponseCode() == INT_RESPONSE_CODE_OK) {
                 inputStream = urlConnection.getInputStream();
                 linkResponse = readFromStream(inputStream);
             } else {

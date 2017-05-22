@@ -16,12 +16,25 @@ public class DBConstans {
         }
     }
 
+    public static final class CategoryUniversTable {
+        public static final String TABLE_NAME = "CategoryUniversTable";
+
+        public static final class Cols {
+            public static final String CATEGORY_UNIVERS_INFO_FIELD_ID = "_id";
+            public static final String CATEGORY_UNIVERS_INFO_FIELD_CITIES_ID = "_city_id";
+            public static final String CATEGORY_UNIVERS_INFO_FIELD_NAME = "_name";
+            public static final String CATEGORY_UNIVERS_INFO_FIELD_LINK = "_link";
+        }
+    }
+
     public static final class UniversityTable {
         public static final String TABLE_NAME = "UniversityInfo";
 
         public static final class Cols {
             public static final String UNIVERSITY_INFO_FIELD_ID = "_id";
             public static final String UNIVERSITY_INFO_FIELD_CITIES_ID = "_city_id";
+            public static final String UNIVERSITY_INFO_FIELD_CATEGORY_NAME = "_category_name";
+            public static final String UNIVERSITY_INFO_FIELD_CATEGORY_LINK = "_category_link";
             public static final String UNIVERSITY_INFO_FIELD_NAME = "_name";
             public static final String UNIVERSITY_INFO_FIELD_LINK = "_link";
         }
