@@ -154,7 +154,7 @@ public class TimeFormListActivity extends BaseActivity implements
                 document = Jsoup.connect(html).get();
                 Element elementById = document.getElementById("okrArea");
                 Elements elementsSelectId = elementById.select("ul#myTab");
-                //TODO доделать этот кошмар/ правильно обработать формы обучения
+                //TODO доделать этот кошмар правильно обработать формы обучения
                 Elements elements;
                 String[] findConstant = mDetailUniverInfo.getStrDetailLink().split("#");
                 String s = findConstant[1].substring(0 , 3);

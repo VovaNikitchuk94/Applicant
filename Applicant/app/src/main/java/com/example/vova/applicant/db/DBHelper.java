@@ -9,6 +9,8 @@ import com.example.vova.applicant.toolsAndConstans.DBConstans.AboutUniversityTab
 import com.example.vova.applicant.toolsAndConstans.DBConstans.ApplicationTable;
 import com.example.vova.applicant.toolsAndConstans.DBConstans.CategoryUniversTable;
 import com.example.vova.applicant.toolsAndConstans.DBConstans.CitiesTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstans.ImportantInfoTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstans.LegendInfoTable;
 import com.example.vova.applicant.toolsAndConstans.DBConstans.SpecialitiesTable;
 import com.example.vova.applicant.toolsAndConstans.DBConstans.TimeFormTable;
 import com.example.vova.applicant.toolsAndConstans.DBConstans.UniversityDetailTable;
@@ -77,10 +79,23 @@ public class DBHelper extends SQLiteOpenHelper {
                 + ApplicationTable.Cols.APPLICATION_INFO_FIELD_UNIVERSITY + " TEXT NOT NULL, "
                 + ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY + " TEXT NOT NULL, "
                 + ApplicationTable.Cols.APPLICATION_FIELD_INFO + " TEXT, "
-                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_NUMBER + " INTEGER NOT NULL, "
+                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_NUMBER + " INTEGER, "
                 + ApplicationTable.Cols.APPLICATION_INFO_FIELD_NAME + " TEXT NOT NULL, "
                 + ApplicationTable.Cols.APPLICATION_INFO_FIELD_TOTAL_SCORE + " TEXT, "
-                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_LINK + " TEXT);");
+                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_LINK + " TEXT, "
+                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_BACKGROUND + " TEXT);");
+
+        sqLiteDatabase.execSQL("CREATE TABLE " + ImportantInfoTable.TABLE_NAME
+                + " (" + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_NAME+ " TEXT NOT NULL, "
+                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_DETAIL + " TEXT NOT NULL);");
+
+        sqLiteDatabase.execSQL("CREATE TABLE " + LegendInfoTable.TABLE_NAME
+                + " (" + LegendInfoTable.Cols.LEGEND_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + LegendInfoTable.Cols.LEGEND_INFO_FIELD_YEAR_ID+ " INTEGER NOT NULL, "
+                + LegendInfoTable.Cols.LEGEND_INFO_FIELD_NAME+ " TEXT, "
+                + LegendInfoTable.Cols.LEGEND_INFO_FIELD_DETAIL + " TEXT, "
+                + LegendInfoTable.Cols.LEGEND_INFO_FIELD_BACKGROUND + " TEXT);");
     }
 
     @Override

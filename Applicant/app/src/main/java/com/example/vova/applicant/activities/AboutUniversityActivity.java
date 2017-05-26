@@ -1,13 +1,14 @@
 package com.example.vova.applicant.activities;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -126,23 +127,79 @@ public class AboutUniversityActivity extends BaseActivity implements
                     dataLink = "http://" + dataLink;
                 }
                 intent = new Intent(Intent.ACTION_VIEW, Uri.parse(dataLink));
+                startActivity(intent);
                 break;
             case "Адреса:":
                 Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + dataLink);
                 intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                startActivity(intent);
                 //open for google Maps
 //                        intent.setPackage("com.google.android.apps.maps");
                 break;
             case "Телефони:":
-                //TODO обработка нескольких номером и правильность написания номера
-                intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + dataLink));
+                //TODO правильность написания номера и если у номера нет кода города
+                String[] phoneNumbers = new String[0];
+                if ((dataLink.contains(",") || dataLink.contains(";"))) {
+//                    if (dataLink.contains(",") && dataLink.contains(";")) {
+//                        phoneNumbers = dataLink.split(",");
+//                        for (int i = 0; i < phoneNumbers.length; i++) {
+//                            String[] newArr = phoneNumbers[i].split(";");
+//                            Log.d("My", "newArr" + newArr.toString());
+//                        }
+//                        phoneNumbers = dataLink.split(";");
+                    if (dataLink.contains(",")) {
+                        phoneNumbers = dataLink.split(",");
+                    } else if (dataLink.contains(";")) {
+                        phoneNumbers = dataLink.split(";");
+                    }
+
+                    if (phoneNumbers[0].length() > phoneNumbers[1].length()) {
+                        if (phoneNumbers[0].startsWith("+")) {
+                            String countryCode = (phoneNumbers[0]).substring(0, 8);
+                            for (int i = 1; i < phoneNumbers.length; i++) {
+                                phoneNumbers[i] = countryCode + phoneNumbers[i];
+                            }
+                            Log.d("My", "case \"Телефони:\": cityCode->>>>>" + countryCode);
+                        } else {
+                            String cityCode;
+                            if (phoneNumbers[0].startsWith("(")) {
+                                cityCode = (phoneNumbers[0]).substring(0, 5);
+                                Log.d("My", "case \"Телефони:\": cityCode->>>>>" + cityCode);
+                            } else {
+                                cityCode = (phoneNumbers[0]).substring(0, 3);
+                            }
+
+                            for (int i = 1; i < phoneNumbers.length; i++) {
+                                phoneNumbers[i] = cityCode + phoneNumbers[i];
+                            }
+                        }
+                    }
+                    final String[] finalPhoneNumber = phoneNumbers;
+                    AlertDialog.Builder builder = new AlertDialog.Builder(AboutUniversityActivity.this);
+                    builder.setTitle(myPosition.getStrAboutUniversType())
+                            .setItems(phoneNumbers, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + finalPhoneNumber[which]));
+                                    startActivity(intent);
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                } else {
+                    intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + dataLink));
+                    startActivity(intent);
+                }
+
+                Log.d("My", "phoneNumbers " + phoneNumbers.length);
+//                intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + dataLink));
                 break;
             case "E-mail:":
                 //TODO обработать несколько имейлов
                 intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + dataLink));
+                startActivity(intent);
                 break;
         }
-        startActivity(intent);
     }
 
     private class ParseAboutUniversityList extends AsyncTask<String, Void, String> {
@@ -207,7 +264,6 @@ public class AboutUniversityActivity extends BaseActivity implements
                         }
                     }
                 }
-
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -18,10 +18,12 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
     private String mStrApplicantName;
     private String mStrApplicantTotalScores;
     private String mStrApplicantLink;
+    private String mStrBackground;
 
     public ApplicationsInfo(long specialityId, String strUniversity, String strSpeciality,
                             String strApplicantInfo, String strApplicantNumber,
-                            String strApplicantName, String strApplicantTotalScores, String link) {
+                            String strApplicantName, String strApplicantTotalScores, String link,
+                            String strBackground) {
         mLongSpecialityId = specialityId;
         mStrUniversity = strUniversity;
         mStrSpeciality = strSpeciality;
@@ -30,6 +32,7 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
         mStrApplicantName = strApplicantName;
         mStrApplicantTotalScores = strApplicantTotalScores;
         mStrApplicantLink = link;
+        mStrBackground = strBackground;
     }
 
     public ApplicationsInfo(Cursor cursor) {
@@ -42,6 +45,7 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
         mStrApplicantName = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_NAME));
         mStrApplicantTotalScores = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_TOTAL_SCORE));
         mStrApplicantLink = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_LINK));
+        mStrBackground = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_BACKGROUND));
     }
 
     public ApplicationsInfo(Parcel parcel) {
@@ -54,6 +58,7 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
         mStrApplicantName = parcel.readString();
         mStrApplicantTotalScores = parcel.readString();
         mStrApplicantLink = parcel.readString();
+        mStrBackground = parcel.readString();
     }
 
     public String getStrApplicantNumber() {
@@ -104,6 +109,14 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
         mStrApplicantInfo = strApplicantInfo;
     }
 
+    public String getStrBackground() {
+        return mStrBackground;
+    }
+
+    public void setStrBackground(String strBackground) {
+        mStrBackground = strBackground;
+    }
+
     @Override
     public ContentValues getContentValues() {
         ContentValues values = new ContentValues();
@@ -115,6 +128,7 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
         values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_NAME, getStrApplicantName());
         values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_TOTAL_SCORE, getStrApplicantTotalScores());
         values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_LINK, getStrApplicantLink());
+        values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_BACKGROUND, getStrBackground());
         return values;
     }
 
@@ -134,6 +148,7 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
         dest.writeString(mStrApplicantName);
         dest.writeString(mStrApplicantTotalScores);
         dest.writeString(mStrApplicantLink);
+        dest.writeString(mStrBackground);
     }
 
     public static final Parcelable.Creator<ApplicationsInfo> CREATOR

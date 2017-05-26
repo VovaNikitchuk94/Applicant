@@ -36,6 +36,7 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
+    private ProgressBar mProgressBar;
 
     long mLongYearId = 0L;
     private String yearsCodeLink = "";
@@ -54,6 +55,8 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
                 yearsCodeLink = bundle.getString(KEY_YEARS_CITIES_LIST_ACTIVITY);
             }
         }
+
+        mProgressBar = (ProgressBar)findViewById(R.id.progress_bar);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_cities_swipe_refresh_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
@@ -104,7 +107,6 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
             parseData();
             Log.d("My","setData -> parseData -> is start");
         } else {
-
             getData(citiesInfoEngine);
         }
     }
@@ -114,6 +116,8 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
         CitiesInfoAdapter citiesInfoAdapter = new CitiesInfoAdapter(citiesInfos);
         citiesInfoAdapter.setOnClickCityInfoItem(CitiesListActivity.this);
         mRecyclerView.setAdapter(citiesInfoAdapter);
+        mRecyclerView.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -209,6 +213,7 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        mProgressBar.setVisibility(View.VISIBLE);
                         final CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
                         getData(citiesInfoEngine);
                     }
@@ -219,8 +224,12 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
                 Document document;
                 try {
                     document = Jsoup.connect(yearsCodeLink).get();
+
                     Element elementRegion = document.getElementById("region");
                     Elements links = elementRegion.getElementsByTag("a");
+
+                    Elements elementsHeadData = document.getElementsByClass("title-page");
+
                     if (citiesInfoEngine.getAllCitiesById(mLongYearId).isEmpty()) {
                         for (Element link : links) {
 
@@ -229,8 +238,14 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
 
                             citiesInfoEngine.addCity(new CitiesInfo(yearsId, citiesName, citiesLink));
 
+                            String strHead = elementsHeadData.select(".title-description").first().text();
+                            String strTime = elementsHeadData.select("small").text();
+
                             Log.d("My", "parse isEmpty -> " + citiesInfoEngine.getCityById(yearsId));
                             Log.d("My", "yearsId -> " + yearsId);
+
+                            Log.d("My", "parse strHead -> " + strHead);
+                            Log.d("My", "strTime -> " + strTime);
                         }
                     } else {
                         for (Element link : links) {
@@ -240,8 +255,14 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
 
                             citiesInfoEngine.updateCity(new CitiesInfo(yearsId, citiesName, citiesLink));
 
+                            String strHead = elementsHeadData.select(".title-description").first().text();
+                            String strTime = elementsHeadData.select("small").text();
+
                             Log.d("My", "parse update -> " + citiesInfoEngine.getCityById(yearsId));
                             Log.d("My", "yearsId -> " + yearsId);
+
+                            Log.d("My", "parse strHead -> " + strHead);
+                            Log.d("My", "strTime -> " + strTime);
                         }
                     }
                 } catch (IOException e) {

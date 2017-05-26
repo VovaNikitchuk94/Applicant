@@ -1,6 +1,6 @@
 package com.example.vova.applicant.adapters;
 
-import android.content.pm.ApplicationInfo;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,9 +39,16 @@ public class ApplicationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ApplicationsInfoViewHolder applicationsInfoViewHolder = (ApplicationsInfoViewHolder) holder;
         final ApplicationsInfo applicationsInfo = mApplicationsInfos.get(position);
+        //set background
+        applicationsInfoViewHolder.rootView.setBackgroundColor(Color.parseColor(applicationsInfo.getStrBackground()));
+//        applicationsInfoViewHolder.numberTextView.setBackgroundColor(Color.parseColor(applicationsInfo.getStrBackground()));
+//        applicationsInfoViewHolder.nameTextView.setBackgroundColor(Color.parseColor(applicationsInfo.getStrBackgroundSecond()));
+//        applicationsInfoViewHolder.totalScoreTextView.setBackgroundColor(Color.parseColor(applicationsInfo.getStrBackground()));
+        //set text
         applicationsInfoViewHolder.numberTextView.setText(applicationsInfo.getStrApplicantNumber());
         applicationsInfoViewHolder.nameTextView.setText(applicationsInfo.getStrApplicantName());
         applicationsInfoViewHolder.totalScoreTextView.setText(applicationsInfo.getStrApplicantTotalScores());
+        //set clickListener
         applicationsInfoViewHolder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

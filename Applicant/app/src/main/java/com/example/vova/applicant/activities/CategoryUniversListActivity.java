@@ -59,6 +59,7 @@ public class CategoryUniversListActivity extends BaseActivity implements
             }
         }
 
+        //TODO Crash when update
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_category_univers_swipe_refresh_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

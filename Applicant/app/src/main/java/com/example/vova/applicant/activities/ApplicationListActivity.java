@@ -2,6 +2,7 @@ package com.example.vova.applicant.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,8 +19,10 @@ import com.example.vova.applicant.Utils;
 import com.example.vova.applicant.adapters.ApplicationAdapter;
 import com.example.vova.applicant.fragments.DetailApplicantFragment;
 import com.example.vova.applicant.model.ApplicationsInfo;
+import com.example.vova.applicant.model.LegendInfo;
 import com.example.vova.applicant.model.SpecialtiesInfo;
 import com.example.vova.applicant.model.engines.ApplicationInfoEngine;
+import com.example.vova.applicant.model.engines.LegendEngine;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -32,6 +35,10 @@ import java.util.ArrayList;
 public class ApplicationListActivity extends BaseActivity implements ApplicationAdapter.OnClickApplicationItem{
 
     public static final String INTENT_KEY_APPLICANT_ACTIVITY = "INTENT_KEY_APPLICANT_ACTIVITY";
+
+    private static final long LEGEND_YEAR_ID_2015 = 2015L;
+    private static final long LEGEND_YEAR_ID_2016 = 2016L;
+    private static final long LEGEND_YEAR_ID_2017 = 2017L;
 
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -115,6 +122,8 @@ public class ApplicationListActivity extends BaseActivity implements Application
         ProgressDialog progDailog = new ProgressDialog(ApplicationListActivity.this);
         ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
 
+        private String color = "#FFFFFF";
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -143,45 +152,146 @@ public class ApplicationListActivity extends BaseActivity implements Application
             String score;
             String someLink;
 
+            String backgroundFirst = "";
+            String backgroundSecond = "";
+
             Document document;
             try {
                 html = mSpecialtiesInfo.getStrLink();
                 document = Jsoup.connect(html).get();
+                Log.d("My", "html -------> " + html);
 
+                //Data of applicants
                 Elements links = document.getElementsByClass("tablesaw tablesaw-stack tablesaw-sortable");
                 Elements elements = links.select("tbody");
                 Elements selectTr = elements.select("tr");
 
+                //Data of University information
                 Elements detailElements = document.getElementsByClass("title-page");
                 university = detailElements.select(".title-description").text();
                 speciality = detailElements.select("p").text();
+
+                //Data of legend
+                Element legendElementById = document.getElementById("legend");
+                Elements selectLegendElements = legendElementById.select("tr");
+                LegendEngine legendEngine = new LegendEngine(getApplication());
+
+                if (legendEngine.getLegendById(LEGEND_YEAR_ID_2015) == null){
+                    parseLegendData(selectLegendElements, legendEngine, LEGEND_YEAR_ID_2015);
+                } else if (legendEngine.getLegendById(LEGEND_YEAR_ID_2016) == null) {
+                    parseLegendData(selectLegendElements, legendEngine, LEGEND_YEAR_ID_2016);
+                }
+
                 if (applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId).isEmpty()){
                     for (Element link : selectTr) {
                         Elements tds = link.select("td");
+
+                        Log.d("My", "color 3->" + color);
+                        getBackgroundApplicant(tds);
+                        Log.d("My", "color 4->" + color);
+//                        String[] colors = getBackgroundApplicant(tds);
+
                         number = tds.get(0).text();
                         name = tds.get(1).text();
                         score = tds.get(3).text();
+
                         someLink = tds.attr("abs:href");
+
                         applicantInfo = link.text();
 
                         applicationInfoEngine.addApplication(new ApplicationsInfo(mLongSpecialityId, university,
-                                speciality, applicantInfo, number, name, score, someLink));
+                                speciality, applicantInfo, number, name, score, someLink, color));
                     }
                 } else {
                     for (Element link : selectTr) {
                         Elements tds = link.select("td");
+
+                        getBackgroundApplicant(tds);
+//                        String[] colors = getBackgroundApplicant(tds);
+
                         number = tds.get(0).text();
                         name = tds.get(1).text();
                         score = tds.get(3).text();
+
                         someLink = tds.attr("abs:href");
                         applicantInfo = link.text();
 
                         applicationInfoEngine.updateApplicant(new ApplicationsInfo(mLongSpecialityId, university,
-                                speciality, applicantInfo, number, name, score, someLink));
+                                speciality, applicantInfo, number, name, score, someLink, color));
                     }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+
+        private void getBackgroundApplicant(Elements tds) {
+
+            String backgroundFirst;
+            String backgroundSecond;
+            Log.d("My", "tds.size() -> " + tds.size());
+            if ((tds.get(0).select("*[style*='background']").size()) > 0) {
+                            Log.d("My", "if ((tds.get(0).select(\"*[style*='background']\") -> " + (true));
+//                            Log.d("My", "if ((tds.get(1).select(\"*[style*='background']\") -> " + (tds.get(1).select("*[style*='background']")));
+
+                 backgroundFirst = tds.get(0).select("*[style*='background']").toString();
+                 backgroundSecond = tds.get(1).select("*[style*='background']").toString();
+
+                backgroundFirst = backgroundFirst.substring(backgroundFirst.indexOf("#"), backgroundFirst.indexOf(">") - 1);
+                backgroundSecond = backgroundSecond.substring(backgroundSecond.indexOf("#"), backgroundSecond.indexOf(">") - 1);
+
+                Log.d("My", "backgroundFirst ->" + backgroundFirst);
+                Log.d("My", "backgroundSecond ->" + backgroundSecond);
+
+                if (!backgroundFirst.equals(backgroundSecond)){
+                    color = "#FFFF99";
+                    Log.d("My", "color 1->" + color);
+                } else {
+                    color = backgroundFirst;
+                    Log.d("My", "color 2->" + color);
+                }
+            } else {
+                color = "#FFFFFF";
+            }
+        }
+
+        private void parseLegendData(Elements selectLegendElements, LegendEngine legendEngine, long yearId) {
+            for (Element legend: selectLegendElements){
+                Elements detailLegend = legend.select("td");
+                String legendName = "";
+                String legendDetail = "";
+                String legendBackgrond = "";
+
+//                Log.d("My", "detailLegend.get(0).text() - >" + detailLegend.get(0).text());
+                if ((detailLegend.get(0).select("*[style*='background']").size()) > 0) {
+                    String style = detailLegend.get(0).select("*[style*='background']").toString();
+
+//                    Log.d("My", "style.length ->" + style.length());
+                    if (style.length() > 132) {
+                        String yelowColor = style.substring(style.indexOf("#", 133));
+//                        Log.d("My", "style  yelowColor----- >" + yelowColor);
+//                        Log.d("My", "style  yelowColor----- >" + yelowColor.substring(0, yelowColor.indexOf(";")));
+                        legendBackgrond = yelowColor.substring(0, yelowColor.indexOf(";"));
+
+//                        , style.indexOf(";")
+                    } else {
+//                        Log.d("My", "style  ----- >" + style.substring(style.indexOf("#"), style.indexOf(";")));
+                        legendBackgrond = style.substring(style.indexOf("#"), style.indexOf(";"));
+                    }
+
+                } else {
+                    legendName = detailLegend.get(0).text();
+                }
+
+                if (detailLegend.size() > 1) {
+//                    Log.d("My", "detailLegend.size() > 1 - >" + true);
+//                    Log.d("My", "detailLegend.get(1).text() - >" + detailLegend.get(1).text());
+                     legendDetail = detailLegend.get(1).text();
+                }
+                legendEngine.addLegend(new LegendInfo(yearId, legendName, legendDetail, legendBackgrond));
+//                Log.d("My", "legendEngine.getLegendById(a)" + legendEngine.getLegendById(yearId));
+//                Log.d("My", "legendBackgrond - >" + legendBackgrond);
+
             }
         }
 

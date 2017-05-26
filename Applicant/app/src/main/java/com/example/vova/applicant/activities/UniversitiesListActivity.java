@@ -48,21 +48,21 @@ public class UniversitiesListActivity extends BaseActivity implements
             }
         }
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_university_swipe_refresh_layout);
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mSwipeRefreshLayout.setRefreshing(true);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        getData();
-                    }
-                }, 0);
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-        });
+//        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_university_swipe_refresh_layout);
+//        mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
+//        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                mSwipeRefreshLayout.setRefreshing(true);
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        getData();
+//                    }
+//                }, 0);
+//                mSwipeRefreshLayout.setRefreshing(false);
+//            }
+//        });
 
         TextView textViewHeadText = (TextView) findViewById(R.id.textViewChooseUniversityDetailUniversityActivity);
         textViewHeadText.setText(mCategoryUniversInfo.getStrCategoryUniversName());
