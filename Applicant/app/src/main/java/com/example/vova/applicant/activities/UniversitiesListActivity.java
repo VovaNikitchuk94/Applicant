@@ -2,7 +2,6 @@ package com.example.vova.applicant.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
@@ -28,17 +27,10 @@ public class UniversitiesListActivity extends BaseActivity implements
     private long nLongCityId = -1;
     private String mStringDegree;
 
-    private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_university_list);
-
-        Log.d("My", "UniversitiesListActivity onCreate");
-
-        drawerAndToolbar();
+    protected void iniActivity() {
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -47,22 +39,6 @@ public class UniversitiesListActivity extends BaseActivity implements
                 mCategoryUniversInfo = (CategoryUniversInfo) bundle.get(KEY_DETAIL_UNIVERSITY_LINK);
             }
         }
-
-//        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_university_swipe_refresh_layout);
-//        mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
-//        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                mSwipeRefreshLayout.setRefreshing(true);
-//                new Handler().postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        getData();
-//                    }
-//                }, 0);
-//                mSwipeRefreshLayout.setRefreshing(false);
-//            }
-//        });
 
         TextView textViewHeadText = (TextView) findViewById(R.id.textViewChooseUniversityDetailUniversityActivity);
         textViewHeadText.setText(mCategoryUniversInfo.getStrCategoryUniversName());
@@ -79,8 +55,13 @@ public class UniversitiesListActivity extends BaseActivity implements
     }
 
     @Override
-    public void drawerAndToolbar() {
-        super.drawerAndToolbar();
+    protected int getLayoutId() {
+        return R.layout.activity_university_list;
+    }
+
+    @Override
+    public void setDrawer() {
+        super.setDrawer();
     }
 
     private void getData() {

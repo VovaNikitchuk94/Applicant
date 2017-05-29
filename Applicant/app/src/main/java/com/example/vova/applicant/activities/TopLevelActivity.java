@@ -3,27 +3,17 @@ package com.example.vova.applicant.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.vova.applicant.R;
-import com.mikepenz.fontawesome_typeface_library.FontAwesome;
-import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.model.DividerDrawerItem;
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
-import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 
 public class TopLevelActivity extends BaseActivity implements View.OnClickListener {
 
     public static final String HTTP_WWW_VSTUP_INFO_2016 = "http://www.vstup.info/2016/";
     public static final String HTTP_WWW_VSTUP_INFO_2015 = "http://www.vstup.info/2015/";
-
-    private EditText mSearchEditText;
 
     private Button mButton2017Year;
     private Button mButton2016Year;
@@ -32,24 +22,21 @@ public class TopLevelActivity extends BaseActivity implements View.OnClickListen
     public String yearsCodeLink = "";
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_top_level);
-
-        drawerAndToolbar();
-
+    protected void iniActivity() {
         initializeView();
     }
 
     @Override
-    public void drawerAndToolbar() {
-        super.drawerAndToolbar();
+    protected int getLayoutId() {
+        return R.layout.activity_top_level;
+    }
+
+    @Override
+    public void setDrawer() {
+        super.setDrawer();
     }
 
     private void initializeView() {
-        mSearchEditText = (EditText) findViewById(R.id.editTextSearchTopLevelActivity);
-        mSearchEditText.setEnabled(false);
-
         mButton2017Year = (Button) findViewById(R.id.button2017YearTopLevelActivity);
         mButton2016Year = (Button) findViewById(R.id.button2016YearTopLevelActivity);
         mButton2015Year = (Button) findViewById(R.id.button2015YearTopLevelActivity);

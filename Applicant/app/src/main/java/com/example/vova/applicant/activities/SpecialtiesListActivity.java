@@ -7,11 +7,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,20 +40,15 @@ public class SpecialtiesListActivity extends BaseActivity implements
 
     private TimeFormInfo mTimeFormInfo;
 
-    private long mLongTimeFormId = 0L;
-    private long mLongDegree = 0L;
+    private long mLongTimeFormId = 0;
+    private long mLongDegree = 0;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
+    private ProgressBar mProgressBar;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_speciality_list);
-
-        Log.d("My", "SpecialtiesListActivity -> OnCreate");
-
-        drawerAndToolbar();
+    protected void iniActivity() {
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -63,18 +59,18 @@ public class SpecialtiesListActivity extends BaseActivity implements
             }
         }
 
+        mProgressBar = (ProgressBar)findViewById(R.id.progress_bar);
+
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_speciality_swipe_refresh_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(true);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        new ParseSpecialitiesList().execute();
-                    }
-                }, 0);
+                mRecyclerView.setVisibility(View.GONE);
+                parseData();
+                Log.d("My","SwipeRefreshLayout -> parseData -> is start");
+                mRecyclerView.setVisibility(View.VISIBLE);
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -94,8 +90,8 @@ public class SpecialtiesListActivity extends BaseActivity implements
     }
 
     @Override
-    public void drawerAndToolbar() {
-        super.drawerAndToolbar();
+    protected int getLayoutId() {
+        return R.layout.activity_speciality_list;
     }
 
     private void setData() {
@@ -103,7 +99,7 @@ public class SpecialtiesListActivity extends BaseActivity implements
         mLongDegree = Long.parseLong(mTimeFormInfo.getStrTimeFormLink().substring(mTimeFormInfo.getStrTimeFormLink().length() - 1));
         SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplication());
         if (specialityInfoEngine.getAllSpecialitiesById(mLongTimeFormId).isEmpty()) {
-            new ParseSpecialitiesList().execute();
+            parseData();
         } else {
             getData(specialityInfoEngine);
         }
@@ -114,6 +110,8 @@ public class SpecialtiesListActivity extends BaseActivity implements
         SpecialitiesAdapter specialitiesAdapter = new SpecialitiesAdapter(specialtiesInfos);
         specialitiesAdapter.setOnClickSpecialityItem(SpecialtiesListActivity.this);
         mRecyclerView.setAdapter(specialitiesAdapter);
+        mRecyclerView.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -128,115 +126,107 @@ public class SpecialtiesListActivity extends BaseActivity implements
         }
     }
 
-    private class ParseSpecialitiesList extends AsyncTask<String, Void, String> {
-        ProgressDialog progDailog = new ProgressDialog(SpecialtiesListActivity.this);
+    private void parseData() {
 
-        SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplication());
+        new Thread(new Runnable() {
 
-        String mHtml = mTimeFormInfo.getStrTimeFormLink();
+            SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplication());
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            Log.d("My", "SpecialtiesListActivity -> ParseSpecialistList - > onPre");
-            progDailog.setMessage(getString(R.string.textResourceLoading));
-            progDailog.setIndeterminate(false);
-            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progDailog.setCancelable(true);
-            progDailog.show();
-        }
+            String mHtml = mTimeFormInfo.getStrTimeFormLink();
 
-        @Override
-        protected String doInBackground(String... params) {
-            if (Utils.connectToData(mTimeFormInfo.getStrTimeFormLink()) && mLongTimeFormId != 0) {
-                parse();
-            }
-            return null;
-        }
-
-        private void parse() {
-            Document document;
-            String specialty;
-            String applications;
-            String accepted;
-            String amount;
-            String newLink;
-
-            String strCategory = mHtml.substring(mHtml.length() - 5, mHtml.length());
-
-            try {
-                document = Jsoup.connect(mHtml).get();
-
-                Log.d("My", "SpecialtiesListActivity -> ParseSpecialistList - > documentLink" + document.text());
-                Log.d("My", "SpecialtiesListActivity -> ParseSpecialistList - > mHtml -> " + mHtml);
-
-                Element form = document.getElementById(strCategory);
-                Elements links = form.select("tbody > tr");
-                //TODO fix this shit
-                if (specialityInfoEngine.getAllSpecialitiesById(mLongTimeFormId).isEmpty()) {
-                    for (Element link : links) {
-                        Elements elements = link.getElementsByClass("button button-mini");
-                        Elements tds = link.select("td");
-                        if (isContains2015()) {
-                            specialty = tds.get(0).text();
-                            applications = tds.get(1).text();
-                            amount = "ліцензований обсяг: " + tds.get(2).text();
-                            newLink = elements.attr("abs:href");
-
-                            specialityInfoEngine.addSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
-                                    specialty, applications, amount, newLink));
-
-                            Log.d("My", "newLink -> " + newLink);
-                        } else {
-                            specialty = tds.get(0).text();
-                            applications = tds.get(1).select("span").text();
-                            accepted = tds.get(1).select("nobr").text();
-                            amount = tds.get(2).text();
-                            newLink = elements.attr("abs:href");
-
-                            specialityInfoEngine.addSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
-                                    specialty, applications, accepted, amount, newLink));
-
-                            Log.d("My", "newLink -> " + newLink);
-                        }
-                    }
-                } else {
-                    for (Element link : links) {
-                        Elements elements = link.getElementsByClass("button button-mini");
-                        Elements tds = link.select("td");
-                        if (isContains2015()) {
-                            specialty = tds.get(0).text();
-                            applications = tds.get(1).text();
-                            amount = "ліцензований обсяг: " + tds.get(2).text();
-                            newLink = elements.attr("abs:href");
-
-                            specialityInfoEngine.updateSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
-                                    specialty, applications, amount, newLink));
-                        } else {
-                            specialty = tds.get(0).text();
-                            applications = tds.get(1).select("span").text();
-                            accepted = tds.get(1).select("nobr").text();
-                            amount = tds.get(2).text();
-                            newLink = elements.attr("abs:href");
-
-                            specialityInfoEngine.updateSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
-                                    specialty, applications, accepted, amount, newLink));
-                        }
-                    }
+            @Override
+            public void run() {
+                if (Utils.connectToData(mTimeFormInfo.getStrTimeFormLink()) && mLongTimeFormId != 0) {
+                    parse();
                 }
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-    }
 
-    private boolean isContains2015() {
-        return mHtml.contains("2015");
-    }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mProgressBar.setVisibility(View.VISIBLE);
+                        getData(specialityInfoEngine);
+                    }
+                });
+            }
 
-    @Override
-    protected void onPostExecute(String srt) {
-        getData(specialityInfoEngine);
-        progDailog.dismiss();
+            private void parse() {
+                Document document;
+                String specialty;
+                String applications;
+                String accepted;
+                String amount;
+                String newLink;
+
+                String strCategory = mHtml.substring(mHtml.length() - 5, mHtml.length());
+
+                try {
+                    document = Jsoup.connect(mHtml).get();
+
+                    Log.d("My", "SpecialtiesListActivity -> ParseSpecialistList - > documentLink" + document.text());
+                    Log.d("My", "SpecialtiesListActivity -> ParseSpecialistList - > mHtml -> " + mHtml);
+
+                    Element form = document.getElementById(strCategory);
+                    Elements links = form.select("tbody > tr");
+                    //TODO fix this shit
+                    if (specialityInfoEngine.getAllSpecialitiesById(mLongTimeFormId).isEmpty()) {
+                        for (Element link : links) {
+                            Elements elements = link.getElementsByClass("button button-mini");
+                            Elements tds = link.select("td");
+                            if (isContains2015()) {
+                                specialty = tds.get(0).text();
+                                applications = tds.get(1).text();
+                                amount = "ліцензований обсяг: " + tds.get(2).text();
+                                newLink = elements.attr("abs:href");
+
+                                specialityInfoEngine.addSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
+                                        specialty, applications, amount, newLink));
+
+                                Log.d("My", "newLink -> " + newLink);
+                            } else {
+                                specialty = tds.get(0).text();
+                                applications = tds.get(1).select("span").text();
+                                accepted = tds.get(1).select("nobr").text();
+                                amount = tds.get(2).text();
+                                newLink = elements.attr("abs:href");
+
+                                specialityInfoEngine.addSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
+                                        specialty, applications, accepted, amount, newLink));
+
+                                Log.d("My", "newLink -> " + newLink);
+                            }
+                        }
+                    } else {
+                        for (Element link : links) {
+                            Elements elements = link.getElementsByClass("button button-mini");
+                            Elements tds = link.select("td");
+                            if (isContains2015()) {
+                                specialty = tds.get(0).text();
+                                applications = tds.get(1).text();
+                                amount = "ліцензований обсяг: " + tds.get(2).text();
+                                newLink = elements.attr("abs:href");
+
+                                specialityInfoEngine.updateSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
+                                        specialty, applications, amount, newLink));
+                            } else {
+                                specialty = tds.get(0).text();
+                                applications = tds.get(1).select("span").text();
+                                accepted = tds.get(1).select("nobr").text();
+                                amount = tds.get(2).text();
+                                newLink = elements.attr("abs:href");
+
+                                specialityInfoEngine.updateSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
+                                        specialty, applications, accepted, amount, newLink));
+                            }
+                        }
+                    }
+                } catch(IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            private boolean isContains2015() {
+                return mHtml.contains("2015");
+            }
+        }).start();
     }
-}
 }

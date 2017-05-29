@@ -1,17 +1,14 @@
 package com.example.vova.applicant.activities;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,20 +34,15 @@ public class DetailUniversListActivity extends BaseActivity implements
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
-    private ArrayList<DetailUniverInfo> mDetailUniverInfos = new ArrayList<>();
+    private ProgressBar mProgressBar;
 
+    private ArrayList<DetailUniverInfo> mDetailUniverInfos = new ArrayList<>();
     private UniversityInfo mUniversityInfo;
 
-    private long mLongDetailUNVId = 0L;
+    private long mLongDetailUNVId = 0;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail_univers_list);
-
-        Log.d("My", "DetailUniversListActivity -> OnCreate");
-
-        drawerAndToolbar();
+    protected void iniActivity() {
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -60,18 +52,18 @@ public class DetailUniversListActivity extends BaseActivity implements
             }
         }
 
+        mProgressBar = (ProgressBar)findViewById(R.id.progress_bar);
+
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_detail_university_swipe_refresh_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(true);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        new ParseUniversitiesDetail().execute();
-                    }
-                }, 0);
+                mRecyclerView.setVisibility(View.GONE);
+                parseData();
+                Log.d("My","SwipeRefreshLayout -> parseData -> is start");
+                mRecyclerView.setVisibility(View.VISIBLE);
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -91,15 +83,15 @@ public class DetailUniversListActivity extends BaseActivity implements
     }
 
     @Override
-    public void drawerAndToolbar() {
-        super.drawerAndToolbar();
+    protected int getLayoutId() {
+        return R.layout.activity_detail_univers_list;
     }
 
     private void setData() {
         mLongDetailUNVId = mUniversityInfo.getId();
         DetailUniverInfoEngine detailUniverInfoEngine = new DetailUniverInfoEngine(getApplication());
         if (detailUniverInfoEngine.getAllDetailUniversById(mLongDetailUNVId).isEmpty()) {
-            new ParseUniversitiesDetail().execute();
+            parseData();
         } else {
             getData(detailUniverInfoEngine);
         }
@@ -110,6 +102,8 @@ public class DetailUniversListActivity extends BaseActivity implements
         DetailUniversAdapter detailUniversAdapter = new DetailUniversAdapter(mDetailUniverInfos);
         detailUniversAdapter.setOnClickDetailUniversItem(DetailUniversListActivity.this);
         mRecyclerView.setAdapter(detailUniversAdapter);
+        mRecyclerView.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -131,72 +125,64 @@ public class DetailUniversListActivity extends BaseActivity implements
         }
     }
 
-    private class ParseUniversitiesDetail extends AsyncTask<Void, Void, Void> {
-        ProgressDialog progDailog = new ProgressDialog(DetailUniversListActivity.this);
+    private void parseData() {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progDailog.setMessage(getString(R.string.textResourceLoading));
-            progDailog.setIndeterminate(true);
-            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progDailog.setCancelable(true);
-            progDailog.show();
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                DetailUniverInfoEngine detailUniverInfoEngine = new DetailUniverInfoEngine(getApplication());
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-
-            DetailUniverInfoEngine detailUniverInfoEngine = new DetailUniverInfoEngine(getApplication());
-
-            if (Utils.connectToData(mUniversityInfo.getStrUniversityLink()) && mLongDetailUNVId != 0) {
-                parse(mLongDetailUNVId, detailUniverInfoEngine);
-            }
-            return null;
-        }
-
-        private void parse(long longDetailUNVId, DetailUniverInfoEngine detailUniverInfoEngine) {
-            String html;
-            html = mUniversityInfo.getStrUniversityLink();
-            Log.d("My", "ParseUniversities doInBackground  mHtml ->" + html);
-            Document document;
-            try {
-                document = Jsoup.connect(html).get();
-
-                Elements elementsByClass = document.getElementsByClass("accordion-heading togglize");
-                Elements elementsText = elementsByClass.select("a");
-                if (detailUniverInfoEngine.getAllDetailUniversById(mLongDetailUNVId).isEmpty()) {
-                    for (Element element : elementsText) {
-
-                        String detailUniversityName = element.text();
-                        String detailUniversityLink = element.attr("abs:href");
-
-                        detailUniverInfoEngine.addDetailUniver(new DetailUniverInfo(longDetailUNVId, detailUniversityName,
-                                detailUniversityLink));
-                        Log.d("My", "ParseUniversities doInBackground  addDetailUniver link ->" + element.attr("abs:href"));
-                        Log.d("My", "ParseUniversities doInBackground  addDetailUniver  detailUniversityLink ->" + detailUniversityLink);
-                    }
-                } else {
-                    for (Element element : elementsText) {
-                        String detailUniversityName = element.text();
-                        String detailUniversityLink = element.attr("abs:href");
-
-                        detailUniverInfoEngine.updateDetailUniver(new DetailUniverInfo(longDetailUNVId, detailUniversityName,
-                                detailUniversityLink));
-                        Log.d("My", "ParseUniversities doInBackground  addDetailUniver link ->" + element.attr("abs:href"));
-                        Log.d("My", "ParseUniversities doInBackground  addDetailUniver  detailUniversityLink ->" + detailUniversityLink);
-                    }
+                if (Utils.connectToData(mUniversityInfo.getStrUniversityLink()) && mLongDetailUNVId != 0) {
+                    parse(mLongDetailUNVId, detailUniverInfoEngine);
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            DetailUniverInfoEngine detailUniverInfoEngine = new DetailUniverInfoEngine(getApplication());
-            getData(detailUniverInfoEngine);
-            progDailog.dismiss();
-        }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mProgressBar.setVisibility(View.VISIBLE);
+                        DetailUniverInfoEngine detailUniverInfoEngine = new DetailUniverInfoEngine(getApplication());
+                        getData(detailUniverInfoEngine);
+                    }
+                });
+            }
+
+            private void parse(long longDetailUNVId, DetailUniverInfoEngine detailUniverInfoEngine) {
+                String html;
+                html = mUniversityInfo.getStrUniversityLink();
+                Log.d("My", "ParseUniversities doInBackground  mHtml ->" + html);
+                Document document;
+                try {
+                    document = Jsoup.connect(html).get();
+
+                    Elements elementsByClass = document.getElementsByClass("accordion-heading togglize");
+                    Elements elementsText = elementsByClass.select("a");
+                    if (detailUniverInfoEngine.getAllDetailUniversById(mLongDetailUNVId).isEmpty()) {
+                        for (Element element : elementsText) {
+
+                            String detailUniversityName = element.text();
+                            String detailUniversityLink = element.attr("abs:href");
+
+                            detailUniverInfoEngine.addDetailUniver(new DetailUniverInfo(longDetailUNVId, detailUniversityName,
+                                    detailUniversityLink));
+                            Log.d("My", "ParseUniversities doInBackground  addDetailUniver link ->" + element.attr("abs:href"));
+                            Log.d("My", "ParseUniversities doInBackground  addDetailUniver  detailUniversityLink ->" + detailUniversityLink);
+                        }
+                    } else {
+                        for (Element element : elementsText) {
+                            String detailUniversityName = element.text();
+                            String detailUniversityLink = element.attr("abs:href");
+
+                            detailUniverInfoEngine.updateDetailUniver(new DetailUniverInfo(longDetailUNVId, detailUniversityName,
+                                    detailUniversityLink));
+                            Log.d("My", "ParseUniversities doInBackground  addDetailUniver link ->" + element.attr("abs:href"));
+                            Log.d("My", "ParseUniversities doInBackground  addDetailUniver  detailUniversityLink ->" + detailUniversityLink);
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }).start();
     }
 }

@@ -41,6 +41,7 @@
     <string name="help">Help</string>
     <string name="favorite">Favorite</string>
     <string name="text_choose_category">Choose category</string>
+    <string name="textInfoForApplicant">Info for applicant</string>
 </resources>
 
 

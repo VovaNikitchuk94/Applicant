@@ -18,32 +18,44 @@
         android:transitionName="actionBar"
         app:titleTextColor="@color/md_white_1000"/>
 
-    <TextView
-        android:id="@+id/textViewСhooseCityCitiesActivity"
-        style="@style/headTextViewStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        style="?android:progressBarStyle"
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/activity_cities_swipe_refresh_layout"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerViewCitiesListActivity"
+        <TextView
+            android:id="@+id/textViewСhooseCityCitiesActivity"
+            style="@style/headTextViewStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone">
+            android:layout_alignParentTop="true"
+            tools:text="TExtView HEad"/>
 
-        </android.support.v7.widget.RecyclerView>
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="?android:progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"/>
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/activity_cities_swipe_refresh_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textViewСhooseCityCitiesActivity">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerViewCitiesListActivity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:visibility="gone">
+
+            </android.support.v7.widget.RecyclerView>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>

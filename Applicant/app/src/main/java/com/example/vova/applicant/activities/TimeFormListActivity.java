@@ -7,11 +7,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.vova.applicant.R;
@@ -43,17 +44,61 @@ public class TimeFormListActivity extends BaseActivity implements
 
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private ProgressBar mProgressBar;
 
-    private long mLongDetailUNVId = 0L;
+    private long mLongDetailUNVId = 0;
+
+//    @Override
+//    protected void onCreate(@Nullable Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_time_form_list);
+//
+//        Log.d("OnCreate", "UniversityPageActivity -> OnCreate");
+//
+//        setDrawer();
+//
+//        Intent intent = getIntent();
+//        if (intent != null) {
+//
+//            Bundle bundle = intent.getExtras();
+//            if (bundle != null) {
+//                mDetailUniverInfo = (DetailUniverInfo) bundle.get(KEY_TIME_FORM_LINK);
+//            }
+//        }
+//
+//        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_time_form_swipe_refresh_layout);
+//        mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
+//        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                mSwipeRefreshLayout.setRefreshing(true);
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        new ParseTimeForm().execute();
+//                    }
+//                }, 0);
+//                mSwipeRefreshLayout.setRefreshing(false);
+//            }
+//        });
+//
+//        TextView textViewHeadText = (TextView) findViewById(R.id.textViewСhooseTimeFormTimeFormActivity);
+//        textViewHeadText.setText(mDetailUniverInfo.getStrDetailText());
+//        Log.d("My", "onCreate   mStrFullTimeLink ->" + mDetailUniverInfo.getStrDetailText());
+//
+//        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewTimeFormListActivity);
+//        LinearLayoutManager layoutManager
+//                = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+//        mRecyclerView.setLayoutManager(layoutManager);
+//        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
+//                layoutManager.getOrientation());
+//        mRecyclerView.addItemDecoration(dividerItemDecoration);
+//
+//        setData();
+//    }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_time_form_list);
-
-        Log.d("OnCreate", "UniversityPageActivity -> OnCreate");
-
-        drawerAndToolbar();
+    protected void iniActivity() {
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -64,18 +109,18 @@ public class TimeFormListActivity extends BaseActivity implements
             }
         }
 
+        mProgressBar = (ProgressBar)findViewById(R.id.progress_bar);
+
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_time_form_swipe_refresh_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(true);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        new ParseTimeForm().execute();
-                    }
-                }, 0);
+                mRecyclerView.setVisibility(View.GONE);
+                parseData();
+                Log.d("My","SwipeRefreshLayout -> parseData -> is start");
+                mRecyclerView.setVisibility(View.VISIBLE);
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -96,15 +141,20 @@ public class TimeFormListActivity extends BaseActivity implements
     }
 
     @Override
-    public void drawerAndToolbar() {
-        super.drawerAndToolbar();
+    protected int getLayoutId() {
+        return R.layout.activity_time_form_list;
+    }
+
+    @Override
+    public void setDrawer() {
+        super.setDrawer();
     }
 
     private void setData() {
         mLongDetailUNVId = mDetailUniverInfo.getId();
         TimeFormEngine timeFormEngine = new TimeFormEngine(getApplication());
         if (timeFormEngine.getAllTimeFormsById(mLongDetailUNVId).isEmpty()){
-            new ParseTimeForm().execute();
+            parseData();
         } else {
             getData(timeFormEngine);
         }
@@ -115,6 +165,8 @@ public class TimeFormListActivity extends BaseActivity implements
         TimeFormAdapter formAdapter = new TimeFormAdapter(timeFormInfos);
         formAdapter.setOnClickTimeFormItem(TimeFormListActivity.this);
         mRecyclerView.setAdapter(formAdapter);
+        mRecyclerView.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -124,84 +176,158 @@ public class TimeFormListActivity extends BaseActivity implements
         startActivity(intent);
     }
 
-    private class ParseTimeForm extends AsyncTask<Void, Void, Void> {
-        private ProgressDialog progDailog = new ProgressDialog(TimeFormListActivity.this);
-        TimeFormEngine timeFormEngine = new TimeFormEngine(getApplication());
+    private void parseData() {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progDailog.setMessage(getString(R.string.textResourceLoading));
-            progDailog.setIndeterminate(false);
-            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progDailog.setCancelable(true);
-            progDailog.show();
-        }
+        new Thread(new Runnable() {
+            TimeFormEngine timeFormEngine = new TimeFormEngine(getApplication());
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (Utils.connectToData(mDetailUniverInfo.getStrDetailLink()) && mLongDetailUNVId != 0) {
-                parse();
-            }
-            return null;
-        }
-
-        private void parse() {
-            String html;
-            html = mDetailUniverInfo.getStrDetailLink();
-            Document document;
-            try {
-                document = Jsoup.connect(html).get();
-                Element elementById = document.getElementById("okrArea");
-                Elements elementsSelectId = elementById.select("ul#myTab");
-                //TODO доделать этот кошмар правильно обработать формы обучения
-                Elements elements;
-                String[] findConstant = mDetailUniverInfo.getStrDetailLink().split("#");
-                String s = findConstant[1].substring(0 , 3);
-                Log.d("My","s -_----------------- > " + s);
-                switch (s) {
-                    case INT_FULL_TIME_FORM:
-                        elements = elementsSelectId.get(0).select("li");
-                        loopElementsParse(elements);
-                        break;
-                    case INT_EXTERNAL_FORM:
-                        elements = elementsSelectId.get(1).select("li");
-                        loopElementsParse(elements);
-                        break;
-                    case INT_EVENING_FORM:
-                        elements = elementsSelectId.get(2).select("li");
-                        loopElementsParse(elements);
-                        break;
-                    case INT_DISTANCE_FORM:
-                        elements = elementsSelectId.get(3).select("li");
-                        loopElementsParse(elements);
-                        break;
+            @Override
+            public void run() {
+                if (Utils.connectToData(mDetailUniverInfo.getStrDetailLink()) && mLongDetailUNVId != 0) {
+                    parse();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
 
-        private void loopElementsParse(Elements elements) {
-            if (timeFormEngine.getAllTimeFormsById(mLongDetailUNVId).isEmpty()){
-                for (Element element : elements) {
-                    String text = element.select("a").text();
-                    String link = element.select("a").attr("abs:href");
-                    timeFormEngine.addTimeForm(new TimeFormInfo(mLongDetailUNVId, text, link));
-                }
-            } else {
-                for (Element element : elements) {
-                    String text = element.select("a").text();
-                    String link = element.select("a").attr("abs:href");
-                    timeFormEngine.updateTimeForm(new TimeFormInfo(mLongDetailUNVId, text, link));
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mProgressBar.setVisibility(View.VISIBLE);
+                        getData(timeFormEngine);
+                    }
+                });
+            }
+
+            private void parse() {
+                String html;
+                html = mDetailUniverInfo.getStrDetailLink();
+                Document document;
+                try {
+                    document = Jsoup.connect(html).get();
+                    Element elementById = document.getElementById("okrArea");
+                    Elements elementsSelectId = elementById.select("ul#myTab");
+                    //TODO доделать этот кошмар правильно обработать формы обучения
+                    Elements elements;
+                    String[] findConstant = mDetailUniverInfo.getStrDetailLink().split("#");
+                    String s = findConstant[1].substring(0 , 3);
+                    Log.d("My","s -_----------------- > " + s);
+                    switch (s) {
+                        case INT_FULL_TIME_FORM:
+                            elements = elementsSelectId.get(0).select("li");
+                            loopElementsParse(elements);
+                            break;
+                        case INT_EXTERNAL_FORM:
+                            elements = elementsSelectId.get(1).select("li");
+                            loopElementsParse(elements);
+                            break;
+                        case INT_EVENING_FORM:
+                            elements = elementsSelectId.get(2).select("li");
+                            loopElementsParse(elements);
+                            break;
+                        case INT_DISTANCE_FORM:
+                            elements = elementsSelectId.get(3).select("li");
+                            loopElementsParse(elements);
+                            break;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
-        }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            getData(timeFormEngine);
-            progDailog.dismiss();
-        }
+            private void loopElementsParse(Elements elements) {
+                if (timeFormEngine.getAllTimeFormsById(mLongDetailUNVId).isEmpty()){
+                    for (Element element : elements) {
+                        String text = element.select("a").text();
+                        String link = element.select("a").attr("abs:href");
+                        timeFormEngine.addTimeForm(new TimeFormInfo(mLongDetailUNVId, text, link));
+                    }
+                } else {
+                    for (Element element : elements) {
+                        String text = element.select("a").text();
+                        String link = element.select("a").attr("abs:href");
+                        timeFormEngine.updateTimeForm(new TimeFormInfo(mLongDetailUNVId, text, link));
+                    }
+                }
+            }
+        }).start();
     }
+
+//    private class ParseTimeForm extends AsyncTask<Void, Void, Void> {
+//        private ProgressDialog progDailog = new ProgressDialog(TimeFormListActivity.this);
+//        TimeFormEngine timeFormEngine = new TimeFormEngine(getApplication());
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            progDailog.setMessage(getString(R.string.textResourceLoading));
+//            progDailog.setIndeterminate(false);
+//            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//            progDailog.setCancelable(true);
+//            progDailog.show();
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (Utils.connectToData(mDetailUniverInfo.getStrDetailLink()) && mLongDetailUNVId != 0) {
+//                parse();
+//            }
+//            return null;
+//        }
+//
+//        private void parse() {
+//            String html;
+//            html = mDetailUniverInfo.getStrDetailLink();
+//            Document document;
+//            try {
+//                document = Jsoup.connect(html).get();
+//                Element elementById = document.getElementById("okrArea");
+//                Elements elementsSelectId = elementById.select("ul#myTab");
+//                //TODO доделать этот кошмар правильно обработать формы обучения
+//                Elements elements;
+//                String[] findConstant = mDetailUniverInfo.getStrDetailLink().split("#");
+//                String s = findConstant[1].substring(0 , 3);
+//                Log.d("My","s -_----------------- > " + s);
+//                switch (s) {
+//                    case INT_FULL_TIME_FORM:
+//                        elements = elementsSelectId.get(0).select("li");
+//                        loopElementsParse(elements);
+//                        break;
+//                    case INT_EXTERNAL_FORM:
+//                        elements = elementsSelectId.get(1).select("li");
+//                        loopElementsParse(elements);
+//                        break;
+//                    case INT_EVENING_FORM:
+//                        elements = elementsSelectId.get(2).select("li");
+//                        loopElementsParse(elements);
+//                        break;
+//                    case INT_DISTANCE_FORM:
+//                        elements = elementsSelectId.get(3).select("li");
+//                        loopElementsParse(elements);
+//                        break;
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        private void loopElementsParse(Elements elements) {
+//            if (timeFormEngine.getAllTimeFormsById(mLongDetailUNVId).isEmpty()){
+//                for (Element element : elements) {
+//                    String text = element.select("a").text();
+//                    String link = element.select("a").attr("abs:href");
+//                    timeFormEngine.addTimeForm(new TimeFormInfo(mLongDetailUNVId, text, link));
+//                }
+//            } else {
+//                for (Element element : elements) {
+//                    String text = element.select("a").text();
+//                    String link = element.select("a").attr("abs:href");
+//                    timeFormEngine.updateTimeForm(new TimeFormInfo(mLongDetailUNVId, text, link));
+//                }
+//            }
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            getData(timeFormEngine);
+//            progDailog.dismiss();
+//        }
+//    }
 }
