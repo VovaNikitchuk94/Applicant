@@ -19,11 +19,13 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
+    private Toolbar toolbar;
+
     public void setDrawer() {
 
         Drawer result = new DrawerBuilder()
                 .withActivity(this)
-                .withToolbar(setToolbar())
+                .withToolbar(getToolbar())
                 .withActionBarDrawerToggle(true)
                 .withHeader(R.layout.drawer_header)
                 .addDrawerItems(
@@ -46,6 +48,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                         Intent intent;
                         switch (position) {
+                            case 1:
+
+                                break;
                             case 8:
                                 intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + "voviknik1994@gmail.com"));
                                 startActivity(intent);
@@ -68,9 +73,13 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public Toolbar setToolbar() {
         // Handle Toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        return toolbar;
+    }
+
+    public Toolbar getToolbar() {
         return toolbar;
     }
 
@@ -79,6 +88,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
 
+        setToolbar();
         setDrawer();
         iniActivity();
     }

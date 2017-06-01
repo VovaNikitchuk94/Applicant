@@ -1,48 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:orientation="vertical">
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".activities.TopLevelActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        app:titleTextColor="@color/md_white_1000"
-        android:elevation="4dp"
-        android:minHeight="?attr/actionBarSize"
-        android:transitionName="actionBar" />
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical">
 
-    <!--<EditText-->
-        <!--android:id="@+id/editTextSearchTopLevelActivity"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:hint="@string/SearchTopLevelActivity"-->
-        <!--/>-->
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            app:titleTextColor="@color/md_white_1000"
+            android:elevation="4dp"
+            android:minHeight="?attr/actionBarSize"
+            android:transitionName="actionBar" />
 
-    <Button
-        android:layout_marginTop="20dp"
-        android:id="@+id/button2017YearTopLevelActivity"
-        style="@style/ButtonTopLevelActivityStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/textButton2017YearTopLevelActivity"
-        />
+            <Button
+                android:layout_marginTop="20dp"
+                android:id="@+id/button2017YearTopLevelActivity"
+                style="@style/ButtonTopLevelActivityStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/textButton2017YearTopLevelActivity"
+                />
 
-    <Button
-        android:id="@+id/button2016YearTopLevelActivity"
-        style="@style/ButtonTopLevelActivityStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/textButton2016YearTopLevelActivity"/>
+            <Button
+                android:id="@+id/button2016YearTopLevelActivity"
+                style="@style/ButtonTopLevelActivityStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/textButton2016YearTopLevelActivity"/>
 
-    <Button
-        android:id="@+id/button2015YearTopLevelActivity"
-        style="@style/ButtonTopLevelActivityStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/textButton2015YearTopLevelActivity"/>
+            <Button
+                android:id="@+id/button2015YearTopLevelActivity"
+                style="@style/ButtonTopLevelActivityStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/textButton2015YearTopLevelActivity"/>
 
-</LinearLayout>
+    </LinearLayout>
+
+    <!--<include layout="@layout/bottom_sheet" />-->
+
+</android.support.design.widget.CoordinatorLayout>

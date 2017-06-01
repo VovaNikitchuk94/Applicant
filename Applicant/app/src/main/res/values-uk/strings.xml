@@ -32,4 +32,8 @@
     <string name="help">Допомога</string>
     <string name="settings">Налаштування</string>
     <string name="favorite">Улюблене</string>
+    <string name="textImportantInfoForApplicant2017">\tНа даний момент сайт vstupInfo.com ще не підготував дані.
+        \tМи повідомимо вас, як тільки перша інформація з’явиться на сайті vstupInfo.com.
+        \tЗараз ви можете ознайомитись з умовами прийому до вищих навчальних закладів 2017 року.</string>
+    <string name="textInfoForApplicant">Інформація для абітурієнта</string>
 </resources>

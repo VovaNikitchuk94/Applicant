@@ -3,9 +3,7 @@ package com.example.vova.applicant.model.engines;
 import android.content.Context;
 
 import com.example.vova.applicant.model.LegendInfo;
-import com.example.vova.applicant.model.TimeFormInfo;
 import com.example.vova.applicant.model.wrappers.dbWrappers.LegendDBWrapper;
-import com.example.vova.applicant.model.wrappers.dbWrappers.TimeFormDBWrapper;
 
 import java.util.ArrayList;
 
@@ -25,8 +23,8 @@ public class LegendEngine extends BaseEngine {
         legendDBWrapper.addLegend(legendInfo);
     }
 
-    public LegendInfo getLegendById(long nId) {
+    public ArrayList<LegendInfo> getLegendsById(long nId) {
         LegendDBWrapper legendDBWrapper = new LegendDBWrapper(getContext());
-        return legendDBWrapper.getLegendById(nId);
+        return legendDBWrapper.getLegendsById(nId);
     }
 }

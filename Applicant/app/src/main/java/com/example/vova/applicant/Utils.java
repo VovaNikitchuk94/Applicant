@@ -1,20 +1,6 @@
-/*
- * Copyright (C) 2016 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.example.vova.applicant;
 
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -27,19 +13,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 
-/**
- * Utility class with methods to help perform the HTTP request and
- * parse the response.
- */
+import javax.net.ssl.HttpsURLConnection;
+
 public final class Utils {
 
-    /**
-     * Tag for the log messages
-     */
     public static final String My = Utils.class.getSimpleName();
-    private static final int INT_RESPONSE_CODE_OK = 200;
 
     public static boolean connectToData(String requestUrl) {
+        Log.d("My", "String My -> " + My);
         // Create URL object
         URL url = createUrl(requestUrl);
 
@@ -54,9 +35,6 @@ public final class Utils {
         return !TextUtils.isEmpty(linkResponse);
     }
 
-    /**
-     * Returns new URL object from the given string URL.
-     */
     private static URL createUrl(String stringUrl) {
         URL url = null;
         try {
@@ -67,9 +45,7 @@ public final class Utils {
         return url;
     }
 
-    /**
-     * Make an HTTP request to the given URL and return a String as the response.
-     */
+
     private static String makeHttpRequest(URL url) throws IOException {
         String linkResponse = "";
 
@@ -89,14 +65,15 @@ public final class Utils {
 
             // If the request was successful (response code 200),
             // then read the input stream and parse the response.
-            if (urlConnection.getResponseCode() == INT_RESPONSE_CODE_OK) {
+            int responseCode = urlConnection.getResponseCode();
+            if (responseCode == HttpsURLConnection.HTTP_OK) {
                 inputStream = urlConnection.getInputStream();
                 linkResponse = readFromStream(inputStream);
             } else {
                 Log.e(My, "Error response code: " + urlConnection.getResponseCode());
             }
         } catch (IOException e) {
-            Log.e(My, "Problem retrieving the earthquake JSON results.", e);
+            Log.e(My, "IOException -> results.", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -108,6 +85,7 @@ public final class Utils {
         return linkResponse;
     }
 
+    @NonNull
     private static String readFromStream(InputStream inputStream) throws IOException {
         StringBuilder output = new StringBuilder();
         if (inputStream != null) {

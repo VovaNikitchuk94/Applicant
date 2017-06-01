@@ -1,6 +1,9 @@
 package com.example.vova.applicant.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
@@ -10,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.vova.applicant.R;
 import com.example.vova.applicant.Utils;
@@ -74,12 +78,25 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
                 layoutManager.getOrientation());
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
+        //TODO upgrade, check data in recyclerView
+        if (!isOnline(this)) {
+            Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show();
+            finish();
+        }
         setData();
     }
 
     @Override
     protected int getLayoutId() {
         return R.layout.activity_cities_list;
+    }
+
+    public static boolean isOnline(Context context)
+    {
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
     //TODO modified method
@@ -106,6 +123,7 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
 
     @Override
     public void onClickCityItem(CitiesInfo citiesInfo) {
+
         Intent intent = new Intent(this, CategoryUniversListActivity.class);
         intent.putExtra(CategoryUniversListActivity.INTENT_KEY_UNIVERSITY_ACTIVITY, citiesInfo);
         startActivity(intent);
@@ -142,7 +160,7 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
 
                     Elements elementsHeadData = document.getElementsByClass("title-page");
 
-                    if (citiesInfoEngine.getAllCitiesById(mLongYearId).isEmpty()) {
+                    if (citiesInfoEngine.getAllCitiesById(yearsId).isEmpty()) {
                         for (Element link : links) {
 
                             String citiesName = link.text();
@@ -153,9 +171,8 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
                             String strHead = elementsHeadData.select(".title-description").first().text();
                             String strTime = elementsHeadData.select("small").text();
 
-                            Log.d("My", "parse isEmpty -> " + citiesInfoEngine.getCityById(yearsId));
+                            Log.d("My", "parse first -> " + citiesInfoEngine.getCityById(yearsId));
                             Log.d("My", "yearsId -> " + yearsId);
-
                             Log.d("My", "parse strHead -> " + strHead);
                             Log.d("My", "strTime -> " + strTime);
                         }
@@ -172,7 +189,6 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
 
                             Log.d("My", "parse update -> " + citiesInfoEngine.getCityById(yearsId));
                             Log.d("My", "yearsId -> " + yearsId);
-
                             Log.d("My", "parse strHead -> " + strHead);
                             Log.d("My", "strTime -> " + strTime);
                         }

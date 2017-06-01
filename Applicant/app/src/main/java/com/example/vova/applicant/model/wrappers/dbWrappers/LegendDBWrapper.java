@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.example.vova.applicant.model.DetailUniverInfo;
 import com.example.vova.applicant.model.LegendInfo;
 import com.example.vova.applicant.model.TimeFormInfo;
 import com.example.vova.applicant.toolsAndConstans.DBConstans.LegendInfoTable;
@@ -31,22 +32,25 @@ public class LegendDBWrapper extends BaseDBWrapper {
         database.close();
     }
 
-    public LegendInfo getLegendById(long nId) {
-        LegendInfo legendInfo = null;
+    public ArrayList<LegendInfo> getLegendsById(long nId) {
+        ArrayList<LegendInfo> arrResult = new ArrayList<>();
         SQLiteDatabase database = getReadable();
         String strRequest = LegendInfoTable.Cols.LEGEND_INFO_FIELD_YEAR_ID + "=?";
         String arrArgs[] = new String[]{Long.toString(nId)};
         Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
-        try{
-            if (cursor!=null && cursor.moveToFirst()){
-                legendInfo = new LegendInfo(cursor);
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    LegendInfo legendInfo = new LegendInfo(cursor);
+                    arrResult.add(legendInfo);
+                } while (cursor.moveToNext());
             }
         } finally {
-            if (cursor!=null){
+            if (cursor != null) {
                 cursor.close();
             }
             database.close();
         }
-        return legendInfo;
+        return arrResult;
     }
 }

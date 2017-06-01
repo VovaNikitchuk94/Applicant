@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
@@ -13,12 +14,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.vova.applicant.R;
 import com.example.vova.applicant.Utils;
 import com.example.vova.applicant.adapters.ApplicationAdapter;
+import com.example.vova.applicant.adapters.LegendAdapter;
 import com.example.vova.applicant.model.ApplicationsInfo;
 import com.example.vova.applicant.model.LegendInfo;
 import com.example.vova.applicant.model.SpecialtiesInfo;
@@ -33,7 +36,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class ApplicationListActivity extends BaseActivity implements ApplicationAdapter.OnClickApplicationItem{
+public class ApplicationListActivity extends BaseActivity implements ApplicationAdapter.OnClickApplicationItem {
 
     public static final String INTENT_KEY_APPLICANT_ACTIVITY = "INTENT_KEY_APPLICANT_ACTIVITY";
 
@@ -42,10 +45,12 @@ public class ApplicationListActivity extends BaseActivity implements Application
     private static final long LEGEND_YEAR_ID_2017 = 2017;
 
     private static final int ITEM_ID_APPLICANT_INFO = 112;
+    private static final int MENU_ITEM_LEGEND = 113;
 
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ProgressBar mProgressBar;
+    private BottomSheetBehavior bottomSheetBehavior;
 
     private SpecialtiesInfo mSpecialtiesInfo;
 
@@ -53,7 +58,6 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
     @Override
     protected void iniActivity() {
-
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -87,7 +91,50 @@ public class ApplicationListActivity extends BaseActivity implements Application
                 layoutManager.getOrientation());
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
+        //modified toolbar
+        Drawable menuRightIconDrawable = ContextCompat.getDrawable(this, R.drawable.ic_more_vert_black_24dp);
+        menuRightIconDrawable.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
+        getToolbar().setOverflowIcon(menuRightIconDrawable);
+
         setData();
+
+        //set recyclerView with legend data
+        setLegendList();
+    }
+
+    private void setLegendList() {
+        Log.d("My", "setLegendList start - >" + true);
+        RecyclerView legendRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewLegendInfoListActivity);
+        LinearLayoutManager legendLayoutManager
+                = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        legendRecyclerView.setLayoutManager(legendLayoutManager);
+        DividerItemDecoration legendDividerItemDecoration = new DividerItemDecoration(legendRecyclerView.getContext(),
+                legendLayoutManager.getOrientation());
+        legendRecyclerView.addItemDecoration(legendDividerItemDecoration);
+
+        LegendEngine legendEngine = new LegendEngine(getApplication());
+//        mLongSpecialityId = mSpecialtiesInfo.getId();
+        ArrayList<LegendInfo> legendInfos = legendEngine.getLegendsById(LEGEND_YEAR_ID_2016);
+        Log.d("My", "setLegendList start legendInfos size- >" + legendInfos.size());
+        LegendAdapter legendAdapter = new LegendAdapter(legendInfos);
+        legendRecyclerView.setAdapter(legendAdapter);
+
+        // получение вью нижнего экрана
+        LinearLayout llBottomSheet = (LinearLayout) findViewById(R.id.bottom_sheet);
+
+        // настройка поведения нижнего экрана
+        bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+        // настройка максимальной высоты
+//        bottomSheetBehavior.setPeekHeight(340);
+//        bottomSheetBehavior.
+
+
+        // настройка возможности скрыть элемент при свайпе вниз
+        bottomSheetBehavior.setHideable(true);
+        Log.d("My", "setLegendList  bottomSheetBehavior.setState - >" +  bottomSheetBehavior.getState());
+
     }
 
     @Override
@@ -104,6 +151,9 @@ public class ApplicationListActivity extends BaseActivity implements Application
         itemApplicantInfo.setIcon(infoDrawable);
         itemApplicantInfo.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
+        MenuItem itemHelp = menu.add(3, MENU_ITEM_LEGEND,3, R.string.textLegend);
+        itemHelp.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -112,8 +162,25 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
         switch (item.getItemId()){
             case ITEM_ID_APPLICANT_INFO:
+//                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+//                        Uri.parse("https://drive.google.com/open?id=0B4__5KtwLylAazV3TEtmWmNYMjQ"));
+//                startActivity(browserIntent);
+
                 Toast.makeText(this, "applicant info selected", Toast.LENGTH_SHORT).show();
                 break;
+            case MENU_ITEM_LEGEND:
+                if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    Log.d("My", " if bottomSheetBehavior.setState - >" +  bottomSheetBehavior.getState());
+                } else {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    Log.d("My", " else bottomSheetBehavior.setState - >" +  bottomSheetBehavior.getState());
+                }
+
+                Log.d("My", " bottomSheetBehavior.setState - >" +  bottomSheetBehavior.getState());
+                Toast.makeText(this, "MENU_ITEM_LEGEND selected", Toast.LENGTH_SHORT).show();
+                break;
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -146,10 +213,12 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
     private void parseData() {
 
+
         new Thread(new Runnable() {
 
             final ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
             String color;
+            final String getStyle = "*[style*='background']";
 
             @Override
             public void run() {
@@ -198,26 +267,24 @@ public class ApplicationListActivity extends BaseActivity implements Application
                     Elements selectLegendElements = legendElementById.select("tr");
                     LegendEngine legendEngine = new LegendEngine(getApplication());
 
-                    if (legendEngine.getLegendById(LEGEND_YEAR_ID_2015) == null){
-                        parseLegendData(selectLegendElements, legendEngine, LEGEND_YEAR_ID_2015);
-                    } else if (legendEngine.getLegendById(LEGEND_YEAR_ID_2016) == null) {
+//                    if (legendEngine.getLegendsById(LEGEND_YEAR_ID_2015) == null){
+//                        parseLegendData(selectLegendElements, legendEngine, LEGEND_YEAR_ID_2015);
+//                    } else
+//                        if (legendEngine.getLegendsById(LEGEND_YEAR_ID_2016).isEmpty()) {
                         parseLegendData(selectLegendElements, legendEngine, LEGEND_YEAR_ID_2016);
-                    }
+//                    }
 
                     if (applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId).isEmpty()){
                         for (Element link : selectTr) {
-                            Elements tds = link.select("td");
+                            Elements tdElements = link.select("td");
 
-//                        Log.d("My", "color 3->" + color);
-                            getBackgroundApplicant(tds);
-//                        Log.d("My", "color 4->" + color);
-//                        String[] colors = getBackgroundApplicant(tds);
+                            getBackgroundApplicant(tdElements);
 
-                            number = tds.get(0).text();
-                            name = tds.get(1).text();
-                            score = tds.get(3).text();
+                            number = tdElements.get(0).text();
+                            name = tdElements.get(1).text();
+                            score = tdElements.get(3).text();
 
-                            someLink = tds.attr("abs:href");
+                            someLink = tdElements.attr("abs:href");
 
                             applicantInfo = link.text();
 
@@ -225,17 +292,18 @@ public class ApplicationListActivity extends BaseActivity implements Application
                                     speciality, applicantInfo, number, name, score, someLink, color));
                         }
                     } else {
+
                         for (Element link : selectTr) {
-                            Elements tds = link.select("td");
+                            Elements tdElements = link.select("td");
 
-                            getBackgroundApplicant(tds);
-//                        String[] colors = getBackgroundApplicant(tds);
+                            getBackgroundApplicant(tdElements);
+//                        String[] colors = getBackgroundApplicant(tdElements);
 
-                            number = tds.get(0).text();
-                            name = tds.get(1).text();
-                            score = tds.get(3).text();
+                            number = tdElements.get(0).text();
+                            name = tdElements.get(1).text();
+                            score = tdElements.get(3).text();
 
-                            someLink = tds.attr("abs:href");
+                            someLink = tdElements.attr("abs:href");
                             applicantInfo = link.text();
 
                             applicationInfoEngine.updateApplicant(new ApplicationsInfo(mLongSpecialityId, university,
@@ -247,17 +315,18 @@ public class ApplicationListActivity extends BaseActivity implements Application
                 }
             }
 
-            private void getBackgroundApplicant(Elements tds) {
+            //TODO get all backgrounds
+            private void getBackgroundApplicant(Elements tdElements) {
 
                 String backgroundFirst;
                 String backgroundSecond;
-                String getStyle = "*[style*='background']";
 
-                Log.d("My", "tds.size() -> " + tds.size());
-                if ((tds.get(0).select(getStyle).size()) > 0) {
 
-                    backgroundFirst = tds.get(0).select(getStyle).toString();
-                    backgroundSecond = tds.get(1).select(getStyle).toString();
+                Log.d("My", "tdElements.size() -> " + tdElements.size());
+                if ((tdElements.get(0).select(getStyle).size()) > 0) {
+
+                    backgroundFirst = tdElements.get(0).select(getStyle).toString();
+                    backgroundSecond = tdElements.get(1).select(getStyle).toString();
 
                     backgroundFirst = backgroundFirst.substring(backgroundFirst.indexOf("#"), backgroundFirst.indexOf(">") - 1);
                     backgroundSecond = backgroundSecond.substring(backgroundSecond.indexOf("#"), backgroundSecond.indexOf(">") - 1);
@@ -272,6 +341,7 @@ public class ApplicationListActivity extends BaseActivity implements Application
                 }
             }
 
+            //get legend data
             private void parseLegendData(Elements selectLegendElements, LegendEngine legendEngine, long yearId) {
                 for (Element legend: selectLegendElements){
                     Elements detailLegend = legend.select("td");
@@ -279,8 +349,8 @@ public class ApplicationListActivity extends BaseActivity implements Application
                     String legendDetail = "";
                     String legendBackgrond = "";
 
-                    if ((detailLegend.get(0).select("*[style*='background']").size()) > 0) {
-                        String style = detailLegend.get(0).select("*[style*='background']").toString();
+                    if ((detailLegend.get(0).select(getStyle).size()) > 0) {
+                        String style = detailLegend.get(0).select(getStyle).toString();
 
                         if (style.length() > 132) {
                             String yelowColor = style.substring(style.indexOf("#", 133));
@@ -294,9 +364,10 @@ public class ApplicationListActivity extends BaseActivity implements Application
                     }
 
                     if (detailLegend.size() > 1) {
-                        legendDetail = detailLegend.get(1).text();
+                        legendDetail = detailLegend.get(1).text().trim();
                     }
                     legendEngine.addLegend(new LegendInfo(yearId, legendName, legendDetail, legendBackgrond));
+                    Log.d("My", "legendEngine new LegendInfo -> " + yearId + "\n" + legendName);
                 }
             }
 
