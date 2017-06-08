@@ -1,11 +1,7 @@
 package com.example.vova.applicant.activities;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.vova.applicant.R;
-import com.example.vova.applicant.Utils;
+import com.example.vova.applicant.utils.Utils;
 import com.example.vova.applicant.adapters.SpecialitiesAdapter;
 import com.example.vova.applicant.model.SpecialtiesInfo;
 import com.example.vova.applicant.model.TimeFormInfo;

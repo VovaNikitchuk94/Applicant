@@ -97,9 +97,17 @@ public class DBConstans {
             public static final String APPLICATION_INFO_FIELD_UNIVERSITY = "_university";
             public static final String APPLICATION_INFO_FIELD_SPECIALITY = "_speciality";
             public static final String APPLICATION_FIELD_INFO = "_info";
+
             public static final String APPLICATION_INFO_FIELD_NUMBER = "_number";
             public static final String APPLICATION_INFO_FIELD_NAME = "_name";
+            public static final String APPLICATION_INFO_FIELD_PRIORITY = "_priority";
             public static final String APPLICATION_INFO_FIELD_TOTAL_SCORE = "_total_score";
+            public static final String APPLICATION_INFO_FIELD_MARK_DOCUMENT = "_mark_document";
+            public static final String APPLICATION_INFO_FIELD_MARK_TEST = "_mark_test";
+            public static final String APPLICATION_INFO_FIELD_MARK_EXAM = "_mark_exam";
+            public static final String APPLICATION_INFO_FIELD_EXTRA_POINTS = "_extra_points";
+            public static final String APPLICATION_INFO_FIELD_ORIGINAL_DOCUMENT = "_original_document";
+
             public static final String APPLICATION_INFO_FIELD_LINK = "_link";
             public static final String APPLICATION_INFO_FIELD_BACKGROUND = "_background";
         }
@@ -110,6 +118,7 @@ public class DBConstans {
 
         public static final class Cols {
             public static final String IMPORTANT_INFO_FIELD_ID = "_id";
+            public static final String IMPORTANT_INFO_FIELD_SPECIALITY_ID = "_speciality_id";
             public static final String IMPORTANT_INFO_FIELD_NAME = "_name";
             public static final String IMPORTANT_INFO_FIELD_DETAIL = "_detail";
         }

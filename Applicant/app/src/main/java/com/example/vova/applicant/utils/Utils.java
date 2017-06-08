@@ -1,4 +1,4 @@
-package com.example.vova.applicant;
+package com.example.vova.applicant.utils;
 
 import android.support.annotation.NonNull;
 import android.text.TextUtils;

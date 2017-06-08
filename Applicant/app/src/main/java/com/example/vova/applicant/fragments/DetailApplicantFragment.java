@@ -47,17 +47,42 @@ public class DetailApplicantFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail_applicant, container, false);
 
-        TextView textViewNameOfUniversity = (TextView) view.findViewById(R.id.textNameOfUniversityFragmentDetailApplicant);
-        TextView textViewNameSpeciality = (TextView) view.findViewById(R.id.textSpecialityFragmentDetailApplicant);
+//        TextView textViewNameOfUniversity = (TextView) view.findViewById(R.id.textNameOfUniversityFragmentDetailApplicant);
+//        TextView textViewNameSpeciality = (TextView) view.findViewById(R.id.textSpecialityFragmentDetailApplicant);
 //        TextView textViewDateOfLastUpdate = (TextView) view.findViewById(R.id.textDateOfLastUpdateFragmentDetailApplicant);
-        TextView textViewDetailAboutApplicant = (TextView) view.findViewById(R.id.textDetailAboutApplicantFragmentDetailApplicant);
+//        TextView textViewDetailAboutApplicant = (TextView) view.findViewById(R.id.textDetailAboutApplicantFragmentDetailApplicant);
+
+        //find textView
+        TextView numberTextView = (TextView) view.findViewById(R.id.textNumberApplicantFragmentDetailApplicant);
+        TextView nameTextView = (TextView) view.findViewById(R.id.textFullNameApplicantFragmentDetailApplicant);
+        TextView priorityTextView = (TextView) view.findViewById(R.id.textPriorityApplicantFragmentDetailApplicant);
+        TextView totalScoreTextView = (TextView) view.findViewById(R.id.textTotalScoreApplicantFragmentDetailApplicant);
+        TextView markDocumentTextView = (TextView) view.findViewById(R.id.textMarkDocumentApplicantFragmentDetailApplicant);
+        TextView markTestTextView = (TextView) view.findViewById(R.id.textMarkTestApplicantFragmentDetailApplicant);
+        TextView markExamTextView = (TextView) view.findViewById(R.id.textMarkExamApplicantFragmentDetailApplicant);
+        TextView extraPointsTextView = (TextView) view.findViewById(R.id.textExtraPointsApplicantFragmentDetailApplicant);
+        TextView originalDocumentTextView = (TextView) view.findViewById(R.id.textOriginalDocumentApplicantFragmentDetailApplicant);
+
 
         if (mApplicationsInfo != null){
-            textViewNameOfUniversity.setText(mApplicationsInfo.getStrUniversity());
-            textViewNameSpeciality.setText(mApplicationsInfo.getStrSpeciality());
-            textViewDetailAboutApplicant.setText(mApplicationsInfo.getStrApplicantInfo());
+//            textViewNameOfUniversity.setText(mApplicationsInfo.getStrUniversity());
+//            textViewNameSpeciality.setText(mApplicationsInfo.getStrSpeciality());
+//            textViewDetailAboutApplicant.setText(mApplicationsInfo.getStrApplicantInfo());
+
+            //set text in textView
+            numberTextView.setText(mApplicationsInfo.getStrApplicantNumber());
+            nameTextView.setText(mApplicationsInfo.getStrApplicantName());
+            priorityTextView.setText(mApplicationsInfo.getStrApplicantPriority());
+            totalScoreTextView.setText(mApplicationsInfo.getStrApplicantTotalScores());
+            markDocumentTextView.setText(mApplicationsInfo.getStrApplicantMarkDocument());
+            markTestTextView.setText(mApplicationsInfo.getStrApplicantMarkTest());
+            markExamTextView.setText(mApplicationsInfo.getStrApplicantMarkExam());
+            extraPointsTextView.setText(mApplicationsInfo.getStrApplicantExtraPoints());
+            originalDocumentTextView.setText(mApplicationsInfo.getStrApplicantOriginalDocument());
 
             Log.d("My", "DetailApplicantFragment onCreateView" + mApplicationsInfo.getStrUniversity());
+            Log.d("My", "DetailApplicantFragment mApplicationsInfo.getStrSpeciality()" + mApplicationsInfo.getStrSpeciality());
+//            Log.d("My", "DetailApplicantFragment mApplicationsInfo.getStrApplicantInfo()" +mApplicationsInfo.getStrApplicantInfo());
         }
 
         Log.d("My", "DetailApplicantFragment onCreateView");

@@ -19,7 +19,9 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.vova.applicant.R;
-import com.example.vova.applicant.Utils;
+import com.example.vova.applicant.model.ImportantInfo;
+import com.example.vova.applicant.model.engines.ImportantApplicantInfoEngine;
+import com.example.vova.applicant.utils.Utils;
 import com.example.vova.applicant.adapters.ApplicationAdapter;
 import com.example.vova.applicant.adapters.LegendAdapter;
 import com.example.vova.applicant.model.ApplicationsInfo;
@@ -104,6 +106,7 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
     private void setLegendList() {
         Log.d("My", "setLegendList start - >" + true);
+
         RecyclerView legendRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewLegendInfoListActivity);
         LinearLayoutManager legendLayoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -111,13 +114,6 @@ public class ApplicationListActivity extends BaseActivity implements Application
         DividerItemDecoration legendDividerItemDecoration = new DividerItemDecoration(legendRecyclerView.getContext(),
                 legendLayoutManager.getOrientation());
         legendRecyclerView.addItemDecoration(legendDividerItemDecoration);
-
-        LegendEngine legendEngine = new LegendEngine(getApplication());
-//        mLongSpecialityId = mSpecialtiesInfo.getId();
-        ArrayList<LegendInfo> legendInfos = legendEngine.getLegendsById(LEGEND_YEAR_ID_2016);
-        Log.d("My", "setLegendList start legendInfos size- >" + legendInfos.size());
-        LegendAdapter legendAdapter = new LegendAdapter(legendInfos);
-        legendRecyclerView.setAdapter(legendAdapter);
 
         // получение вью нижнего экрана
         LinearLayout llBottomSheet = (LinearLayout) findViewById(R.id.bottom_sheet);
@@ -130,11 +126,18 @@ public class ApplicationListActivity extends BaseActivity implements Application
 //        bottomSheetBehavior.setPeekHeight(340);
 //        bottomSheetBehavior.
 
-
         // настройка возможности скрыть элемент при свайпе вниз
         bottomSheetBehavior.setHideable(true);
-        Log.d("My", "setLegendList  bottomSheetBehavior.setState - >" +  bottomSheetBehavior.getState());
 
+        LegendEngine legendEngine = new LegendEngine(getApplication());
+//        mLongSpecialityId = mSpecialtiesInfo.getId();
+        ArrayList<LegendInfo> legendInfos = legendEngine.getLegendsById(LEGEND_YEAR_ID_2016);
+        Log.d("My", "setLegendList start legendInfos size- >" + legendInfos.size());
+        LegendAdapter legendAdapter = new LegendAdapter(legendInfos);
+        legendRecyclerView.setAdapter(legendAdapter);
+//        legendAdapter.notifyDataSetChanged();
+
+        Log.d("My", "setLegendList  bottomSheetBehavior.setState - >" +  bottomSheetBehavior.getState());
     }
 
     @Override
@@ -213,7 +216,6 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
     private void parseData() {
 
-
         new Thread(new Runnable() {
 
             final ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
@@ -241,9 +243,18 @@ public class ApplicationListActivity extends BaseActivity implements Application
                 String university;
                 String speciality;
                 String applicantInfo;
+
+                //applicant data
                 String number;
                 String name;
-                String score;
+                String priority = "";
+                String totalScore;
+                String markDocument;
+                String markTest;
+                String markExam;
+                String extraPoints;
+                String originalDocument;
+
                 String someLink;
 
                 Document document;
@@ -252,10 +263,20 @@ public class ApplicationListActivity extends BaseActivity implements Application
                     document = Jsoup.connect(html).get();
                     Log.d("My", "html -------> " + html);
 
+                    //get time and date update page
+                    String strLastUpdatePage = document.select("div.title-page > p > small").text();
+//                    String strLastUpdatePageToString = document.select("div.title-page > p > small").toString();
+                    Log.d("My", "strLastUpdatePage -> " + strLastUpdatePage );
+//                    Log.d("My", "strLastUpdatePageToString -> " + strLastUpdatePageToString );
+                    String[] arrayTimeDate = strLastUpdatePage.split(" ");
+                    String date = arrayTimeDate[3];
+                    String time = arrayTimeDate[5];
+                    Log.d("My", "date -> " + date + "\ntime -> " + time);
+
                     //Data of applicants
                     Elements links = document.getElementsByClass("tablesaw tablesaw-stack tablesaw-sortable");
-                    Elements elements = links.select("tbody");
-                    Elements selectTr = elements.select("tr");
+                    Elements elementsBody = links.select("tbody");
+                    Elements selectTr = elementsBody.select("tr");
 
                     //Data of University information
                     Elements detailElements = document.getElementsByClass("title-page");
@@ -266,30 +287,57 @@ public class ApplicationListActivity extends BaseActivity implements Application
                     Element legendElementById = document.getElementById("legend");
                     Elements selectLegendElements = legendElementById.select("tr");
                     LegendEngine legendEngine = new LegendEngine(getApplication());
-
-//                    if (legendEngine.getLegendsById(LEGEND_YEAR_ID_2015) == null){
-//                        parseLegendData(selectLegendElements, legendEngine, LEGEND_YEAR_ID_2015);
-//                    } else
-//                        if (legendEngine.getLegendsById(LEGEND_YEAR_ID_2016).isEmpty()) {
+                    if (legendEngine.getLegendsById(LEGEND_YEAR_ID_2016).isEmpty()) {
                         parseLegendData(selectLegendElements, legendEngine, LEGEND_YEAR_ID_2016);
-//                    }
+                    }
+
+                    //Data of marking
+                    Elements elementsThead = links.select("thead");
+                    Elements selectTrMarking = elementsThead.select("th");
+                    Log.d("My", "selectTrMarking ->" + selectTrMarking);
+                    parseMarking(selectTrMarking);
 
                     if (applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId).isEmpty()){
                         for (Element link : selectTr) {
                             Elements tdElements = link.select("td");
 
+                            //background
                             getBackgroundApplicant(tdElements);
 
-                            number = tdElements.get(0).text();
-                            name = tdElements.get(1).text();
-                            score = tdElements.get(3).text();
+                            Log.d("My", "tdElements.size(); - > " + tdElements.size());
+                            if (tdElements.size() == 8) {
+                                number = tdElements.get(0).text();
+                                name = tdElements.get(1).text();
+                                totalScore = tdElements.get(2).text();
+                                markDocument = tdElements.get(3).text();
+                                markTest = tdElements.get(4).text();
+                                markExam = tdElements.get(5).text();
+                                extraPoints = tdElements.get(6).text();
+                                originalDocument = tdElements.get(7).text();
+                            } else {
+                                number = tdElements.get(0).text();
+                                name = tdElements.get(1).text();
+                                priority = tdElements.get(2).text();
+                                totalScore = tdElements.get(3).text();
+                                markDocument = tdElements.get(4).text();
+                                markTest = tdElements.get(5).text();
+                                markExam = tdElements.get(6).text();
+                                extraPoints = tdElements.get(7).text();
+                                originalDocument = tdElements.get(8).text();
+                            }
+
+                            Log.d("My", "number + name + priority + totalScore + markDocument +\n" +
+                                    "markTest + markExam + extraPoints + originalDocument" +
+                                    number + name + priority + totalScore + markDocument +
+                                    markTest + markExam + extraPoints + originalDocument);
 
                             someLink = tdElements.attr("abs:href");
 
                             applicantInfo = link.text();
 
                             applicationInfoEngine.addApplication(new ApplicationsInfo(mLongSpecialityId, university,
-                                    speciality, applicantInfo, number, name, score, someLink, color));
+                                    speciality, applicantInfo, number, name, priority, totalScore, markDocument,
+                                    markTest, markExam, extraPoints, originalDocument, someLink, color));
                         }
                     } else {
 
@@ -297,17 +345,23 @@ public class ApplicationListActivity extends BaseActivity implements Application
                             Elements tdElements = link.select("td");
 
                             getBackgroundApplicant(tdElements);
-//                        String[] colors = getBackgroundApplicant(tdElements);
 
                             number = tdElements.get(0).text();
                             name = tdElements.get(1).text();
-                            score = tdElements.get(3).text();
+                            priority = tdElements.get(2).text();
+                            totalScore = tdElements.get(3).text();
+                            markDocument = tdElements.get(4).text();
+                            markTest = tdElements.get(5).text();
+                            markExam = tdElements.get(6).text();
+                            extraPoints = tdElements.get(7).text();
+                            originalDocument = tdElements.get(8).text();
 
                             someLink = tdElements.attr("abs:href");
                             applicantInfo = link.text();
 
                             applicationInfoEngine.updateApplicant(new ApplicationsInfo(mLongSpecialityId, university,
-                                    speciality, applicantInfo, number, name, score, someLink, color));
+                                    speciality, applicantInfo, number, name, priority, totalScore, markDocument,
+                                    markTest, markExam, extraPoints, originalDocument, someLink, color));
                         }
                     }
                 } catch (IOException e) {
@@ -315,12 +369,25 @@ public class ApplicationListActivity extends BaseActivity implements Application
                 }
             }
 
+            private void parseMarking(Elements selectTrMarking) {
+                ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getApplication());
+                if (importantApplicantInfoEngine.getImportantInfoById(mLongSpecialityId).isEmpty()) {
+                    for (Element mark : selectTrMarking) {
+
+                        importantApplicantInfoEngine.addImportantInfo(new ImportantInfo(mLongSpecialityId,
+                                mark.text(), mark.text()));
+//                        mark.text();
+                        Log.d("My", "mark.text(); ->" + mark.text());
+                    }
+                }
+            }
+
+            //get background color applicant item
             //TODO get all backgrounds
             private void getBackgroundApplicant(Elements tdElements) {
 
                 String backgroundFirst;
                 String backgroundSecond;
-
 
                 Log.d("My", "tdElements.size() -> " + tdElements.size());
                 if ((tdElements.get(0).select(getStyle).size()) > 0) {
@@ -347,16 +414,16 @@ public class ApplicationListActivity extends BaseActivity implements Application
                     Elements detailLegend = legend.select("td");
                     String legendName = "";
                     String legendDetail = "";
-                    String legendBackgrond = "";
+                    String legendBackground = "";
 
                     if ((detailLegend.get(0).select(getStyle).size()) > 0) {
                         String style = detailLegend.get(0).select(getStyle).toString();
 
                         if (style.length() > 132) {
                             String yelowColor = style.substring(style.indexOf("#", 133));
-                            legendBackgrond = yelowColor.substring(0, yelowColor.indexOf(";"));
+                            legendBackground = yelowColor.substring(0, yelowColor.indexOf(";"));
                         } else {
-                            legendBackgrond = style.substring(style.indexOf("#"), style.indexOf(";"));
+                            legendBackground = style.substring(style.indexOf("#"), style.indexOf(";"));
                         }
 
                     } else {
@@ -366,7 +433,7 @@ public class ApplicationListActivity extends BaseActivity implements Application
                     if (detailLegend.size() > 1) {
                         legendDetail = detailLegend.get(1).text().trim();
                     }
-                    legendEngine.addLegend(new LegendInfo(yearId, legendName, legendDetail, legendBackgrond));
+                    legendEngine.addLegend(new LegendInfo(yearId, legendName, legendDetail, legendBackground));
                     Log.d("My", "legendEngine new LegendInfo -> " + yearId + "\n" + legendName);
                 }
             }

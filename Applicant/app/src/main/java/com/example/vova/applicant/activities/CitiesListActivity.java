@@ -16,7 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.vova.applicant.R;
-import com.example.vova.applicant.Utils;
+import com.example.vova.applicant.utils.Utils;
 import com.example.vova.applicant.adapters.CitiesInfoAdapter;
 import com.example.vova.applicant.model.CitiesInfo;
 import com.example.vova.applicant.model.engines.CitiesInfoEngine;
@@ -155,13 +155,21 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
                 try {
                     document = Jsoup.connect(yearsCodeLink).get();
 
+                    //get time and date update page
+                    String strLastUpdatePage = document.select("div.title-page > small").text();
+                    Log.d("My", "strLastUpdatePage -> " + strLastUpdatePage );
+                    String[] arrayTimeDate = strLastUpdatePage.split(" ");
+                    String date = arrayTimeDate[3];
+                    String time = arrayTimeDate[5];
+                    Log.d("My", "date -> " + date + "\ntime -> " + time);
+
                     Element elementRegion = document.getElementById("region");
-                    Elements links = elementRegion.getElementsByTag("a");
+                    Elements linksByTag = elementRegion.getElementsByTag("a");
 
                     Elements elementsHeadData = document.getElementsByClass("title-page");
 
                     if (citiesInfoEngine.getAllCitiesById(yearsId).isEmpty()) {
-                        for (Element link : links) {
+                        for (Element link : linksByTag) {
 
                             String citiesName = link.text();
                             String citiesLink = link.attr("abs:href");
@@ -171,13 +179,13 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
                             String strHead = elementsHeadData.select(".title-description").first().text();
                             String strTime = elementsHeadData.select("small").text();
 
-                            Log.d("My", "parse first -> " + citiesInfoEngine.getCityById(yearsId));
-                            Log.d("My", "yearsId -> " + yearsId);
-                            Log.d("My", "parse strHead -> " + strHead);
-                            Log.d("My", "strTime -> " + strTime);
+//                            Log.d("My", "parse first -> " + citiesInfoEngine.getCityById(yearsId));
+//                            Log.d("My", "yearsId -> " + yearsId);
+//                            Log.d("My", "parse strHead -> " + strHead);
+//                            Log.d("My", "strTime -> " + strTime);
                         }
                     } else {
-                        for (Element link : links) {
+                        for (Element link : linksByTag) {
 
                             String citiesName = link.text();
                             String citiesLink = link.attr("abs:href");
@@ -187,10 +195,10 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
                             String strHead = elementsHeadData.select(".title-description").first().text();
                             String strTime = elementsHeadData.select("small").text();
 
-                            Log.d("My", "parse update -> " + citiesInfoEngine.getCityById(yearsId));
-                            Log.d("My", "yearsId -> " + yearsId);
-                            Log.d("My", "parse strHead -> " + strHead);
-                            Log.d("My", "strTime -> " + strTime);
+//                            Log.d("My", "parse update -> " + citiesInfoEngine.getCityById(yearsId));
+//                            Log.d("My", "yearsId -> " + yearsId);
+//                            Log.d("My", "parse strHead -> " + strHead);
+//                            Log.d("My", "strTime -> " + strTime);
                         }
                     }
                 } catch (IOException e) {

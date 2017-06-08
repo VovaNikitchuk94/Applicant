@@ -9,16 +9,18 @@ import com.example.vova.applicant.toolsAndConstans.DBConstans.ImportantInfoTable
 
 import java.util.ArrayList;
 
-public class ImportantInfoDBWrapper extends BaseDBWrapper {
+public class ImportantApplicantInfoDBWrapper extends BaseDBWrapper {
 
-    public ImportantInfoDBWrapper(Context context) {
+    public ImportantApplicantInfoDBWrapper(Context context) {
         super(context, ImportantInfoTable.TABLE_NAME);
     }
 
-    public ArrayList<ImportantInfo> getAllInfos() {
+    public ArrayList<ImportantInfo> getImportantInfoById(long nId) {
         ArrayList<ImportantInfo> arrResult = new ArrayList<>();
         SQLiteDatabase database = getReadable();
-        Cursor cursor = database.query(getTableName(), null, null, null, null, null, null);
+        String strRequest = ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_SPECIALITY_ID + "=?";
+        String arrArgs[] = new String[]{Long.toString(nId)};
+        Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
         try {
             if (cursor != null && cursor.moveToFirst()) {
                 do {
@@ -35,7 +37,7 @@ public class ImportantInfoDBWrapper extends BaseDBWrapper {
         return arrResult;
     }
 
-    public void addInfos(ImportantInfo importantInfo) {
+    public void addImportantInfo(ImportantInfo importantInfo) {
         SQLiteDatabase database = getWritable();
         database.insert(getTableName(), null, importantInfo.getContentValues());
         database.close();

@@ -14,24 +14,45 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
     private String mStrUniversity;
     private String mStrSpeciality;
     private String mStrApplicantInfo;
+
+    //Detail applicant info
     private String mStrApplicantNumber;
     private String mStrApplicantName;
+    private String mStrApplicantPriority;
     private String mStrApplicantTotalScores;
+    private String mStrApplicantMarkDocument;
+    private String mStrApplicantMarkTest;
+    private String mStrApplicantMarkExam;
+    private String mStrApplicantExtraPoints;
+    private String mStrApplicantOriginalDocument;
+
     private String mStrApplicantLink;
     private String mStrBackground;
 
-    public ApplicationsInfo(long specialityId, String strUniversity, String strSpeciality,
+    public ApplicationsInfo(long longSpecialityId, String strUniversity, String strSpeciality,
                             String strApplicantInfo, String strApplicantNumber,
-                            String strApplicantName, String strApplicantTotalScores, String link,
-                            String strBackground) {
-        mLongSpecialityId = specialityId;
+                            String strApplicantName, String strApplicantPriority,
+                            String strApplicantTotalScores, String strApplicantMarkDocument,
+                            String strApplicantMarkTest, String strApplicantMarkExam,
+                            String strApplicantExtraPoints, String strApplicantOriginalDocument,
+                            String strApplicantLink, String strBackground) {
+
+        mLongSpecialityId = longSpecialityId;
         mStrUniversity = strUniversity;
         mStrSpeciality = strSpeciality;
         mStrApplicantInfo = strApplicantInfo;
+
         mStrApplicantNumber = strApplicantNumber;
         mStrApplicantName = strApplicantName;
+        mStrApplicantPriority = strApplicantPriority;
         mStrApplicantTotalScores = strApplicantTotalScores;
-        mStrApplicantLink = link;
+        mStrApplicantMarkDocument = strApplicantMarkDocument;
+        mStrApplicantMarkTest = strApplicantMarkTest;
+        mStrApplicantMarkExam = strApplicantMarkExam;
+        mStrApplicantExtraPoints = strApplicantExtraPoints;
+        mStrApplicantOriginalDocument = strApplicantOriginalDocument;
+
+        mStrApplicantLink = strApplicantLink;
         mStrBackground = strBackground;
     }
 
@@ -41,9 +62,17 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
         mStrUniversity = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_UNIVERSITY));
         mStrSpeciality = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY));
         mStrApplicantInfo = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_FIELD_INFO));
+
         mStrApplicantNumber = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_NUMBER));
         mStrApplicantName = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_NAME));
+        mStrApplicantPriority = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_PRIORITY));
         mStrApplicantTotalScores = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_TOTAL_SCORE));
+        mStrApplicantMarkDocument = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_MARK_DOCUMENT));
+        mStrApplicantMarkTest = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_MARK_TEST));
+        mStrApplicantMarkExam = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_MARK_EXAM));
+        mStrApplicantExtraPoints = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_EXTRA_POINTS));
+        mStrApplicantOriginalDocument = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_ORIGINAL_DOCUMENT));
+
         mStrApplicantLink = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_LINK));
         mStrBackground = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_BACKGROUND));
     }
@@ -54,9 +83,17 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
         mStrUniversity = parcel.readString();
         mStrSpeciality = parcel.readString();
         mStrApplicantInfo = parcel.readString();
+
         mStrApplicantNumber = parcel.readString();
         mStrApplicantName = parcel.readString();
+        mStrApplicantPriority = parcel.readString();
         mStrApplicantTotalScores = parcel.readString();
+        mStrApplicantMarkDocument = parcel.readString();
+        mStrApplicantMarkTest = parcel.readString();
+        mStrApplicantMarkExam = parcel.readString();
+        mStrApplicantExtraPoints = parcel.readString();
+        mStrApplicantOriginalDocument = parcel.readString();
+
         mStrApplicantLink = parcel.readString();
         mStrBackground = parcel.readString();
     }
@@ -81,54 +118,68 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
         return mLongSpecialityId;
     }
 
-    public void setLongSpecialityId(long longSpecialityId) {
-        mLongSpecialityId = longSpecialityId;
-    }
-
     public String getStrUniversity() {
         return mStrUniversity;
-    }
-
-    public void setStrUniversity(String strUniversity) {
-        mStrUniversity = strUniversity;
     }
 
     public String getStrSpeciality() {
         return mStrSpeciality;
     }
 
-    public void setStrSpeciality(String strSpeciality) {
-        mStrSpeciality = strSpeciality;
-    }
-
     public String getStrApplicantInfo() {
         return mStrApplicantInfo;
-    }
-
-    public void setStrApplicantInfo(String strApplicantInfo) {
-        mStrApplicantInfo = strApplicantInfo;
     }
 
     public String getStrBackground() {
         return mStrBackground;
     }
 
-    public void setStrBackground(String strBackground) {
-        mStrBackground = strBackground;
+    public String getStrApplicantPriority() {
+        return mStrApplicantPriority;
+    }
+
+    public String getStrApplicantMarkDocument() {
+        return mStrApplicantMarkDocument;
+    }
+
+    public String getStrApplicantMarkTest() {
+        return mStrApplicantMarkTest;
+    }
+
+    public String getStrApplicantMarkExam() {
+        return mStrApplicantMarkExam;
+    }
+
+    public String getStrApplicantExtraPoints() {
+        return mStrApplicantExtraPoints;
+    }
+
+    public String getStrApplicantOriginalDocument() {
+        return mStrApplicantOriginalDocument;
     }
 
     @Override
     public ContentValues getContentValues() {
         ContentValues values = new ContentValues();
+
         values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY_ID, getLongSpecialityId());
         values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_UNIVERSITY, getStrUniversity());
         values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY, getStrSpeciality());
         values.put(ApplicationTable.Cols.APPLICATION_FIELD_INFO, getStrApplicantInfo());
+
         values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_NUMBER, getStrApplicantNumber());
         values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_NAME, getStrApplicantName());
+        values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_PRIORITY, getStrApplicantPriority());
         values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_TOTAL_SCORE, getStrApplicantTotalScores());
+        values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_MARK_DOCUMENT, getStrApplicantMarkDocument());
+        values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_MARK_TEST, getStrApplicantMarkTest());
+        values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_MARK_EXAM, getStrApplicantMarkExam());
+        values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_EXTRA_POINTS, getStrApplicantExtraPoints());
+        values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_ORIGINAL_DOCUMENT, getStrApplicantOriginalDocument());
+
         values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_LINK, getStrApplicantLink());
         values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_BACKGROUND, getStrBackground());
+
         return values;
     }
 
@@ -144,9 +195,17 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
         dest.writeString(mStrUniversity);
         dest.writeString(mStrSpeciality);
         dest.writeString(mStrApplicantInfo);
+
         dest.writeString(mStrApplicantNumber);
         dest.writeString(mStrApplicantName);
+        dest.writeString(mStrApplicantPriority);
         dest.writeString(mStrApplicantTotalScores);
+        dest.writeString(mStrApplicantMarkDocument);
+        dest.writeString(mStrApplicantMarkTest);
+        dest.writeString(mStrApplicantMarkExam);
+        dest.writeString(mStrApplicantExtraPoints);
+        dest.writeString(mStrApplicantOriginalDocument);
+
         dest.writeString(mStrApplicantLink);
         dest.writeString(mStrBackground);
     }

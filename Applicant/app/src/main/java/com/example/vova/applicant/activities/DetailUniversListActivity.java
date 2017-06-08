@@ -13,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.vova.applicant.R;
-import com.example.vova.applicant.Utils;
+import com.example.vova.applicant.utils.Utils;
 import com.example.vova.applicant.adapters.DetailUniversAdapter;
 import com.example.vova.applicant.model.DetailUniverInfo;
 import com.example.vova.applicant.model.UniversityInfo;
@@ -153,6 +153,14 @@ public class DetailUniversListActivity extends BaseActivity implements
                 Document document;
                 try {
                     document = Jsoup.connect(html).get();
+
+                    //get time and date update page
+                    String strLastUpdatePage = document.select("div.title-page > small").text();
+                    Log.d("My", "strLastUpdatePage -> " + strLastUpdatePage );
+                    String[] arrayTimeDate = strLastUpdatePage.split(" ");
+                    String date = arrayTimeDate[3];
+                    String time = arrayTimeDate[5];
+                    Log.d("My", "date -> " + date + "\ntime -> " + time);
 
                     Elements elementsByClass = document.getElementsByClass("accordion-heading togglize");
                     Elements elementsText = elementsByClass.select("a");

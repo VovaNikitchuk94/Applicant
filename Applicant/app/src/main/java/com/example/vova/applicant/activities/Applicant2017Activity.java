@@ -42,8 +42,10 @@ public class Applicant2017Activity extends BaseActivity {
 
         switch (item.getItemId()){
             case ITEM_ID_APPLICANT_INFO:
+                //intent for open pdf in new task
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW,
                         Uri.parse(DRIVE_GOOGLE_COM_OPEN_IMPORTANT_INFO_2017));
+//                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(browserIntent);
                 break;
         }

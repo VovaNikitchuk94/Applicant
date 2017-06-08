@@ -15,7 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.vova.applicant.R;
-import com.example.vova.applicant.Utils;
+import com.example.vova.applicant.utils.Utils;
 import com.example.vova.applicant.adapters.AboutUniversityAdapter;
 import com.example.vova.applicant.model.AboutUniversityInfo;
 import com.example.vova.applicant.model.DetailUniverInfo;

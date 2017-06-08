@@ -1,24 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-    android:padding="16dp">
+              android:orientation="vertical"
+    android:padding="16dp"
+    android:paddingBottom="0dp">
 
-    <!--<TextView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/textNameOfUniversityFragmentDetailApplicant"/>-->
+    <TextView
+        android:id="@+id/textNameOfUniversityFragmentDetailApplicant"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
-    <!--<TextView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/textSpecialityFragmentDetailApplicant"/>-->
-
-    <!--<TextView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/textDateOfLastUpdateFragmentDetailApplicant"/>-->
+    <TextView
+        android:id="@+id/textSpecialityFragmentDetailApplicant"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,55 +25,55 @@
             android:layout_width="wrap_content"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:id="@+id/textNumberApplicantFragmentDetailApplicant"/>
+            android:id="@+id/textNumberApplicantFragmentImportantInfoApplicant"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:id="@+id/textFullNameApplicantFragmentDetailApplicant"/>
+            android:id="@+id/textFullNameApplicantFragmentImportantInfoApplicant"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:id="@+id/textPriorityApplicantFragmentDetailApplicant"/>
+            android:id="@+id/textPriorityApplicantFragmentImportantInfoApplicant"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:id="@+id/textTotalScoreApplicantFragmentDetailApplicant"/>
+            android:id="@+id/textTotalScoreApplicantFragmentImportantInfoApplicant"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:id="@+id/textMarkDocumentApplicantFragmentDetailApplicant"/>
+            android:id="@+id/textMarkDocumentApplicantFragmentImportantInfoApplicant"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:id="@+id/textMarkTestApplicantFragmentDetailApplicant"/>
+            android:id="@+id/textMarkTestApplicantFragmentImportantInfoApplicant"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:id="@+id/textMarkExamApplicantFragmentDetailApplicant"/>
+            android:id="@+id/textMarkExamApplicantFragmentImportantInfoApplicant"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:id="@+id/textExtraPointsApplicantFragmentDetailApplicant"/>
+            android:id="@+id/textExtraPointsApplicantFragmentImportantInfoApplicant"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:id="@+id/textOriginalDocumentApplicantFragmentDetailApplicant"/>
+            android:id="@+id/textOriginalDocumentApplicantFragmentImportantInfoApplicant"/>
 
     </LinearLayout>
 

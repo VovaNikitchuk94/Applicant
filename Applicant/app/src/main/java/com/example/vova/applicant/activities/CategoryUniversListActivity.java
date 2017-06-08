@@ -12,7 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.vova.applicant.R;
-import com.example.vova.applicant.Utils;
+import com.example.vova.applicant.utils.Utils;
 import com.example.vova.applicant.adapters.CategoryUniversAdapter;
 import com.example.vova.applicant.model.CategoryUniversInfo;
 import com.example.vova.applicant.model.CitiesInfo;
@@ -151,10 +151,17 @@ public class CategoryUniversListActivity extends BaseActivity implements
 
                     document = Jsoup.connect(html).get();
 
+                    //get time and date update page
+                    String strLastUpdatePage = document.select("div.title-page > small").text();
+                    Log.d("My", "strLastUpdatePage -> " + strLastUpdatePage );
+                    String[] arrayTimeDate = strLastUpdatePage.split(" ");
+                    String date = arrayTimeDate[3];
+                    String time = arrayTimeDate[5];
+                    Log.d("My", "date -> " + date + "\ntime -> " + time);
+
                     Elements groupElements = document.getElementsByClass("accordion-group");
 
                     if (categoryUniversEngine.getAllCategoryById(universityCityId).isEmpty()){
-//                    for (Element group : groupElements) {
 
                         Elements elementsNameType = groupElements.select(".accordion-toggle");
                         Elements elementsTextType = elementsNameType.select("a");
@@ -167,7 +174,6 @@ public class CategoryUniversListActivity extends BaseActivity implements
                             Log.d("My", "element categoryName -> " + categoryName);
                             Log.d("My", "element categoryLink-> " + categoryLink);
                         }
-//                    }
                     }
 
                     if (universityInfoEngine.getAllUniversitiesById(mLongCityId).isEmpty()) {
@@ -187,7 +193,7 @@ public class CategoryUniversListActivity extends BaseActivity implements
 
                                 universityName = element.text();
                                 universityLink = element.attr("abs:href");
-//                            categoryUniversEngine.addCategory(new CategoryUniversInfo(universityCityId, categoryName, categoryLink));
+
                                 universityInfoEngine.addUniversity(new UniversityInfo(universityCityId,
                                         categoryName, categoryLink, universityName, universityLink) );
 
@@ -214,7 +220,6 @@ public class CategoryUniversListActivity extends BaseActivity implements
 
                                 universityName = element.text();
                                 universityLink = element.attr("abs:href");
-//                            categoryUniversEngine.updateCategory(new CategoryUniversInfo(universityCityId, categoryName, categoryLink));
                                 universityInfoEngine.updateUniversity(new UniversityInfo(universityCityId,
                                         categoryName, categoryLink, universityName, universityLink));
 
