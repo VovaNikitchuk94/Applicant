@@ -46,27 +46,25 @@ public class TopLevelActivity extends BaseActivity implements View.OnClickListen
         mButton2017Year.setOnClickListener(this);
         mButton2016Year.setOnClickListener(this);
         mButton2015Year.setOnClickListener(this);
-
-        //modified toolbar
-        Drawable menuRightIconDrawable = ContextCompat.getDrawable(this, R.drawable.ic_more_vert_black_24dp);
-        menuRightIconDrawable.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
-        getToolbar().setOverflowIcon(menuRightIconDrawable);
     }
 
     @Override
     public void onClick(View view) {
         Intent intent = null;
         switch (view.getId()) {
+
             case R.id.button2017YearTopLevelActivity:
                 //TODO fix when can opened 2017vstupInfoPage
                 intent = new Intent(this, Applicant2017Activity.class);
                 yearsCodeLink = "";
                 break;
+
             case R.id.button2016YearTopLevelActivity:
                 yearsCodeLink = HTTP_WWW_VSTUP_INFO_2016;
                  intent = new Intent(this, CitiesListActivity.class);
                 intent.putExtra(CitiesListActivity.KEY_YEARS_CITIES_LIST_ACTIVITY, yearsCodeLink);
                 break;
+
             case R.id.button2015YearTopLevelActivity:
                 yearsCodeLink = HTTP_WWW_VSTUP_INFO_2015;
                  intent = new Intent(this, CitiesListActivity.class);

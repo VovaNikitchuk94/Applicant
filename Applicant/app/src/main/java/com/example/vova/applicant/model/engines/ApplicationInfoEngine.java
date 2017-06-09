@@ -1,6 +1,7 @@
 package com.example.vova.applicant.model.engines;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.vova.applicant.model.ApplicationsInfo;
 import com.example.vova.applicant.model.wrappers.dbWrappers.ApplicationDBWrapper;
@@ -19,6 +20,7 @@ public class ApplicationInfoEngine extends BaseEngine {
     }
 
     public ArrayList<ApplicationsInfo> getAllApplicantionsById(long nId) {
+        Log.d("My", "ApplicationInfoEngine ----------> getAllApplicantionsById");
         ApplicationDBWrapper applicationDBWrapper = new ApplicationDBWrapper(getContext());
         return applicationDBWrapper.getAllApplicantionsById(nId);
     }

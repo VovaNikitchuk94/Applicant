@@ -263,6 +263,7 @@ public class ApplicationListActivity extends BaseActivity implements Application
                     document = Jsoup.connect(html).get();
                     Log.d("My", "html -------> " + html);
 
+                    //TODO parse the date in SQLite
                     //get time and date update page
                     String strLastUpdatePage = document.select("div.title-page > p > small").text();
 //                    String strLastUpdatePageToString = document.select("div.title-page > p > small").toString();

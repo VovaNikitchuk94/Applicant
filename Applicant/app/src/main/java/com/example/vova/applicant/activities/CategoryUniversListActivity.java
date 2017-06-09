@@ -48,6 +48,7 @@ public class CategoryUniversListActivity extends BaseActivity implements
 
     @Override
     protected void iniActivity() {
+        Log.d("My", "CategoryUniversListActivity --------> iniActivity");
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -108,7 +109,6 @@ public class CategoryUniversListActivity extends BaseActivity implements
         mProgressBar.setVisibility(View.GONE);
     }
 
-    //TODO fix
     @Override
     public void onClickCategoryItem(CategoryUniversInfo categoryUniversInfo) {
         Intent intent = new Intent(this, UniversitiesListActivity.class);
@@ -169,7 +169,7 @@ public class CategoryUniversListActivity extends BaseActivity implements
                             categoryName = elementType.text();
                             categoryLink = elementType.attr("abs:href");
                             categoryUniversEngine.addCategory(new CategoryUniversInfo(universityCityId,
-                                    categoryName, categoryLink));
+                                    categoryName, categoryLink, date, time));
 
                             Log.d("My", "element categoryName -> " + categoryName);
                             Log.d("My", "element categoryLink-> " + categoryLink);

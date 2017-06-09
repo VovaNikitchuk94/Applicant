@@ -3,10 +3,9 @@ package com.example.vova.applicant.model.wrappers.dbWrappers;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.example.vova.applicant.model.TimeFormInfo;
-import com.example.vova.applicant.toolsAndConstans.DBConstans.TimeFormTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.TimeFormTable;
 
 import java.util.ArrayList;
 

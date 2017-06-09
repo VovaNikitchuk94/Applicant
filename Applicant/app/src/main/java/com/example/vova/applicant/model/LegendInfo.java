@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.vova.applicant.toolsAndConstans.DBConstans.LegendInfoTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.LegendInfoTable;
 
 public class LegendInfo extends BaseEntity implements Parcelable{
 

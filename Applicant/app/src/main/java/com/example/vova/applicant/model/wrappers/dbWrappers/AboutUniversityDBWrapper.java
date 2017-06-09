@@ -3,10 +3,9 @@ package com.example.vova.applicant.model.wrappers.dbWrappers;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.example.vova.applicant.model.AboutUniversityInfo;
-import com.example.vova.applicant.toolsAndConstans.DBConstans.AboutUniversityTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.AboutUniversityTable;
 
 import java.util.ArrayList;
 

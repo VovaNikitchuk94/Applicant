@@ -1,6 +1,7 @@
 package com.example.vova.applicant.model.engines;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.vova.applicant.model.SpecialtiesInfo;
 import com.example.vova.applicant.model.wrappers.dbWrappers.SpecialityDBWrapper;
@@ -19,6 +20,7 @@ public class SpecialityInfoEngine extends BaseEngine {
 //    }
 
     public ArrayList<SpecialtiesInfo> getAllSpecialitiesById(long nId) {
+        Log.d("My", "SpecialityInfoEngine ----------> getAllSpecialitiesById");
         SpecialityDBWrapper specialityDBWrapper = new SpecialityDBWrapper(getContext());
         return specialityDBWrapper.getAllSpecialitiesById(nId);
     }

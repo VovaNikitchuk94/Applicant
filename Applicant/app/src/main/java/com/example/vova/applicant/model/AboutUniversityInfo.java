@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.vova.applicant.toolsAndConstans.DBConstans.AboutUniversityTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.AboutUniversityTable;
 
 public class AboutUniversityInfo extends BaseEntity implements Parcelable{
 

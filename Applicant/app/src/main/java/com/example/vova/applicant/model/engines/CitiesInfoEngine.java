@@ -1,6 +1,7 @@
 package com.example.vova.applicant.model.engines;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.vova.applicant.model.CitiesInfo;
 import com.example.vova.applicant.model.wrappers.dbWrappers.CitiesInfoDBWrapper;
@@ -19,6 +20,7 @@ public class CitiesInfoEngine extends BaseEngine {
     }
 
     public ArrayList<CitiesInfo> getAllCitiesById(long nId) {
+        Log.d("My", "CitiesInfoEngine ----------> getAllCitiesById");
         CitiesInfoDBWrapper citiesInfoDBWrapper = new CitiesInfoDBWrapper(getContext());
         return citiesInfoDBWrapper.getAllCitiesById(nId);
     }
@@ -37,7 +39,4 @@ public class CitiesInfoEngine extends BaseEngine {
         CitiesInfoDBWrapper citiesInfoDBWrapper = new CitiesInfoDBWrapper(getContext());
         return citiesInfoDBWrapper.getCityById(nId);
     }
-
-
-
 }

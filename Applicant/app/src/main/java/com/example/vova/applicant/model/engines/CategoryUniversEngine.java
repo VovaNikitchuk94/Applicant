@@ -17,7 +17,7 @@ public class CategoryUniversEngine extends BaseEngine {
     }
 
     public ArrayList<CategoryUniversInfo> getAllCategoryById(long nId) {
-        Log.d("My","getAllCategoryById");
+        Log.d("My", "CategoryUniversEngine ----------> getAllCategoryById");
         CategoryUniversInfoDBWrapper categoryUniversInfoDBWrapper = new CategoryUniversInfoDBWrapper(getContext());
         return categoryUniversInfoDBWrapper.getAllCategoryById(nId);
     }

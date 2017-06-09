@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.vova.applicant.toolsAndConstans.DBConstans.TimeFormTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.TimeFormTable;
 
 public class TimeFormInfo extends BaseEntity implements Parcelable {
 

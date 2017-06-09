@@ -42,6 +42,7 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
 
     @Override
     protected void iniActivity() {
+        Log.d("My", "CitiesListActivity --------> iniActivity");
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -60,6 +61,8 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(true);
                 mRecyclerView.setVisibility(View.GONE);
+//                TODO запускать только когда можно обновить данные
+//                if ()
                 parseData();
                 Log.d("My","SwipeRefreshLayout -> parseData -> is start");
                 mRecyclerView.setVisibility(View.VISIBLE);
@@ -166,23 +169,13 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
                     Element elementRegion = document.getElementById("region");
                     Elements linksByTag = elementRegion.getElementsByTag("a");
 
-                    Elements elementsHeadData = document.getElementsByClass("title-page");
-
                     if (citiesInfoEngine.getAllCitiesById(yearsId).isEmpty()) {
                         for (Element link : linksByTag) {
 
                             String citiesName = link.text();
                             String citiesLink = link.attr("abs:href");
 
-                            citiesInfoEngine.addCity(new CitiesInfo(yearsId, citiesName, citiesLink));
-
-                            String strHead = elementsHeadData.select(".title-description").first().text();
-                            String strTime = elementsHeadData.select("small").text();
-
-//                            Log.d("My", "parse first -> " + citiesInfoEngine.getCityById(yearsId));
-//                            Log.d("My", "yearsId -> " + yearsId);
-//                            Log.d("My", "parse strHead -> " + strHead);
-//                            Log.d("My", "strTime -> " + strTime);
+                            citiesInfoEngine.addCity(new CitiesInfo(yearsId, citiesName, citiesLink, date, time));
                         }
                     } else {
                         for (Element link : linksByTag) {
@@ -190,15 +183,7 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
                             String citiesName = link.text();
                             String citiesLink = link.attr("abs:href");
 
-                            citiesInfoEngine.updateCity(new CitiesInfo(yearsId, citiesName, citiesLink));
-
-                            String strHead = elementsHeadData.select(".title-description").first().text();
-                            String strTime = elementsHeadData.select("small").text();
-
-//                            Log.d("My", "parse update -> " + citiesInfoEngine.getCityById(yearsId));
-//                            Log.d("My", "yearsId -> " + yearsId);
-//                            Log.d("My", "parse strHead -> " + strHead);
-//                            Log.d("My", "strTime -> " + strTime);
+                            citiesInfoEngine.updateCity(new CitiesInfo(yearsId, citiesName, citiesLink, date, time));
                         }
                     }
                 } catch (IOException e) {

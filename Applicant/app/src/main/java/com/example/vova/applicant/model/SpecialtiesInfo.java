@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.vova.applicant.toolsAndConstans.DBConstans.SpecialitiesTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.SpecialitiesTable;
 
 public class SpecialtiesInfo extends BaseEntity implements Parcelable {
 

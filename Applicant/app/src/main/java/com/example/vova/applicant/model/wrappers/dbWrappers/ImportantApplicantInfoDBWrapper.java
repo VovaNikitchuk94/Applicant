@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.vova.applicant.model.ImportantInfo;
-import com.example.vova.applicant.toolsAndConstans.DBConstans.ImportantInfoTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.ImportantInfoTable;
 
 import java.util.ArrayList;
 

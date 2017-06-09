@@ -1,6 +1,6 @@
 package com.example.vova.applicant.toolsAndConstans;
 
-public class DBConstans {
+public class DBConstants {
 
     public static final String DB_NAME = "note_db";
     public static final int DB_VERSION = 1;
@@ -13,6 +13,8 @@ public class DBConstans {
             public static final String CITIES_INFO_FIELD_YEAR_ID = "_year_id";
             public static final String CITIES_INFO_FIELD_NAME = "_name";
             public static final String CITIES_INFO_FIELD_LINK = "_link";
+            public static final String CITIES_INFO_FIELD_DATE_UPDATE = "_date_update";
+            public static final String CITIES_INFO_FIELD_TIME_UPDATE = "_time_update";
         }
     }
 
@@ -24,6 +26,8 @@ public class DBConstans {
             public static final String CATEGORY_UNIVERS_INFO_FIELD_CITIES_ID = "_city_id";
             public static final String CATEGORY_UNIVERS_INFO_FIELD_NAME = "_name";
             public static final String CATEGORY_UNIVERS_INFO_FIELD_LINK = "_link";
+            public static final String CATEGORY_UNIVERS_INFO_FIELD_DATE_UPDATE = "_date_update";
+            public static final String CATEGORY_UNIVERS_INFO_FIELD_TIME_UPDATE = "_time_update";
         }
     }
 
@@ -48,6 +52,8 @@ public class DBConstans {
             public static final String UNIVERSITY_DETAIL_INFO_FIELD_UNV_ID = "_university_id";
             public static final String UNIVERSITY_DETAIL_INFO_FIELD_NAME = "_name";
             public static final String UNIVERSITY_DETAIL_INFO_FIELD_LINK = "_link";
+            public static final String UNIVERSITY_DETAIL_INFO_FIELD_DATE_UPDATE = "_date_update";
+            public static final String UNIVERSITY_DETAIL_INFO_FIELD_TIME_UPDATE = "_time_update";
         }
     }
 

@@ -43,6 +43,7 @@ public class DetailUniversListActivity extends BaseActivity implements
 
     @Override
     protected void iniActivity() {
+        Log.d("My", "DetailUniversListActivity --------> iniActivity");
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -171,7 +172,7 @@ public class DetailUniversListActivity extends BaseActivity implements
                             String detailUniversityLink = element.attr("abs:href");
 
                             detailUniverInfoEngine.addDetailUniver(new DetailUniverInfo(longDetailUNVId, detailUniversityName,
-                                    detailUniversityLink));
+                                    detailUniversityLink, date, time));
                             Log.d("My", "ParseUniversities doInBackground  addDetailUniver link ->" + element.attr("abs:href"));
                             Log.d("My", "ParseUniversities doInBackground  addDetailUniver  detailUniversityLink ->" + detailUniversityLink);
                         }
@@ -181,7 +182,7 @@ public class DetailUniversListActivity extends BaseActivity implements
                             String detailUniversityLink = element.attr("abs:href");
 
                             detailUniverInfoEngine.updateDetailUniver(new DetailUniverInfo(longDetailUNVId, detailUniversityName,
-                                    detailUniversityLink));
+                                    detailUniversityLink, date, time));
                             Log.d("My", "ParseUniversities doInBackground  addDetailUniver link ->" + element.attr("abs:href"));
                             Log.d("My", "ParseUniversities doInBackground  addDetailUniver  detailUniversityLink ->" + detailUniversityLink);
                         }

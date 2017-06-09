@@ -1,6 +1,7 @@
 package com.example.vova.applicant.model.engines;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.vova.applicant.model.ImportantInfo;
 import com.example.vova.applicant.model.wrappers.dbWrappers.ImportantApplicantInfoDBWrapper;
@@ -14,6 +15,7 @@ public class ImportantApplicantInfoEngine extends BaseEngine {
     }
 
     public ArrayList<ImportantInfo> getImportantInfoById(long nId) {
+        Log.d("My", "ImportantApplicantInfoEngine ----------> getImportantInfoById");
         ImportantApplicantInfoDBWrapper importantApplicantInfoDBWrapper = new ImportantApplicantInfoDBWrapper(getContext());
         return importantApplicantInfoDBWrapper.getImportantInfoById(nId);
     }

@@ -3,7 +3,7 @@ package com.example.vova.applicant.model;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-import com.example.vova.applicant.toolsAndConstans.DBConstans.ImportantInfoTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.ImportantInfoTable;
 
 public class ImportantInfo extends BaseEntity {
 

@@ -46,6 +46,7 @@ public class TimeFormListActivity extends BaseActivity implements
 
     @Override
     protected void iniActivity() {
+        Log.d("My", "TimeFormListActivity --------> iniActivity");
 
         Intent intent = getIntent();
         if (intent != null) {

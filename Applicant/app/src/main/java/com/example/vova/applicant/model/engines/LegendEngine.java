@@ -1,6 +1,7 @@
 package com.example.vova.applicant.model.engines;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.vova.applicant.model.LegendInfo;
 import com.example.vova.applicant.model.wrappers.dbWrappers.LegendDBWrapper;
@@ -24,6 +25,7 @@ public class LegendEngine extends BaseEngine {
     }
 
     public ArrayList<LegendInfo> getLegendsById(long nId) {
+        Log.d("My", "LegendEngine ----------> getLegendsById");
         LegendDBWrapper legendDBWrapper = new LegendDBWrapper(getContext());
         return legendDBWrapper.getLegendsById(nId);
     }

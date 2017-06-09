@@ -45,6 +45,8 @@ public class SpecialtiesListActivity extends BaseActivity implements
 
     @Override
     protected void iniActivity() {
+        Log.d("My", "SpecialtiesListActivity --------> iniActivity");
+
 
         Intent intent = getIntent();
         if (intent != null) {

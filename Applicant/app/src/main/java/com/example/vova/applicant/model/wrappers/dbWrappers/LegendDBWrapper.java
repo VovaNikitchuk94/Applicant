@@ -4,11 +4,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.example.vova.applicant.model.DetailUniverInfo;
 import com.example.vova.applicant.model.LegendInfo;
-import com.example.vova.applicant.model.TimeFormInfo;
-import com.example.vova.applicant.toolsAndConstans.DBConstans.LegendInfoTable;
-import com.example.vova.applicant.toolsAndConstans.DBConstans.TimeFormTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.LegendInfoTable;
 
 import java.util.ArrayList;
 

@@ -5,10 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.vova.applicant.model.CategoryUniversInfo;
-import com.example.vova.applicant.model.UniversityInfo;
-import com.example.vova.applicant.toolsAndConstans.DBConstans;
-import com.example.vova.applicant.toolsAndConstans.DBConstans.CategoryUniversTable;
-import com.example.vova.applicant.toolsAndConstans.DBConstans.UniversityTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.CategoryUniversTable;
 
 import java.util.ArrayList;
 

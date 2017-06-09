@@ -4,22 +4,22 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.vova.applicant.toolsAndConstans.DBConstans;
-import com.example.vova.applicant.toolsAndConstans.DBConstans.AboutUniversityTable;
-import com.example.vova.applicant.toolsAndConstans.DBConstans.ApplicationTable;
-import com.example.vova.applicant.toolsAndConstans.DBConstans.CategoryUniversTable;
-import com.example.vova.applicant.toolsAndConstans.DBConstans.CitiesTable;
-import com.example.vova.applicant.toolsAndConstans.DBConstans.ImportantInfoTable;
-import com.example.vova.applicant.toolsAndConstans.DBConstans.LegendInfoTable;
-import com.example.vova.applicant.toolsAndConstans.DBConstans.SpecialitiesTable;
-import com.example.vova.applicant.toolsAndConstans.DBConstans.TimeFormTable;
-import com.example.vova.applicant.toolsAndConstans.DBConstans.UniversityDetailTable;
-import com.example.vova.applicant.toolsAndConstans.DBConstans.UniversityTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.AboutUniversityTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.ApplicationTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.CategoryUniversTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.CitiesTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.ImportantInfoTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.LegendInfoTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.SpecialitiesTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.TimeFormTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.UniversityDetailTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.UniversityTable;
 
 public class DBHelper extends SQLiteOpenHelper {
 
     public DBHelper(Context context) {
-        super(context, DBConstans.DB_NAME, null, DBConstans.DB_VERSION);
+        super(context, DBConstants.DB_NAME, null, DBConstants.DB_VERSION);
     }
 
     @Override
@@ -29,13 +29,17 @@ public class DBHelper extends SQLiteOpenHelper {
                 + " (" + CitiesTable.Cols.CITIES_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + CitiesTable.Cols.CITIES_INFO_FIELD_YEAR_ID + " INTEGER NOT NULL, "
                 + CitiesTable.Cols.CITIES_INFO_FIELD_NAME + " TEXT NOT NULL, "
-                + CitiesTable.Cols.CITIES_INFO_FIELD_LINK + " TEXT NOT NULL); ");
+                + CitiesTable.Cols.CITIES_INFO_FIELD_LINK + " TEXT NOT NULL, "
+                + CitiesTable.Cols.CITIES_INFO_FIELD_DATE_UPDATE + " TEXT NOT NULL, "
+                + CitiesTable.Cols.CITIES_INFO_FIELD_TIME_UPDATE + " TEXT NOT NULL); ");
 
         sqLiteDatabase.execSQL("CREATE TABLE " + CategoryUniversTable.TABLE_NAME
                 + " (" + CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_CITIES_ID + " INTEGER NOT NULL, "
                 + CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_NAME + " TEXT NOT NULL, "
-                + CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_LINK + " TEXT NOT NULL);");
+                + CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_LINK + " TEXT NOT NULL, "
+                + CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_DATE_UPDATE + " TEXT NOT NULL, "
+                + CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_TIME_UPDATE + " TEXT NOT NULL);");
 
         sqLiteDatabase.execSQL("CREATE TABLE " + UniversityTable.TABLE_NAME
                 + " (" + UniversityTable.Cols.UNIVERSITY_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -49,7 +53,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 + " (" + UniversityDetailTable.Cols.UNIVERSITY_DETAIL_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + UniversityDetailTable.Cols.UNIVERSITY_DETAIL_INFO_FIELD_UNV_ID + " INTEGER NOT NULL, "
                 + UniversityDetailTable.Cols.UNIVERSITY_DETAIL_INFO_FIELD_NAME + " TEXT NOT NULL, "
-                + UniversityDetailTable.Cols.UNIVERSITY_DETAIL_INFO_FIELD_LINK + " TEXT NOT NULL);");
+                + UniversityDetailTable.Cols.UNIVERSITY_DETAIL_INFO_FIELD_LINK + " TEXT NOT NULL, "
+                + UniversityDetailTable.Cols.UNIVERSITY_DETAIL_INFO_FIELD_DATE_UPDATE + " TEXT NOT NULL, "
+                + UniversityDetailTable.Cols.UNIVERSITY_DETAIL_INFO_FIELD_TIME_UPDATE + " TEXT NOT NULL);");
 
         sqLiteDatabase.execSQL("CREATE TABLE " + AboutUniversityTable.TABLE_NAME
                 + " (" + AboutUniversityTable.Cols.ABOUT_UNIVERSITY_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "

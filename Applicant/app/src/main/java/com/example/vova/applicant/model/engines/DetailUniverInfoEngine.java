@@ -1,6 +1,7 @@
 package com.example.vova.applicant.model.engines;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.vova.applicant.model.DetailUniverInfo;
 import com.example.vova.applicant.model.UniversityInfo;
@@ -21,6 +22,7 @@ public class DetailUniverInfoEngine extends BaseEngine {
     }
 
     public ArrayList<DetailUniverInfo> getAllDetailUniversById(long nId) {
+        Log.d("My", "DetailUniverInfoEngine ----------> getAllDetailUniversById");
         DetailUniverDBWrapper detailUniverDBWrapper = new DetailUniverDBWrapper(getContext());
         return detailUniverDBWrapper.getAllDetailUniversById(nId);
     }

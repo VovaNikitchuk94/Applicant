@@ -6,8 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.example.vova.applicant.model.CitiesInfo;
-import com.example.vova.applicant.toolsAndConstans.DBConstans;
-import com.example.vova.applicant.toolsAndConstans.DBConstans.CitiesTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.CitiesTable;
 
 import java.util.ArrayList;
 

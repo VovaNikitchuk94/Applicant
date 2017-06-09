@@ -1,6 +1,7 @@
 package com.example.vova.applicant.model.engines;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.vova.applicant.model.TimeFormInfo;
 import com.example.vova.applicant.model.wrappers.dbWrappers.TimeFormDBWrapper;
@@ -19,6 +20,7 @@ public class TimeFormEngine extends BaseEngine {
     }
 
     public ArrayList<TimeFormInfo> getAllTimeFormsById(long nId) {
+        Log.d("My", "TimeFormEngine ----------> getAllTimeFormsById");
         TimeFormDBWrapper timeFormDBWrapper = new TimeFormDBWrapper(getContext());
         return timeFormDBWrapper.getAllTimeFormsById(nId);
     }

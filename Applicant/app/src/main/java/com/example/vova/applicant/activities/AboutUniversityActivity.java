@@ -197,7 +197,6 @@ public class AboutUniversityActivity extends BaseActivity implements
 //                intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + dataLink));
                 break;
             case "E-mail:":
-                //TODO обработать несколько имейлов
                 intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + dataLink));
                 startActivity(intent);
                 break;

@@ -1,6 +1,7 @@
 package com.example.vova.applicant.model.engines;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.vova.applicant.model.CitiesInfo;
 import com.example.vova.applicant.model.UniversityInfo;
@@ -21,6 +22,7 @@ public class UniversitiesInfoEngine extends BaseEngine {
     }
 
     public ArrayList<UniversityInfo> getAllUniversitiesById(long nId) {
+        Log.d("My", "UniversitiesInfoEngine ----------> getAllUniversitiesById");
         UniversitiesInfoDBWrapper universitiesInfoDBWrapper = new UniversitiesInfoDBWrapper(getContext());
         return universitiesInfoDBWrapper.getAllUniversitiesById(nId);
     }
@@ -29,13 +31,6 @@ public class UniversitiesInfoEngine extends BaseEngine {
         UniversitiesInfoDBWrapper universitiesInfoDBWrapper = new UniversitiesInfoDBWrapper(getContext());
         return universitiesInfoDBWrapper.getAllUniversitiesByDegree(nId, category);
     }
-
-//    public ArrayList<UniversityInfo> getAllUniversByCategory(long nId, String category) {
-//        UniversitiesInfoDBWrapper universitiesInfoDBWrapper = new UniversitiesInfoDBWrapper(getContext());
-//        ArrayList<UniversityInfo> infos = universitiesInfoDBWrapper.getAllUniversitiesById(nId);
-//        infos.retainAll(universitiesInfoDBWrapper.getAllUniversitiesByDegree(category));
-//        return universitiesInfoDBWrapper.getAllUniversitiesById(nId);
-//    }
 
     public ArrayList<UniversityInfo> getAllDegree() {
         UniversitiesInfoDBWrapper universitiesInfoDBWrapper = new UniversitiesInfoDBWrapper(getContext());

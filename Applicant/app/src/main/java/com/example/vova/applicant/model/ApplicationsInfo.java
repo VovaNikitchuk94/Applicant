@@ -6,7 +6,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 
-import com.example.vova.applicant.toolsAndConstans.DBConstans.ApplicationTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.ApplicationTable;
 
 public class ApplicationsInfo extends BaseEntity implements Parcelable {
 
