@@ -30,7 +30,7 @@ import java.util.ArrayList;
 public class DetailUniversListActivity extends BaseActivity implements
         DetailUniversAdapter.OnClickDetailUniversItem {
 
-    public static final String KEY_DETAIL_UNIVERSITY_LINK = "KEY_DETAIL_UNIVERSITY_LINK";
+    public static final String KEY_DETAIL_UNIVERSITY_LINK = "KEY_CATEGORY_UNIVERSITY_LINK";
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
@@ -117,7 +117,7 @@ public class DetailUniversListActivity extends BaseActivity implements
             startActivity(intent);
         } else {
             if (detailUniverInfo.getStrDetailText().contains("(0)")){
-                Toast.makeText(this, "Data is empty", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.textEmptyData, Toast.LENGTH_SHORT).show();
             } else {
                 intent = new Intent(this, TimeFormListActivity.class);
                 intent.putExtra(TimeFormListActivity.KEY_TIME_FORM_LINK, detailUniverInfo);
@@ -155,13 +155,13 @@ public class DetailUniversListActivity extends BaseActivity implements
                 try {
                     document = Jsoup.connect(html).get();
 
-                    //get time and date update page
+                    //get timeUpdate and dateUpdate update page
                     String strLastUpdatePage = document.select("div.title-page > small").text();
                     Log.d("My", "strLastUpdatePage -> " + strLastUpdatePage );
                     String[] arrayTimeDate = strLastUpdatePage.split(" ");
-                    String date = arrayTimeDate[3];
-                    String time = arrayTimeDate[5];
-                    Log.d("My", "date -> " + date + "\ntime -> " + time);
+                    String dateUpdate = arrayTimeDate[3];
+                    String timeUpdate = arrayTimeDate[5];
+                    Log.d("My", "dateUpdate -> " + dateUpdate + "\ntimeUpdate -> " + timeUpdate);
 
                     Elements elementsByClass = document.getElementsByClass("accordion-heading togglize");
                     Elements elementsText = elementsByClass.select("a");
@@ -172,7 +172,7 @@ public class DetailUniversListActivity extends BaseActivity implements
                             String detailUniversityLink = element.attr("abs:href");
 
                             detailUniverInfoEngine.addDetailUniver(new DetailUniverInfo(longDetailUNVId, detailUniversityName,
-                                    detailUniversityLink, date, time));
+                                    detailUniversityLink, dateUpdate, timeUpdate));
                             Log.d("My", "ParseUniversities doInBackground  addDetailUniver link ->" + element.attr("abs:href"));
                             Log.d("My", "ParseUniversities doInBackground  addDetailUniver  detailUniversityLink ->" + detailUniversityLink);
                         }
@@ -182,7 +182,7 @@ public class DetailUniversListActivity extends BaseActivity implements
                             String detailUniversityLink = element.attr("abs:href");
 
                             detailUniverInfoEngine.updateDetailUniver(new DetailUniverInfo(longDetailUNVId, detailUniversityName,
-                                    detailUniversityLink, date, time));
+                                    detailUniversityLink, dateUpdate, timeUpdate));
                             Log.d("My", "ParseUniversities doInBackground  addDetailUniver link ->" + element.attr("abs:href"));
                             Log.d("My", "ParseUniversities doInBackground  addDetailUniver  detailUniversityLink ->" + detailUniversityLink);
                         }

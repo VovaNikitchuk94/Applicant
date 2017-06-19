@@ -36,8 +36,18 @@ public class LegendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         LegendInfoViewHolder legendInfoViewHolder = (LegendInfoViewHolder) holder;
         final LegendInfo legendInfo = mLegendInfos.get(position);
+        Log.d("My", "LegendAdapter onBindViewHolder legendInfo.getStrNameLegend() -> " + legendInfo.getStrNameLegend());
+//        if (legendInfo.getStrBackgroundLegend() != null) {
+        legendInfoViewHolder.mTextViewLegendName.setBackgroundColor(Color.parseColor(legendInfo.getStrBackgroundLegend()));
+//            legendInfoViewHolder.mTextViewLegendName.setText("");
+        Log.d("My", "LegendAdapter onBindViewHolder legendInfo.getStrBackgroundLegend() -> " + legendInfo.getStrBackgroundLegend() + " position >>>> " + position);
+//            legendInfoViewHolder.mTextViewLegendName.setBackgroundResource(R.drawable.text_view_background_style);
+//        } else {
         legendInfoViewHolder.mTextViewLegendName.setText(legendInfo.getStrNameLegend());
         legendInfoViewHolder.mTextViewLegendDetail.setText(legendInfo.getStrDetailLegend());
+//            Log.d("My", "LegendAdapter onBindViewHolder legendInfo.getStrBackgroundLegend() -> " + legendInfo.getStrNameLegend()  + " position >>>> " + position);
+//        }
+//        legendInfoViewHolder.mTextViewLegendDetail.setText(legendInfo.getStrDetailLegend());
 //   TODO fix bag with background
 //     legendInfoViewHolder.rootView.setBackgroundColor(Color.parseColor(legendInfo.getStrBackgroundLegend()));
     }

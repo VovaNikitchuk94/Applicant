@@ -123,11 +123,11 @@ public class UniversitiesInfoDBWrapper extends BaseDBWrapper {
         String arrArgs[] = new String[]{Long.toString(nId)};
         Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
         try{
-            if (cursor!=null && cursor.moveToFirst()){
+            if (cursor != null && cursor.moveToFirst()){
                 universityInfo = new UniversityInfo(cursor);
             }
         } finally {
-            if (cursor!=null){
+            if (cursor != null){
                 cursor.close();
             }
             database.close();

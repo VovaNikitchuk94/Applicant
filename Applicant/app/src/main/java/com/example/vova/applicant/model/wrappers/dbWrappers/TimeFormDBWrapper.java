@@ -78,11 +78,11 @@ public class TimeFormDBWrapper extends BaseDBWrapper {
         String arrArgs[] = new String[]{Long.toString(nId)};
         Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
         try{
-            if (cursor!=null && cursor.moveToFirst()){
+            if (cursor != null && cursor.moveToFirst()){
                 timeFormInfo = new TimeFormInfo(cursor);
             }
         } finally {
-            if (cursor!=null){
+            if (cursor != null){
                 cursor.close();
             }
             database.close();

@@ -11,8 +11,8 @@ import com.example.vova.applicant.toolsAndConstans.DBConstants.ApplicationTable;
 public class ApplicationsInfo extends BaseEntity implements Parcelable {
 
     private long mLongSpecialityId;
-    private String mStrUniversity;
-    private String mStrSpeciality;
+//    private String mStrUniversity;
+//    private String mStrSpeciality;
     private String mStrApplicantInfo;
 
     //Detail applicant info
@@ -29,7 +29,7 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
     private String mStrApplicantLink;
     private String mStrBackground;
 
-    public ApplicationsInfo(long longSpecialityId, String strUniversity, String strSpeciality,
+    public ApplicationsInfo(long longSpecialityId,
                             String strApplicantInfo, String strApplicantNumber,
                             String strApplicantName, String strApplicantPriority,
                             String strApplicantTotalScores, String strApplicantMarkDocument,
@@ -38,8 +38,8 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
                             String strApplicantLink, String strBackground) {
 
         mLongSpecialityId = longSpecialityId;
-        mStrUniversity = strUniversity;
-        mStrSpeciality = strSpeciality;
+//        mStrUniversity = strUniversity;
+//        mStrSpeciality = strSpeciality;
         mStrApplicantInfo = strApplicantInfo;
 
         mStrApplicantNumber = strApplicantNumber;
@@ -59,8 +59,8 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
     public ApplicationsInfo(Cursor cursor) {
         setId(cursor.getLong(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_ID)));
         mLongSpecialityId = cursor.getLong(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY_ID));
-        mStrUniversity = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_UNIVERSITY));
-        mStrSpeciality = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY));
+//        mStrUniversity = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_UNIVERSITY));
+//        mStrSpeciality = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY));
         mStrApplicantInfo = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_FIELD_INFO));
 
         mStrApplicantNumber = cursor.getString(cursor.getColumnIndex(ApplicationTable.Cols.APPLICATION_INFO_FIELD_NUMBER));
@@ -80,8 +80,8 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
     public ApplicationsInfo(Parcel parcel) {
         setId(parcel.readLong());
         mLongSpecialityId = parcel.readLong();
-        mStrUniversity = parcel.readString();
-        mStrSpeciality = parcel.readString();
+//        mStrUniversity = parcel.readString();
+//        mStrSpeciality = parcel.readString();
         mStrApplicantInfo = parcel.readString();
 
         mStrApplicantNumber = parcel.readString();
@@ -118,13 +118,13 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
         return mLongSpecialityId;
     }
 
-    public String getStrUniversity() {
-        return mStrUniversity;
-    }
+//    public String getStrUniversity() {
+//        return mStrUniversity;
+//    }
 
-    public String getStrSpeciality() {
-        return mStrSpeciality;
-    }
+//    public String getStrSpeciality() {
+//        return mStrSpeciality;
+//    }
 
     public String getStrApplicantInfo() {
         return mStrApplicantInfo;
@@ -163,8 +163,8 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
         ContentValues values = new ContentValues();
 
         values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY_ID, getLongSpecialityId());
-        values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_UNIVERSITY, getStrUniversity());
-        values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY, getStrSpeciality());
+//        values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_UNIVERSITY, getStrUniversity());
+//        values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY, getStrSpeciality());
         values.put(ApplicationTable.Cols.APPLICATION_FIELD_INFO, getStrApplicantInfo());
 
         values.put(ApplicationTable.Cols.APPLICATION_INFO_FIELD_NUMBER, getStrApplicantNumber());
@@ -192,8 +192,8 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(getId());
         dest.writeLong(mLongSpecialityId);
-        dest.writeString(mStrUniversity);
-        dest.writeString(mStrSpeciality);
+//        dest.writeString(mStrUniversity);
+//        dest.writeString(mStrSpeciality);
         dest.writeString(mStrApplicantInfo);
 
         dest.writeString(mStrApplicantNumber);

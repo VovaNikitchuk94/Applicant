@@ -40,14 +40,14 @@ public class ApplicationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         ApplicationsInfoViewHolder applicationsInfoViewHolder = (ApplicationsInfoViewHolder) holder;
         final ApplicationsInfo applicationsInfo = mApplicationsInfos.get(position);
         //set background
+        //TODO сделать правильный подбор цветов списка
         applicationsInfoViewHolder.rootView.setBackgroundColor(Color.parseColor(applicationsInfo.getStrBackground()));
-//        applicationsInfoViewHolder.numberTextView.setBackgroundColor(Color.parseColor(applicationsInfo.getStrBackground()));
-//        applicationsInfoViewHolder.nameTextView.setBackgroundColor(Color.parseColor(applicationsInfo.getStrBackgroundSecond()));
-//        applicationsInfoViewHolder.totalScoreTextView.setBackgroundColor(Color.parseColor(applicationsInfo.getStrBackground()));
         //set text
         applicationsInfoViewHolder.numberTextView.setText(applicationsInfo.getStrApplicantNumber());
         applicationsInfoViewHolder.nameTextView.setText(applicationsInfo.getStrApplicantName());
         applicationsInfoViewHolder.totalScoreTextView.setText(applicationsInfo.getStrApplicantTotalScores());
+        applicationsInfoViewHolder.BDOScoreTextView.setText(applicationsInfo.getStrApplicantMarkDocument());
+        applicationsInfoViewHolder.ZNOScoreTextView.setText(applicationsInfo.getStrApplicantMarkTest());
         //set clickListener
         applicationsInfoViewHolder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +70,8 @@ public class ApplicationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         TextView numberTextView;
         TextView nameTextView;
         TextView totalScoreTextView;
+        TextView BDOScoreTextView;
+        TextView ZNOScoreTextView;
 
         ApplicationsInfoViewHolder(View itemView) {
             super(itemView);
@@ -77,6 +79,8 @@ public class ApplicationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             numberTextView = (TextView) itemView.findViewById(R.id.textViewSequenceNumberApplicantInfo);
             nameTextView = (TextView) itemView.findViewById(R.id.textViewNameApplicantsApplicantInfo);
             totalScoreTextView = (TextView) itemView.findViewById(R.id.textViewCompetitionScoresApplicantInfo);
+            BDOScoreTextView = (TextView) itemView.findViewById(R.id.textViewBDOScoreApplicantsApplicantInfo);
+            ZNOScoreTextView = (TextView) itemView.findViewById(R.id.textViewZNOScoreApplicantsApplicantInfo);
         }
     }
 

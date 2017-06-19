@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.vova.applicant.R;
@@ -37,50 +38,26 @@ public class ImportantInfoApplicantFragment extends Fragment {
         Log.d("My", "onCreateView ->");
 
         TextView textViewNameOfUniversity = (TextView) view.findViewById(R.id.textNameOfUniversityFragmentDetailApplicant);
-        TextView textViewNameSpeciality = (TextView) view.findViewById(R.id.textSpecialityFragmentDetailApplicant);
+        TextView textViewSpeciality = (TextView) view.findViewById(R.id.textSpecialityFragmentDetailApplicant);
+        TextView textViewSpecialization = (TextView) view.findViewById(R.id.textSpecializationFragmentDetailApplicant);
+        TextView textViewFaculty = (TextView) view.findViewById(R.id.textFacultyFragmentDetailApplicant);
+        TextView textViewTimeForm = (TextView) view.findViewById(R.id.textTimeFormFragmentDetailApplicant);
+        TextView textViewLastTimeUpdate = (TextView) view.findViewById(R.id.textLastTimeUpdateFragmentDetailApplicant);
 
-        TextView textViewNumber = (TextView) view.findViewById(R.id.textNumberApplicantFragmentImportantInfoApplicant);
-        TextView textViewFullName = (TextView) view.findViewById(R.id.textFullNameApplicantFragmentImportantInfoApplicant);
-        TextView textViewPriority = (TextView) view.findViewById(R.id.textPriorityApplicantFragmentImportantInfoApplicant);
-        TextView textViewTotalScore = (TextView) view.findViewById(R.id.textTotalScoreApplicantFragmentImportantInfoApplicant);
-        TextView textViewMarkDocument = (TextView) view.findViewById(R.id.textMarkDocumentApplicantFragmentImportantInfoApplicant);
-        TextView textViewMarkTest = (TextView) view.findViewById(R.id.textMarkTestApplicantFragmentImportantInfoApplicant);
-        TextView textViewMarkExam = (TextView) view.findViewById(R.id.textMarkExamApplicantFragmentImportantInfoApplicant);
-        TextView textViewExtraPoint = (TextView) view.findViewById(R.id.textExtraPointsApplicantFragmentImportantInfoApplicant);
-        TextView textViewOriginalDocoment = (TextView) view.findViewById(R.id.textOriginalDocumentApplicantFragmentImportantInfoApplicant);
+        //TODO распарсить и правильно отобразить техтвьюшки с важной информацией
 
         if (mApplicationsInfo != null) {
+
             ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getContext());
-            ArrayList<ImportantInfo> importantInfos = importantApplicantInfoEngine.getImportantInfoById(mApplicationsInfo.getLongSpecialityId());
-            Log.d("My", "importantInfos.size() -> " + importantInfos.size());
+            ImportantInfo importantInfo = importantApplicantInfoEngine.getImportantInfoById(mApplicationsInfo.getLongSpecialityId());
 
-            textViewNameOfUniversity.setText(mApplicationsInfo.getStrUniversity());
-            textViewNameSpeciality.setText(mApplicationsInfo.getStrSpeciality());
-
-            if (!importantInfos.isEmpty()) {
-                if (importantInfos.size() == 9) {
-                    textViewNumber.setText(importantInfos.get(0).getStrName());
-                    textViewFullName.setText(importantInfos.get(1).getStrName());
-                    textViewPriority.setText(importantInfos.get(2).getStrName());
-                    textViewTotalScore.setText(importantInfos.get(3).getStrName());
-                    textViewMarkDocument.setText(importantInfos.get(4).getStrName());
-                    textViewMarkTest.setText(importantInfos.get(5).getStrName());
-                    textViewMarkExam.setText(importantInfos.get(6).getStrName());
-                    textViewExtraPoint.setText(importantInfos.get(7).getStrName());
-                    textViewOriginalDocoment.setText(importantInfos.get(8).getStrName());
-                } else {
-                    textViewNumber.setText(importantInfos.get(0).getStrName());
-                    textViewFullName.setText(importantInfos.get(1).getStrName());
-                    textViewTotalScore.setText(importantInfos.get(2).getStrName());
-                    textViewMarkDocument.setText(importantInfos.get(3).getStrName());
-                    textViewMarkTest.setText(importantInfos.get(4).getStrName());
-                    textViewMarkExam.setText(importantInfos.get(5).getStrName());
-                    textViewExtraPoint.setText(importantInfos.get(6).getStrName());
-                    textViewOriginalDocoment.setText(importantInfos.get(7).getStrName());
-                }
-
-
-                Log.d("My", "textViewTotalScore -> " + textViewTotalScore.getText());
+            if (importantInfo != null) {
+                textViewNameOfUniversity.setText(importantInfo.getStrUniversityName());
+                textViewSpeciality.setText(importantInfo.getStrSpeciality());
+                textViewSpecialization.setText(importantInfo.getStrSpecialization());
+                textViewFaculty.setText(importantInfo.getStrFaculty());
+                textViewTimeForm.setText(importantInfo.getStrTimeForm());
+                textViewLastTimeUpdate.setText(importantInfo.getStrLastTimeUpdate());
             }
         }
 

@@ -47,6 +47,7 @@
         \tYou can read the terms of admission to universities in 2017.</string>
     <string name="textViewConventionsBottomSheet">Conventions</string>
     <string name="textLegend">Legend</string>
+    <string name="textEmptyData">Data is empty</string>
 </resources>
 
 

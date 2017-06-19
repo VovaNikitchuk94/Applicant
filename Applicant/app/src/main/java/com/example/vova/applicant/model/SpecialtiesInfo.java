@@ -14,28 +14,25 @@ public class SpecialtiesInfo extends BaseEntity implements Parcelable {
     private String mStrSpecialty;
     private String mStrApplications;
     private String mStrAccepted;
-    private String mStrAmount;
+    private String mStrRecommended;
+    private String mStrLicensedOrder;
+    private String mStrVolumeOrder;
+    private String mStrExam;
     private String mStrLink;
 
-    public SpecialtiesInfo(long detailUnvId, long degree, String strSpecialty, String strApplications,
-                           String strAccepted, String strAmount, String link) {
-        mLongDetailUNVId = detailUnvId;
-        mLongDegree = degree;
+    public SpecialtiesInfo(long longDetailUNVId, long longDegree, String strSpecialty, String strApplications,
+                           String strAccepted, String strRecommended, String strLicensedOrder,
+                           String strVolumeOrder, String strExam, String strLink) {
+        mLongDetailUNVId = longDetailUNVId;
+        mLongDegree = longDegree;
         mStrSpecialty = strSpecialty;
         mStrApplications = strApplications;
         mStrAccepted = strAccepted;
-        mStrAmount = strAmount;
-        mStrLink = link;
-    }
-
-    public SpecialtiesInfo(long detailUnvId, long degree, String strSpecialty, String strApplications,
-                           String strAmount, String link) {
-        mLongDetailUNVId = detailUnvId;
-        mLongDegree = degree;
-        mStrSpecialty = strSpecialty;
-        mStrApplications = strApplications;
-        mStrAmount = strAmount;
-        mStrLink = link;
+        mStrRecommended = strRecommended;
+        mStrLicensedOrder = strLicensedOrder;
+        mStrVolumeOrder = strVolumeOrder;
+        mStrExam = strExam;
+        mStrLink = strLink;
     }
 
     public SpecialtiesInfo(Cursor cursor) {
@@ -45,7 +42,10 @@ public class SpecialtiesInfo extends BaseEntity implements Parcelable {
         mStrSpecialty = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_SPECIALITY));
         mStrApplications = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_APPLICATION));
         mStrAccepted = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_ACCEPTED));
-        mStrAmount = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_AMOUNT));
+        mStrRecommended = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_RECOMMENDED));
+        mStrLicensedOrder = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_LICENSED_ORDERS));
+        mStrVolumeOrder = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_VOLUME_ORDERS));
+        mStrExam = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_EXAMS));
         mStrLink = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_LINK));
     }
 
@@ -56,7 +56,10 @@ public class SpecialtiesInfo extends BaseEntity implements Parcelable {
         mStrSpecialty = parcel.readString();
         mStrApplications = parcel.readString();
         mStrAccepted = parcel.readString();
-        mStrAmount = parcel.readString();
+        mStrRecommended = parcel.readString();
+        mStrLicensedOrder = parcel.readString();
+        mStrVolumeOrder = parcel.readString();
+        mStrExam = parcel.readString();
         mStrLink = parcel.readString();
     }
 
@@ -72,10 +75,6 @@ public class SpecialtiesInfo extends BaseEntity implements Parcelable {
         return mStrAccepted;
     }
 
-    public String getStrAmount() {
-        return mStrAmount;
-    }
-
     public String getStrLink() {
         return mStrLink;
     }
@@ -84,16 +83,24 @@ public class SpecialtiesInfo extends BaseEntity implements Parcelable {
         return mLongDetailUNVId;
     }
 
-    public void setLongDetailUNVId(long longDetailUNVId) {
-        mLongDetailUNVId = longDetailUNVId;
-    }
-
     public long getLongDegree() {
         return mLongDegree;
     }
 
-    public void setLongDegree(long longDegree) {
-        mLongDegree = longDegree;
+    public String getStrRecommended() {
+        return mStrRecommended;
+    }
+
+    public String getStrLicensedOrder() {
+        return mStrLicensedOrder;
+    }
+
+    public String getStrVolumeOrder() {
+        return mStrVolumeOrder;
+    }
+
+    public String getStrExam() {
+        return mStrExam;
     }
 
     @Override
@@ -104,7 +111,10 @@ public class SpecialtiesInfo extends BaseEntity implements Parcelable {
         values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_SPECIALITY, getStrSpecialty());
         values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_APPLICATION, getStrApplications());
         values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_ACCEPTED, getStrAccepted());
-        values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_AMOUNT, getStrAmount());
+        values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_RECOMMENDED, getStrRecommended());
+        values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_LICENSED_ORDERS, getStrLicensedOrder());
+        values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_VOLUME_ORDERS, getStrVolumeOrder());
+        values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_EXAMS, getStrExam());
         values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_LINK, getStrLink());
         return values;
     }
@@ -122,7 +132,10 @@ public class SpecialtiesInfo extends BaseEntity implements Parcelable {
         dest.writeString(mStrSpecialty);
         dest.writeString(mStrApplications);
         dest.writeString(mStrAccepted);
-        dest.writeString(mStrAmount);
+        dest.writeString(mStrRecommended);
+        dest.writeString(mStrLicensedOrder);
+        dest.writeString(mStrVolumeOrder);
+        dest.writeString(mStrExam);
         dest.writeString(mStrLink);
 
     }

@@ -3,7 +3,8 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:paddingTop="0dp">
 
     <!--<TextView-->
         <!--android:layout_width="match_parent"-->
@@ -20,65 +21,131 @@
         <!--android:layout_height="wrap_content"-->
         <!--android:id="@+id/textDateOfLastUpdateFragmentDetailApplicant"/>-->
 
-    <LinearLayout
+    <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:stretchColumns="*">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/textNumberApplicantFragmentDetailApplicant"/>
+        <TableRow
+            android:background="#f4c6aa">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/textFullNameApplicantFragmentDetailApplicant"/>
+            <TextView
+                android:background="#b6b4b4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textNumberApplicantFragmentImportantInfoApplicant"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/textPriorityApplicantFragmentDetailApplicant"/>
+            <TextView
+                android:background="#b6c9e7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textFullNameApplicantFragmentImportantInfoApplicant"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/textTotalScoreApplicantFragmentDetailApplicant"/>
+            <TextView
+                android:background="#b6b4b4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textPriorityApplicantFragmentImportantInfoApplicant"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/textMarkDocumentApplicantFragmentDetailApplicant"/>
+            <TextView
+                android:background="#b6c9e7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textTotalScoreApplicantFragmentImportantInfoApplicant"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/textMarkTestApplicantFragmentDetailApplicant"/>
+            <TextView
+                android:background="#b6b4b4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textMarkDocumentApplicantFragmentImportantInfoApplicant"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/textMarkExamApplicantFragmentDetailApplicant"/>
+            <TextView
+                android:background="#b6c9e7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textMarkTestApplicantFragmentImportantInfoApplicant"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/textExtraPointsApplicantFragmentDetailApplicant"/>
+            <TextView
+                android:background="#b6b4b4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textMarkExamApplicantFragmentImportantInfoApplicant"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/textOriginalDocumentApplicantFragmentDetailApplicant"/>
+            <TextView
+                android:background="#b6c9e7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textExtraPointsApplicantFragmentImportantInfoApplicant"/>
 
-    </LinearLayout>
+            <TextView
+                android:background="#b6b4b4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textOriginalDocumentApplicantFragmentImportantInfoApplicant"/>
+
+
+        </TableRow>
+
+        <TableRow
+            android:background="#d4efcb">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textNumberApplicantFragmentDetailApplicant"
+                android:background="#b6b4b4"/>
+
+            <TextView
+                android:background="#b6c9e7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textFullNameApplicantFragmentDetailApplicant"/>
+
+            <TextView
+                android:background="#b6b4b4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textPriorityApplicantFragmentDetailApplicant"/>
+
+            <TextView
+                android:background="#b6c9e7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textTotalScoreApplicantFragmentDetailApplicant"/>
+
+            <TextView
+                android:background="#b6b4b4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textMarkDocumentApplicantFragmentDetailApplicant"/>
+
+            <TextView
+                android:background="#b6c9e7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textMarkTestApplicantFragmentDetailApplicant"/>
+
+            <TextView
+                android:background="#b6b4b4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textMarkExamApplicantFragmentDetailApplicant"/>
+
+            <TextView
+                android:background="#b6c9e7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textExtraPointsApplicantFragmentDetailApplicant"/>
+
+            <TextView
+                android:background="#b6b4b4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textOriginalDocumentApplicantFragmentDetailApplicant"/>
+
+        </TableRow>
+
+    </TableLayout>
 
 </LinearLayout>

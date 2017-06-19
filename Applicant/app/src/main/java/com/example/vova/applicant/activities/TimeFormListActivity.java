@@ -121,6 +121,7 @@ public class TimeFormListActivity extends BaseActivity implements
     public void onClickTimeFormItem(TimeFormInfo timeFormInfo) {
         Intent intent = new Intent(TimeFormListActivity.this, SpecialtiesListActivity.class);
         intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_LINK, timeFormInfo);
+        intent.putExtra(SpecialtiesListActivity.KEY_SPECIALITIES_TITLE_STRING, mDetailUniverInfo.getStrDetailText());
         startActivity(intent);
     }
 
@@ -159,18 +160,23 @@ public class TimeFormListActivity extends BaseActivity implements
                     Log.d("My","s -_----------------- > " + s);
                     switch (s) {
                         case INT_FULL_TIME_FORM:
+                            Log.d("My","INT_FULL_TIME_FORM is pressed -> " + s);
                             elements = elementsSelectId.get(0).select("li");
                             loopElementsParse(elements);
                             break;
                         case INT_EXTERNAL_FORM:
+                            Log.d("My","INT_FULL_TIME_FORM is pressed -> " + s);
                             elements = elementsSelectId.get(1).select("li");
                             loopElementsParse(elements);
                             break;
                         case INT_EVENING_FORM:
+                            Log.d("My","INT_FULL_TIME_FORM is pressed -> " + s);
                             elements = elementsSelectId.get(2).select("li");
                             loopElementsParse(elements);
                             break;
                         case INT_DISTANCE_FORM:
+                            //TODO падает приложение в 2016, универ гетьмана
+                            Log.d("My","INT_FULL_TIME_FORM is pressed -> " + s);
                             elements = elementsSelectId.get(3).select("li");
                             loopElementsParse(elements);
                             break;
@@ -183,15 +189,15 @@ public class TimeFormListActivity extends BaseActivity implements
             private void loopElementsParse(Elements elements) {
                 if (timeFormEngine.getAllTimeFormsById(mLongDetailUNVId).isEmpty()){
                     for (Element element : elements) {
-                        String text = element.select("a").text();
-                        String link = element.select("a").attr("abs:href");
-                        timeFormEngine.addTimeForm(new TimeFormInfo(mLongDetailUNVId, text, link));
+                        String textTimeForm = element.select("a").text();
+                        String linkTimeForm = element.select("a").attr("abs:href");
+                        timeFormEngine.addTimeForm(new TimeFormInfo(mLongDetailUNVId, textTimeForm, linkTimeForm));
                     }
                 } else {
                     for (Element element : elements) {
-                        String text = element.select("a").text();
-                        String link = element.select("a").attr("abs:href");
-                        timeFormEngine.updateTimeForm(new TimeFormInfo(mLongDetailUNVId, text, link));
+                        String textTimeForm = element.select("a").text();
+                        String linkTimeForm = element.select("a").attr("abs:href");
+                        timeFormEngine.updateTimeForm(new TimeFormInfo(mLongDetailUNVId, textTimeForm, linkTimeForm));
                     }
                 }
             }

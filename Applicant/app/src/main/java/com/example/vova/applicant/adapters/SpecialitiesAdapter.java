@@ -41,7 +41,9 @@ public class SpecialitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         specialitiesInfoViewHolder.specialtyTextView.setText(specialtiesInfo.getStrSpecialty());
         specialitiesInfoViewHolder.applicationsTextView.setText(specialtiesInfo.getStrApplications());
         specialitiesInfoViewHolder.acceptedTextView.setText(specialtiesInfo.getStrAccepted());
-        specialitiesInfoViewHolder.amountTextView.setText(specialtiesInfo.getStrAmount());
+        specialitiesInfoViewHolder.recommendedTextView.setText(specialtiesInfo.getStrRecommended());
+        specialitiesInfoViewHolder.licenseOrderTextView.setText(specialtiesInfo.getStrLicensedOrder());
+        specialitiesInfoViewHolder.volumeOrderTextView.setText(specialtiesInfo.getStrVolumeOrder());
         specialitiesInfoViewHolder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,15 +65,19 @@ public class SpecialitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         TextView specialtyTextView;
         TextView applicationsTextView;
         TextView acceptedTextView;
-        TextView amountTextView;
+        TextView recommendedTextView;
+        TextView licenseOrderTextView;
+        TextView volumeOrderTextView;
 
         public SpecialitiesInfoViewHolder(View itemView) {
             super(itemView);
             rootView = itemView;
-             specialtyTextView = (TextView) itemView.findViewById(R.id.textViewSpecialtySpecialtiesInfo);
-             applicationsTextView = (TextView) itemView.findViewById(R.id.textViewApplicationsSpecialtiesInfo);
-             acceptedTextView = (TextView) itemView.findViewById(R.id.textViewAcceptedSpecialtiesInfo);
-             amountTextView = (TextView) itemView.findViewById(R.id.textViewAmountSpecialtiesInfo);
+            specialtyTextView = (TextView) itemView.findViewById(R.id.textViewSpecialtySpecialtiesInfo);
+            applicationsTextView = (TextView) itemView.findViewById(R.id.textViewApplicationsSpecialtiesInfo);
+            acceptedTextView = (TextView) itemView.findViewById(R.id.textViewmStrAcceptedSpecialtiesInfo);
+            recommendedTextView = (TextView) itemView.findViewById(R.id.textViewmStrRecommendedSpecialtiesInfo);
+            licenseOrderTextView = (TextView) itemView.findViewById(R.id.textViewmmStrLicensedOrderSpecialtiesInfo);
+            volumeOrderTextView = (TextView) itemView.findViewById(R.id.textViewmmStrVolumeOrderSpecialtiesInfo);
         }
     }
 

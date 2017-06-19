@@ -81,6 +81,7 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
                 layoutManager.getOrientation());
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
+        //TODO проверять наличие интернета и уведомлять пользователя если его нет
         //TODO upgrade, check data in recyclerView
         if (!isOnline(this)) {
             Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show();
@@ -158,13 +159,15 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
                 try {
                     document = Jsoup.connect(yearsCodeLink).get();
 
-                    //get time and date update page
+                    //TODO при обновлении нужно затирать всю цепочку связаных данных в БД
+
+                    //get timeUpdate and dateUpdate update page
                     String strLastUpdatePage = document.select("div.title-page > small").text();
                     Log.d("My", "strLastUpdatePage -> " + strLastUpdatePage );
                     String[] arrayTimeDate = strLastUpdatePage.split(" ");
-                    String date = arrayTimeDate[3];
-                    String time = arrayTimeDate[5];
-                    Log.d("My", "date -> " + date + "\ntime -> " + time);
+                    String dateUpdate = arrayTimeDate[3];
+                    String timeUpdate = arrayTimeDate[5];
+                    Log.d("My", "dateUpdate -> " + dateUpdate + "\ntimeUpdate -> " + timeUpdate);
 
                     Element elementRegion = document.getElementById("region");
                     Elements linksByTag = elementRegion.getElementsByTag("a");
@@ -175,7 +178,8 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
                             String citiesName = link.text();
                             String citiesLink = link.attr("abs:href");
 
-                            citiesInfoEngine.addCity(new CitiesInfo(yearsId, citiesName, citiesLink, date, time));
+                            citiesInfoEngine.addCity(new CitiesInfo(yearsId, citiesName, citiesLink,
+                                    dateUpdate, timeUpdate));
                         }
                     } else {
                         for (Element link : linksByTag) {
@@ -183,7 +187,8 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
                             String citiesName = link.text();
                             String citiesLink = link.attr("abs:href");
 
-                            citiesInfoEngine.updateCity(new CitiesInfo(yearsId, citiesName, citiesLink, date, time));
+                            citiesInfoEngine.updateCity(new CitiesInfo(yearsId, citiesName, citiesLink,
+                                    dateUpdate, timeUpdate));
                         }
                     }
                 } catch (IOException e) {

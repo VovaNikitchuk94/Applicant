@@ -11,7 +11,11 @@ import android.widget.TextView;
 
 import com.example.vova.applicant.R;
 import com.example.vova.applicant.model.ApplicationsInfo;
+import com.example.vova.applicant.model.ImportantInfo;
 import com.example.vova.applicant.model.engines.ApplicationInfoEngine;
+import com.example.vova.applicant.model.engines.ImportantApplicantInfoEngine;
+
+import java.util.ArrayList;
 
 public class DetailApplicantFragment extends Fragment {
 
@@ -47,10 +51,27 @@ public class DetailApplicantFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail_applicant, container, false);
 
+        //TODO правильно отобразить данные абитуры: что б совпадали столбцы + красивый внешний вид
+
 //        TextView textViewNameOfUniversity = (TextView) view.findViewById(R.id.textNameOfUniversityFragmentDetailApplicant);
 //        TextView textViewNameSpeciality = (TextView) view.findViewById(R.id.textSpecialityFragmentDetailApplicant);
 //        TextView textViewDateOfLastUpdate = (TextView) view.findViewById(R.id.textDateOfLastUpdateFragmentDetailApplicant);
 //        TextView textViewDetailAboutApplicant = (TextView) view.findViewById(R.id.textDetailAboutApplicantFragmentDetailApplicant);
+
+        //set legend textViews
+        ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getContext());
+        ImportantInfo importantInfos = importantApplicantInfoEngine.getImportantInfoById(mApplicationsInfo.getLongSpecialityId());
+        Log.d("My", "importantInfos.getId() -> " + importantInfos.getId());
+
+        TextView textViewNumber = (TextView) view.findViewById(R.id.textNumberApplicantFragmentImportantInfoApplicant);
+        TextView textViewFullName = (TextView) view.findViewById(R.id.textFullNameApplicantFragmentImportantInfoApplicant);
+        TextView textViewPriority = (TextView) view.findViewById(R.id.textPriorityApplicantFragmentImportantInfoApplicant);
+        TextView textViewTotalScore = (TextView) view.findViewById(R.id.textTotalScoreApplicantFragmentImportantInfoApplicant);
+        TextView textViewMarkDocument = (TextView) view.findViewById(R.id.textMarkDocumentApplicantFragmentImportantInfoApplicant);
+        TextView textViewMarkTest = (TextView) view.findViewById(R.id.textMarkTestApplicantFragmentImportantInfoApplicant);
+        TextView textViewMarkExam = (TextView) view.findViewById(R.id.textMarkExamApplicantFragmentImportantInfoApplicant);
+        TextView textViewExtraPoint = (TextView) view.findViewById(R.id.textExtraPointsApplicantFragmentImportantInfoApplicant);
+        TextView textViewOriginalDocument = (TextView) view.findViewById(R.id.textOriginalDocumentApplicantFragmentImportantInfoApplicant);
 
         //find textView
         TextView numberTextView = (TextView) view.findViewById(R.id.textNumberApplicantFragmentDetailApplicant);
@@ -62,6 +83,8 @@ public class DetailApplicantFragment extends Fragment {
         TextView markExamTextView = (TextView) view.findViewById(R.id.textMarkExamApplicantFragmentDetailApplicant);
         TextView extraPointsTextView = (TextView) view.findViewById(R.id.textExtraPointsApplicantFragmentDetailApplicant);
         TextView originalDocumentTextView = (TextView) view.findViewById(R.id.textOriginalDocumentApplicantFragmentDetailApplicant);
+
+
 
 
         if (mApplicationsInfo != null){
@@ -80,8 +103,20 @@ public class DetailApplicantFragment extends Fragment {
             extraPointsTextView.setText(mApplicationsInfo.getStrApplicantExtraPoints());
             originalDocumentTextView.setText(mApplicationsInfo.getStrApplicantOriginalDocument());
 
-            Log.d("My", "DetailApplicantFragment onCreateView" + mApplicationsInfo.getStrUniversity());
-            Log.d("My", "DetailApplicantFragment mApplicationsInfo.getStrSpeciality()" + mApplicationsInfo.getStrSpeciality());
+            //set legend text in textView
+            textViewNumber.setText(importantInfos.getStrNumber());
+            textViewFullName.setText(importantInfos.getStrName());
+            textViewPriority.setText(importantInfos.getStrPriority());
+            textViewTotalScore.setText(importantInfos.getStrTotalScores());
+            textViewMarkDocument.setText(importantInfos.getStrMarkDocument());
+            textViewMarkTest.setText(importantInfos.getStrMarkTest());
+            textViewMarkExam.setText(importantInfos.getStrMarkExam());
+            textViewExtraPoint.setText(importantInfos.getStrExtraPoints());
+            textViewOriginalDocument.setText(importantInfos.getStrOriginalDocument());
+//            textViewOriginalDocument.setText(importantInfos.get(8).getStrName());
+
+//            Log.d("My", "DetailApplicantFragment onCreateView" + mApplicationsInfo.getStrUniversity());
+//            Log.d("My", "DetailApplicantFragment mApplicationsInfo.getStrSpeciality()" + mApplicationsInfo.getStrSpeciality());
 //            Log.d("My", "DetailApplicantFragment mApplicationsInfo.getStrApplicantInfo()" +mApplicationsInfo.getStrApplicantInfo());
         }
 

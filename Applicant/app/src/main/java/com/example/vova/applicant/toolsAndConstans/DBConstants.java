@@ -89,7 +89,10 @@ public class DBConstants {
             public static final String SPECIALITIES_INFO_FIELD_SPECIALITY = "_name";
             public static final String SPECIALITIES_INFO_FIELD_APPLICATION = "_application";
             public static final String SPECIALITIES_INFO_FIELD_ACCEPTED = "_accepted";
-            public static final String SPECIALITIES_INFO_FIELD_AMOUNT = "_amount";
+            public static final String SPECIALITIES_INFO_FIELD_RECOMMENDED = "_recommended";
+            public static final String SPECIALITIES_INFO_FIELD_LICENSED_ORDERS = "_licensed_orders";
+            public static final String SPECIALITIES_INFO_FIELD_VOLUME_ORDERS = "_volume_orders";
+            public static final String SPECIALITIES_INFO_FIELD_EXAMS = "_exams";
             public static final String SPECIALITIES_INFO_FIELD_LINK = "_link";
         }
     }
@@ -125,8 +128,23 @@ public class DBConstants {
         public static final class Cols {
             public static final String IMPORTANT_INFO_FIELD_ID = "_id";
             public static final String IMPORTANT_INFO_FIELD_SPECIALITY_ID = "_speciality_id";
+
+            public static final String IMPORTANT_INFO_FIELD_UNIVERSITY_NAME = "_university_name";
+            public static final String IMPORTANT_INFO_FIELD_SPECIALITY = "_speciality";
+            public static final String IMPORTANT_INFO_FIELD_SPECIALIZATION = "_specialization";
+            public static final String IMPORTANT_INFO_FIELD_FACULTY = "_faculty";
+            public static final String IMPORTANT_INFO_FIELD_TIME_FORM = "_time_form";
+            public static final String IMPORTANT_INFO_FIELD_LAST_TIME_UPDATE = "_last_time_update";
+
+            public static final String IMPORTANT_INFO_FIELD_NUMBER = "_number";
             public static final String IMPORTANT_INFO_FIELD_NAME = "_name";
-            public static final String IMPORTANT_INFO_FIELD_DETAIL = "_detail";
+            public static final String IMPORTANT_INFO_FIELD_PRIORITY = "_priority";
+            public static final String IMPORTANT_INFO_FIELD_TOTAL_SCORE = "_total_score";
+            public static final String IMPORTANT_INFO_FIELD_MARK_DOCUMENT = "_mark_document";
+            public static final String IMPORTANT_INFO_FIELD_MARK_TEST = "_mark_test";
+            public static final String IMPORTANT_INFO_FIELD_MARK_EXAM = "_mark_exam";
+            public static final String IMPORTANT_INFO_FIELD_EXTRA_POINTS = "_extra_points";
+            public static final String IMPORTANT_INFO_FIELD_ORIGINAL_DOCUMENT = "_original_document";
         }
     }
 

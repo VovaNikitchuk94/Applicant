@@ -1,80 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-    android:padding="16dp"
-    android:paddingBottom="0dp">
+              android:padding="16dp"
+              android:paddingBottom="0dp">
 
     <TextView
         android:id="@+id/textNameOfUniversityFragmentDetailApplicant"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        tools:text="Державний університет телекомунікацій"/>
 
     <TextView
         android:id="@+id/textSpecialityFragmentDetailApplicant"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        tools:text="Спеціальність: 124 Системний аналіз"/>
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/textSpecializationFragmentDetailApplicant"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        tools:text="Спеціалізація: Системний аналіз,"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/textNumberApplicantFragmentImportantInfoApplicant"/>
+    <TextView
+        android:id="@+id/textFacultyFragmentDetailApplicant"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="факультет: Інформаційних технологій"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/textFullNameApplicantFragmentImportantInfoApplicant"/>
+    <TextView
+        android:id="@+id/textTimeFormFragmentDetailApplicant"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="денна форма навчання"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/textPriorityApplicantFragmentImportantInfoApplicant"/>
+    <TextView
+        android:id="@+id/textLastTimeUpdateFragmentDetailApplicant"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="денна форма навчання"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/textTotalScoreApplicantFragmentImportantInfoApplicant"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/textMarkDocumentApplicantFragmentImportantInfoApplicant"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/textMarkTestApplicantFragmentImportantInfoApplicant"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/textMarkExamApplicantFragmentImportantInfoApplicant"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/textExtraPointsApplicantFragmentImportantInfoApplicant"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/textOriginalDocumentApplicantFragmentImportantInfoApplicant"/>
-
-    </LinearLayout>
 
 </LinearLayout>

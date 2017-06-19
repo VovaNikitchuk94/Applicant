@@ -112,7 +112,7 @@ public class CategoryUniversListActivity extends BaseActivity implements
     @Override
     public void onClickCategoryItem(CategoryUniversInfo categoryUniversInfo) {
         Intent intent = new Intent(this, UniversitiesListActivity.class);
-        intent.putExtra(UniversitiesListActivity.KEY_DETAIL_UNIVERSITY_LINK, categoryUniversInfo);
+        intent.putExtra(UniversitiesListActivity.KEY_CATEGORY_UNIVERSITY_LINK, categoryUniversInfo);
         startActivity(intent);
     }
 
@@ -151,37 +151,40 @@ public class CategoryUniversListActivity extends BaseActivity implements
 
                     document = Jsoup.connect(html).get();
 
-                    //get time and date update page
+                    //get timeUpdate and dateUpdate update page
                     String strLastUpdatePage = document.select("div.title-page > small").text();
                     Log.d("My", "strLastUpdatePage -> " + strLastUpdatePage );
                     String[] arrayTimeDate = strLastUpdatePage.split(" ");
-                    String date = arrayTimeDate[3];
-                    String time = arrayTimeDate[5];
-                    Log.d("My", "date -> " + date + "\ntime -> " + time);
+                    String dateUpdate = arrayTimeDate[3];
+                    String timeUpdate = arrayTimeDate[5];
+                    Log.d("My", "dateUpdate -> " + dateUpdate + "\ntimeUpdate -> " + timeUpdate);
 
                     Elements groupElements = document.getElementsByClass("accordion-group");
 
+                    //add category universities to DB
                     if (categoryUniversEngine.getAllCategoryById(universityCityId).isEmpty()){
 
                         Elements elementsNameType = groupElements.select(".accordion-toggle");
                         Elements elementsTextType = elementsNameType.select("a");
                         for (Element elementType : elementsTextType) {
                             categoryName = elementType.text();
-                            categoryLink = elementType.attr("abs:href");
+//                            categoryLink = elementType.attr("abs:href");
                             categoryUniversEngine.addCategory(new CategoryUniversInfo(universityCityId,
-                                    categoryName, categoryLink, date, time));
+                                    categoryName, dateUpdate, timeUpdate));
 
-                            Log.d("My", "element categoryName -> " + categoryName);
-                            Log.d("My", "element categoryLink-> " + categoryLink);
+                            Log.d("My", "add category universities to DB categoryName -> " + categoryName);
+                            Log.d("My", "add category universities to DB categoryLink-> " + categoryLink);
                         }
                     }
 
+                    //add universities to DB
                     if (universityInfoEngine.getAllUniversitiesById(mLongCityId).isEmpty()) {
 
                         for (Element group : groupElements) {
 
                             Elements elementsNameType = group.select(".accordion-toggle");
                             Elements elementsTextType = elementsNameType.select("a");
+
                             for (Element elementType : elementsTextType) {
                                 categoryName = elementType.text();
                                 categoryLink = elementType.attr("abs:href");
@@ -189,16 +192,17 @@ public class CategoryUniversListActivity extends BaseActivity implements
 
                             Elements elementsByClass = group.select(".accordion-inner");
                             Elements elementsText = elementsByClass.select("a");
+
                             for (Element element : elementsText) {
 
                                 universityName = element.text();
                                 universityLink = element.attr("abs:href");
 
                                 universityInfoEngine.addUniversity(new UniversityInfo(universityCityId,
-                                        categoryName, categoryLink, universityName, universityLink) );
+                                        categoryName, categoryLink, universityName, universityLink));
 
-                                Log.d("My", "element categoryName -> " + categoryName);
-                                Log.d("My", "element categoryLink-> " + categoryLink);
+                                Log.d("My", "add universities to DB categoryName -> " + categoryName);
+                                Log.d("My", "add universities to DB categoryLink-> " + categoryLink);
                                 Log.d("My", "element name -> " + element.text());
                                 Log.d("My", "element link-> " + element.attr("abs:href"));
                             }
@@ -208,6 +212,7 @@ public class CategoryUniversListActivity extends BaseActivity implements
 
                             Elements elementsNameType = group.select(".accordion-toggle");
                             Elements elementsTextType = elementsNameType.select("a");
+
                             for (Element elementType : elementsTextType) {
                                 categoryName = elementType.text();
                                 categoryLink = elementType.attr("abs:href");

@@ -13,11 +13,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.vova.applicant.R;
-import com.example.vova.applicant.utils.Utils;
 import com.example.vova.applicant.adapters.SpecialitiesAdapter;
 import com.example.vova.applicant.model.SpecialtiesInfo;
 import com.example.vova.applicant.model.TimeFormInfo;
 import com.example.vova.applicant.model.engines.SpecialityInfoEngine;
+import com.example.vova.applicant.utils.Utils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -33,6 +33,7 @@ public class SpecialtiesListActivity extends BaseActivity implements
     // TODO rename all fields
 
     public static final String KEY_SPECIALITIES_LINK = "KEY_SPECIALITIES_LINK";
+    public static final String KEY_SPECIALITIES_TITLE_STRING = "KEY_SPECIALITIES_TITLE_STRING";
 
     private TimeFormInfo mTimeFormInfo;
 
@@ -46,7 +47,7 @@ public class SpecialtiesListActivity extends BaseActivity implements
     @Override
     protected void iniActivity() {
         Log.d("My", "SpecialtiesListActivity --------> iniActivity");
-
+        String strTitle = "";
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -54,10 +55,11 @@ public class SpecialtiesListActivity extends BaseActivity implements
             if (bundle != null) {
                 // TODO rename all fields
                 mTimeFormInfo = (TimeFormInfo) bundle.get(KEY_SPECIALITIES_LINK);
+                strTitle = bundle.getString(KEY_SPECIALITIES_TITLE_STRING, "");
             }
         }
 
-        mProgressBar = (ProgressBar)findViewById(R.id.progress_bar);
+        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_speciality_swipe_refresh_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
@@ -67,14 +69,19 @@ public class SpecialtiesListActivity extends BaseActivity implements
                 mSwipeRefreshLayout.setRefreshing(true);
                 mRecyclerView.setVisibility(View.GONE);
                 parseData();
-                Log.d("My","SwipeRefreshLayout -> parseData -> is start");
+                Log.d("My", "SwipeRefreshLayout -> parseData -> is start");
                 mRecyclerView.setVisibility(View.VISIBLE);
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
 
         TextView textView = (TextView) findViewById(R.id.textViewHeadAboutUniversityActivity);
-        textView.setText(mTimeFormInfo.getStrTimeFormName());
+        if (!strTitle.equals("")) {
+            strTitle = strTitle.substring(0, strTitle.indexOf(" ("));
+            textView.setText(strTitle + ", " + mTimeFormInfo.getStrTimeFormName());
+        } else {
+            textView.setText(mTimeFormInfo.getStrTimeFormName());
+        }
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewSpecialityListActivity);
         LinearLayoutManager layoutManager
@@ -129,7 +136,6 @@ public class SpecialtiesListActivity extends BaseActivity implements
         new Thread(new Runnable() {
 
             SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplication());
-
             String mHtml = mTimeFormInfo.getStrTimeFormLink();
 
             @Override
@@ -149,11 +155,15 @@ public class SpecialtiesListActivity extends BaseActivity implements
 
             private void parse() {
                 Document document;
+
                 String specialty;
                 String applications;
-                String accepted;
-                String amount;
-                String newLink;
+                String accepted = null;
+                String recommended = null;
+                String licenseOrder = null;
+                String volumeOrder = null;
+                String exam = null;
+                String newLink = null;
 
                 String strCategory = mHtml.substring(mHtml.length() - 5, mHtml.length());
 
@@ -165,66 +175,103 @@ public class SpecialtiesListActivity extends BaseActivity implements
 
                     Element form = document.getElementById(strCategory);
                     Elements links = form.select("tbody > tr");
-                    //TODO fix this shit
+                    //TODO правильно обработать загрузку данных
+                    //TODO пустые данные о (рекомендовано, зараховано) получают  поля с прошлых не пустых данных
                     if (specialityInfoEngine.getAllSpecialitiesById(mLongTimeFormId).isEmpty()) {
                         for (Element link : links) {
                             Elements elements = link.getElementsByClass("button button-mini");
-                            Elements tds = link.select("td");
-                            if (isContains2015()) {
-                                specialty = tds.get(0).text();
-                                applications = tds.get(1).text();
-                                amount = "ліцензований обсяг: " + tds.get(2).text();
-                                newLink = elements.attr("abs:href");
+                            Elements tdElements = link.select("td");
 
-                                specialityInfoEngine.addSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
-                                        specialty, applications, amount, newLink));
+//                            if (isContains2015()) {
+////                                specialty = tdElements.get(0).text();
+////                                applications = tdElements.get(1).text();
+////                                amount = "ліцензований обсяг: " + tdElements.get(2).text();
+////                                newLink = elements.attr("abs:href");
+////
+////                                specialityInfoEngine.addSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
+////                                        specialty, applications, amount, newLink));
+//
+////                                Log.d("My", "newLink -> " + newLink);
+//                            } else {
+                            //try to get data from speciality
+                            specialty = (tdElements.get(0).toString()).replaceAll("(?i)<td[^>]*>", "")
+                                    .replaceAll("(?i)<[/]td[^>]*>", "").replaceAll("(?i)<br[^>]*>", "\n");
+                            Log.d("My", "specialty -> " + specialty);
 
-                                Log.d("My", "newLink -> " + newLink);
+                            //try get more data applications
+                            applications = tdElements.get(1).select("span").text();
+                            Log.d("My", "applications -> " + tdElements.get(1).select("span").text());
+                            if (tdElements.get(1).select("nobr").size() == 2) {
+                                accepted = tdElements.get(1).select("nobr").get(0).text();
+                                recommended = tdElements.get(1).select("nobr").get(1).text();
+                                Log.d("My", "applications -> " + tdElements.get(1).select("nobr").get(0).text());
+                                Log.d("My", "applications -> " + tdElements.get(1).select("nobr").get(1).text());
+                            } else if (tdElements.get(1).select("nobr").size() == 1) {
+                                Log.d("My", "applications -> " + tdElements.get(1).select("nobr").get(0).text());
+                                recommended = tdElements.get(1).select("nobr").get(0).text();
                             } else {
-                                specialty = tds.get(0).text();
-                                applications = tds.get(1).select("span").text();
-                                accepted = tds.get(1).select("nobr").text();
-                                amount = tds.get(2).text();
-                                newLink = elements.attr("abs:href");
-
-                                specialityInfoEngine.addSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
-                                        specialty, applications, accepted, amount, newLink));
-
-                                Log.d("My", "newLink -> " + newLink);
+                                Log.d("My", "get more data applications -> is empty");
                             }
+
+                            //try get more data amount
+                            if (tdElements.get(2).select("nobr").size() == 2) {
+                                licenseOrder = tdElements.get(2).select("nobr").get(0).text();
+                                volumeOrder = tdElements.get(2).select("nobr").get(1).text();
+
+                                Log.d("My", "get more data amount -> " + tdElements.get(2).select("nobr").get(0).text());
+                                Log.d("My", "get more data amount -> " + tdElements.get(2).select("nobr").get(1).text());
+                            } else if (tdElements.get(2).select("nobr").size() == 1) {
+                                Log.d("My", "get more data amount -> " + tdElements.get(2).select("nobr").get(0).text());
+                                volumeOrder = tdElements.get(2).select("nobr").get(0).text();
+                            } else {
+                                Log.d("My", "get more data amount -> is empty");
+                            }
+
+                            //attempt to get more data from exams
+                            exam = (tdElements.get(3).toString()).replaceAll("(?i)<td[^>]*>", "")
+                                    .replaceAll("(?i)<[/]td[^>]*>", "").replaceAll("(?i)<br[^>]*>", "\n");
+                            Log.d("My", "get more data amount -> " + exam);
+
+                            newLink = elements.attr("abs:href");
+
+                            specialityInfoEngine.addSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
+                                    specialty, applications, accepted, recommended, licenseOrder, volumeOrder, exam, newLink));
+
+//                            }
                         }
                     } else {
                         for (Element link : links) {
                             Elements elements = link.getElementsByClass("button button-mini");
                             Elements tds = link.select("td");
-                            if (isContains2015()) {
-                                specialty = tds.get(0).text();
-                                applications = tds.get(1).text();
-                                amount = "ліцензований обсяг: " + tds.get(2).text();
-                                newLink = elements.attr("abs:href");
+//                            if (isContains2015()) {
+//                                specialty = tds.get(0).text();
+//                                applications = tds.get(1).text();
+//                                exam = tds.get(3).text();
+//                                newLink = elements.attr("abs:href");
+//
+//                                specialityInfoEngine.addSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
+//                                        specialty, applications, accepted, recommended, licenseOrder, volumeOrder, exam, newLink));
+//                            } else {
+                            specialty = tds.get(0).text();
+                            applications = tds.get(1).select("span").text();
+                            accepted = tds.get(1).select("nobr").text();
+                            exam = tds.get(3).text();
+                            newLink = elements.attr("abs:href");
 
-                                specialityInfoEngine.updateSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
-                                        specialty, applications, amount, newLink));
-                            } else {
-                                specialty = tds.get(0).text();
-                                applications = tds.get(1).select("span").text();
-                                accepted = tds.get(1).select("nobr").text();
-                                amount = tds.get(2).text();
-                                newLink = elements.attr("abs:href");
-
-                                specialityInfoEngine.updateSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
-                                        specialty, applications, accepted, amount, newLink));
-                            }
+                            specialityInfoEngine.addSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
+                                    specialty, applications, accepted, recommended, licenseOrder, volumeOrder, exam, newLink));
+//                            }
                         }
                     }
-                } catch(IOException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
 
-            private boolean isContains2015() {
-                return mHtml.contains("2015");
-            }
+//            private boolean isContains2015() {
+//                return mHtml.contains("2015");
+//            }
+
         }).start();
     }
 }

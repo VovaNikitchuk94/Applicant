@@ -29,6 +29,110 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
+            <TableLayout
+                android:id="@+id/tableLayoutApplicantInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:paddingEnd="8dp"
+                android:paddingStart="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:shrinkColumns="*"
+                android:stretchColumns="1, 2, 3, 4">
+
+                <TableRow>
+
+                    <TextView
+                        android:id="@+id/textViewLegendSequenceNumberApplicantInfo"
+                        android:layout_width="45dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:paddingEnd="8dp"
+                        tools:text="№"/>
+
+                    <TextView
+                        android:id="@+id/textViewLegendNameApplicantsApplicantInfo"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:paddingEnd="8dp"
+                        android:paddingStart="20dp"
+                        tools:text="ПІБ"/>
+
+                    <TextView
+                        android:id="@+id/textViewLegendCompetitionScoresApplicantInfo"
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:paddingEnd="8dp"
+                        android:paddingStart="5dp"
+                        tools:text="Е"/>
+
+                    <TextView
+                        android:id="@+id/textViewLegendBDOScoreApplicantsApplicantInfo"
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:paddingEnd="8dp"
+                        android:paddingStart="5dp"
+                        tools:text="ЗНО"/>
+
+                    <TextView
+                        android:id="@+id/textViewLegendZNOScoreApplicantsApplicantInfo"
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:paddingStart="5dp"
+                        tools:text="БДО"/>
+
+                </TableRow>
+
+                <!--<TableRow>-->
+
+                    <!--<TextView-->
+                        <!--android:id="@+id/textViewSequenceNumberApplicantInfo"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:gravity="start"-->
+                        <!--android:paddingEnd="8dp"-->
+                        <!--tools:text="1"/>-->
+
+                    <!--<TextView-->
+                        <!--android:id="@+id/textViewNameApplicantsApplicantInfo"-->
+                        <!--android:layout_width="120dp"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:gravity="start"-->
+                        <!--android:paddingEnd="8dp"-->
+                        <!--tools:text="Никитчук В.Л."/>-->
+
+                    <!--<TextView-->
+                        <!--android:id="@+id/textViewCompetitionScoresApplicantInfo"-->
+                        <!--android:layout_width="40dp"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:gravity="start"-->
+                        <!--android:paddingEnd="8dp"-->
+                        <!--tools:text="412.96"/>-->
+
+                    <!--<TextView-->
+                        <!--android:id="@+id/textViewBDOScoreApplicantsApplicantInfo"-->
+                        <!--android:layout_width="40dp"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:gravity="start"-->
+                        <!--android:paddingEnd="8dp"-->
+                        <!--tools:text="125.36"/>-->
+
+                    <!--<TextView-->
+                        <!--android:id="@+id/textViewZNOScoreApplicantsApplicantInfo"-->
+                        <!--android:layout_width="40dp"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:gravity="start"-->
+                        <!--tools:text="251.23"/>-->
+
+                <!--</TableRow>-->
+
+            </TableLayout>
+
             <ProgressBar
                 android:id="@+id/progress_bar"
                 style="?android:progressBarStyle"
@@ -40,7 +144,8 @@
             <android.support.v4.widget.SwipeRefreshLayout
                 android:id="@+id/activity_applicant_swipe_refresh_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tableLayoutApplicantInfo">
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recyclerViewApplicationListActivity"
@@ -58,6 +163,6 @@
 
     </LinearLayout>
 
-    <include layout="@layout/bottom_sheet" />
+    <include layout="@layout/bottom_sheet"/>
 
 </android.support.design.widget.CoordinatorLayout>

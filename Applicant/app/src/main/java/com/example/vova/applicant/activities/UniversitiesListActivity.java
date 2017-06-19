@@ -2,8 +2,6 @@ package com.example.vova.applicant.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,11 +19,11 @@ import java.util.ArrayList;
 public class UniversitiesListActivity extends BaseActivity implements
         UniversitiesAdapter.OnClickUniversityItem {
 
-    public static final String KEY_DETAIL_UNIVERSITY_LINK = "KEY_DETAIL_UNIVERSITY_LINK";
+    public static final String KEY_CATEGORY_UNIVERSITY_LINK = "KEY_CATEGORY_UNIVERSITY_LINK";
 
     private CategoryUniversInfo mCategoryUniversInfo;
     private long nLongCityId = -1;
-    private String mStringDegree;
+    private String mStringCategory;
 
     private RecyclerView mRecyclerView;
 
@@ -37,7 +35,7 @@ public class UniversitiesListActivity extends BaseActivity implements
         if (intent != null) {
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
-                mCategoryUniversInfo = (CategoryUniversInfo) bundle.get(KEY_DETAIL_UNIVERSITY_LINK);
+                mCategoryUniversInfo = (CategoryUniversInfo) bundle.get(KEY_CATEGORY_UNIVERSITY_LINK);
             }
         }
 
@@ -68,12 +66,12 @@ public class UniversitiesListActivity extends BaseActivity implements
     private void getData() {
         UniversitiesInfoEngine universityInfoEngine = new UniversitiesInfoEngine(getApplication());
         nLongCityId = mCategoryUniversInfo.getLongCityId();
-        mStringDegree = mCategoryUniversInfo.getStrCategoryUniversName();
+        mStringCategory = mCategoryUniversInfo.getStrCategoryUniversName();
 
         Log.d("My","nLongCityId -> " + nLongCityId);
-        Log.d("My","mStringDegree -> " + mStringDegree);
+        Log.d("My","mStringCategory -> " + mStringCategory);
         ArrayList<UniversityInfo> universityInfos = universityInfoEngine
-                .getAllUniversitiesByDegree(nLongCityId, mStringDegree);
+                .getAllUniversitiesByDegree(nLongCityId, mStringCategory);
         UniversitiesAdapter universitiesAdapter = new UniversitiesAdapter(universityInfos);
         universitiesAdapter.setOnClickUniversityItem(UniversitiesListActivity.this);
         mRecyclerView.setAdapter(universitiesAdapter);

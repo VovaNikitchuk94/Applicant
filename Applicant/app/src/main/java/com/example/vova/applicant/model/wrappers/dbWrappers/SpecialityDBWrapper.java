@@ -62,28 +62,6 @@ public class SpecialityDBWrapper extends BaseDBWrapper {
         return arrResult;
     }
 
-//    public ArrayList<SpecialtiesInfo> getAllSpecialitiesByDegree(long nId) {
-//        ArrayList<SpecialtiesInfo> arrResult = new ArrayList<>();
-//        SQLiteDatabase database = getReadable();
-//        String strRequest = SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_DEGREE + "=?";
-//        String arrArgs[] = new String[]{Long.toString(nId)};
-//        Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
-//        try {
-//            if (cursor != null && cursor.moveToFirst()) {
-//                do {
-//                    SpecialtiesInfo specialtiesInfo = new SpecialtiesInfo(cursor);
-//                    arrResult.add(specialtiesInfo);
-//                } while (cursor.moveToNext());
-//            }
-//        } finally {
-//            if (cursor != null) {
-//                cursor.close();
-//            }
-//            database.close();
-//        }
-//        return arrResult;
-//    }
-
     public void updateSpeciality(SpecialtiesInfo specialtiesInfo) {
         SQLiteDatabase database = getWritable();
         String strRequest = SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_TIME_FORM_ID + "=?";
@@ -105,11 +83,11 @@ public class SpecialityDBWrapper extends BaseDBWrapper {
         String arrArgs[] = new String[]{Long.toString(nId)};
         Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
         try{
-            if (cursor!=null && cursor.moveToFirst()){
+            if (cursor != null && cursor.moveToFirst()){
                 specialtiesInfo = new SpecialtiesInfo(cursor);
             }
         } finally {
-            if (cursor!=null){
+            if (cursor != null){
                 cursor.close();
             }
             database.close();
