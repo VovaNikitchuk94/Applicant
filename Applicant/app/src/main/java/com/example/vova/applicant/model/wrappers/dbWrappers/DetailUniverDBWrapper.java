@@ -60,8 +60,10 @@ public class DetailUniverDBWrapper extends BaseDBWrapper {
 
     public void updateDetailUniver(DetailUniverInfo detailUniverInfo) {
         SQLiteDatabase database = getWritable();
-        String strRequest = DBConstants.UniversityTable.Cols.UNIVERSITY_INFO_FIELD_CITIES_ID + "=?";
-        String arrArgs[] = new String[]{Long.toString(detailUniverInfo.getId())};
+        String strRequest = UniversityDetailTable.Cols.UNIVERSITY_DETAIL_INFO_FIELD_UNV_ID + "=?" + " AND "
+                + UniversityDetailTable.Cols.UNIVERSITY_DETAIL_INFO_FIELD_NAME + "=?";
+        String arrArgs[] = new String[]{Long.toString(detailUniverInfo.getLongUniversityId()),
+                detailUniverInfo.getStrDetailText()};
         database.update(getTableName(), detailUniverInfo.getContentValues(), strRequest, arrArgs);
         database.close();
     }
@@ -75,7 +77,7 @@ public class DetailUniverDBWrapper extends BaseDBWrapper {
     public DetailUniverInfo getDetailUniverById(long nId) {
         DetailUniverInfo detailUniverInfo = null;
         SQLiteDatabase database = getReadable();
-        String strRequest = UniversityDetailTable.Cols.UNIVERSITY_DETAIL_INFO_FIELD_ID + "=?";
+        String strRequest = UniversityDetailTable.Cols.UNIVERSITY_DETAIL_INFO_FIELD_UNV_ID + "=?";
         String arrArgs[] = new String[]{Long.toString(nId)};
         Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
         try{

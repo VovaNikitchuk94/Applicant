@@ -12,11 +12,13 @@ public class TimeFormInfo extends BaseEntity implements Parcelable {
     private long mLongDetailUNVId;
     private String mStrTimeFormName;
     private String mStrTimeFormLink;
+    private String mStrDateLastUpdate;
 
-    public TimeFormInfo(long longDetailUNVId, String strTimeFormName, String strTimeFormLink) {
+    public TimeFormInfo(long longDetailUNVId, String strTimeFormName, String strTimeFormLink, String strDateLastUpdate) {
         mLongDetailUNVId = longDetailUNVId;
         mStrTimeFormName = strTimeFormName;
         mStrTimeFormLink = strTimeFormLink;
+        mStrDateLastUpdate = strDateLastUpdate;
     }
 
     public TimeFormInfo(Cursor cursor) {
@@ -24,6 +26,7 @@ public class TimeFormInfo extends BaseEntity implements Parcelable {
         mLongDetailUNVId = cursor.getLong(cursor.getColumnIndex(TimeFormTable.Cols.TIME_FORM_INFO_FIELD_DETAIL_UNV_ID));
         mStrTimeFormName = cursor.getString(cursor.getColumnIndex(TimeFormTable.Cols.TIME_FORM_INFO_FIELD_NAME));
         mStrTimeFormLink = cursor.getString(cursor.getColumnIndex(TimeFormTable.Cols.TIME_FORM_INFO_FIELD_LINK));
+        mStrDateLastUpdate = cursor.getString(cursor.getColumnIndex(TimeFormTable.Cols.TIME_FORM_INFO_FIELD_DATE_UPDATE));
     }
 
     private TimeFormInfo(Parcel parcel) {
@@ -31,30 +34,23 @@ public class TimeFormInfo extends BaseEntity implements Parcelable {
         mLongDetailUNVId = parcel.readLong();
         mStrTimeFormName = parcel.readString();
         mStrTimeFormLink = parcel.readString();
+        mStrDateLastUpdate = parcel.readString();
     }
 
     public String getStrTimeFormName() {
         return mStrTimeFormName;
     }
 
-    public void setStrTimeFormName(String strTimeFormName) {
-        mStrTimeFormName = strTimeFormName;
-    }
-
     public String getStrTimeFormLink() {
         return mStrTimeFormLink;
-    }
-
-    public void setStrTimeFormLink(String strTimeFormLink) {
-        mStrTimeFormLink = strTimeFormLink;
     }
 
     public long getLongDetailUNVId() {
         return mLongDetailUNVId;
     }
 
-    public void setLongDetailUNVId(long longDetailUNVId) {
-        mLongDetailUNVId = longDetailUNVId;
+    public String getStrDateLastUpdate() {
+        return mStrDateLastUpdate;
     }
 
     @Override
@@ -63,6 +59,7 @@ public class TimeFormInfo extends BaseEntity implements Parcelable {
         values.put(TimeFormTable.Cols.TIME_FORM_INFO_FIELD_DETAIL_UNV_ID, getLongDetailUNVId());
         values.put(TimeFormTable.Cols.TIME_FORM_INFO_FIELD_NAME, getStrTimeFormName());
         values.put(TimeFormTable.Cols.TIME_FORM_INFO_FIELD_LINK, getStrTimeFormLink());
+        values.put(TimeFormTable.Cols.TIME_FORM_INFO_FIELD_DATE_UPDATE, getStrDateLastUpdate());
         return values;
     }
 
@@ -77,6 +74,7 @@ public class TimeFormInfo extends BaseEntity implements Parcelable {
         dest.writeLong(mLongDetailUNVId);
         dest.writeString(mStrTimeFormName);
         dest.writeString(mStrTimeFormLink);
+        dest.writeString(mStrDateLastUpdate);
     }
 
     public static final Parcelable.Creator<TimeFormInfo> CREATOR

@@ -15,6 +15,7 @@ public class UniversitiesInfoDBWrapper extends BaseDBWrapper {
         super(context, UniversityTable.TABLE_NAME);
     }
 
+    //TODO  как то много методов... что я пил?
     public ArrayList<UniversityInfo> getAllUniversities() {
         ArrayList<UniversityInfo> arrResult = new ArrayList<>();
         SQLiteDatabase database = getReadable();
@@ -104,8 +105,10 @@ public class UniversitiesInfoDBWrapper extends BaseDBWrapper {
 
     public void updateUniversity(UniversityInfo universityInfo) {
         SQLiteDatabase database = getWritable();
-        String strRequest = UniversityTable.Cols.UNIVERSITY_INFO_FIELD_CITIES_ID + "=?";
-        String arrArgs[] = new String[]{Long.toString(universityInfo.getId())};
+        String strRequest = UniversityTable.Cols.UNIVERSITY_INFO_FIELD_CITIES_ID + "=?" + " AND "
+                + UniversityTable.Cols.UNIVERSITY_INFO_FIELD_NAME + "=?";
+        String arrArgs[] = new String[]{Long.toString(universityInfo.getLongCityId()),
+                universityInfo.getStrUniversityName()};
         database.update(getTableName(), universityInfo.getContentValues(), strRequest, arrArgs);
         database.close();
     }

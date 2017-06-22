@@ -37,24 +37,12 @@ public class AboutUniversityInfo extends BaseEntity implements Parcelable{
         return mStrAboutUniversType;
     }
 
-    public void setStrAboutUniversType(String strAboutUniversType) {
-        mStrAboutUniversType = strAboutUniversType;
-    }
-
     public String getStrAboutUniversData() {
         return mStrAboutUniversData;
     }
 
-    public void setStrAboutUniversData(String strAboutUniversData) {
-        mStrAboutUniversData = strAboutUniversData;
-    }
-
     public long getLongDetailUNVId() {
         return mLongDetailUNVId;
-    }
-
-    public void setLongDetailUNVId(long longDetailUNVId) {
-        mLongDetailUNVId = longDetailUNVId;
     }
 
     @Override

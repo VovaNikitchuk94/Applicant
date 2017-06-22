@@ -16,6 +16,7 @@ public class CitiesInfoDBWrapper extends BaseDBWrapper {
         super(context, CitiesTable.TABLE_NAME);
     }
 
+    //не нужен
     public ArrayList<CitiesInfo> getAllCities() {
         ArrayList<CitiesInfo> arrResult = new ArrayList<>();
         SQLiteDatabase database = getReadable();
@@ -48,7 +49,6 @@ public class CitiesInfoDBWrapper extends BaseDBWrapper {
                     CitiesInfo citiesInfo = new CitiesInfo(cursor);
                     arrResult.add(citiesInfo);
 
-                    Log.d("My", "CitiesInfo getAllCitiesById citiesInfo.getId() - >  " + citiesInfo.getId());
                 } while (cursor.moveToNext());
             }
         } finally {
@@ -62,8 +62,8 @@ public class CitiesInfoDBWrapper extends BaseDBWrapper {
 
     public void updateCity(CitiesInfo citiesInfo) {
         SQLiteDatabase database = getWritable();
-        String strRequest = CitiesTable.Cols.CITIES_INFO_FIELD_YEAR_ID + "=?";
-        String arrArgs[] = new String[]{Long.toString(citiesInfo.getId())};
+        String strRequest = CitiesTable.Cols.CITIES_INFO_FIELD_YEAR_ID + "=?" + " AND " + CitiesTable.Cols.CITIES_INFO_FIELD_NAME + "=?";
+        String arrArgs[] = new String[]{Long.toString(citiesInfo.getLongYearId()), citiesInfo.getStrCityName()};
         database.update(getTableName(), citiesInfo.getContentValues(), strRequest, arrArgs);
         database.close();
     }
@@ -77,14 +77,13 @@ public class CitiesInfoDBWrapper extends BaseDBWrapper {
     public CitiesInfo getCityById(long nId) {
         CitiesInfo citiesInfo = null;
         SQLiteDatabase database = getReadable();
-        String strRequest = CitiesTable.Cols.CITIES_INFO_FIELD_ID + "=?";
+        String strRequest = CitiesTable.Cols.CITIES_INFO_FIELD_YEAR_ID + "=?";
         String arrArgs[] = new String[]{Long.toString(nId)};
         Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
         try{
             if (cursor!=null && cursor.moveToFirst()){
                 citiesInfo = new CitiesInfo(cursor);
 
-                Log.d("My", "CitiesInfo getCityById citiesInfo.getId() - >  " + citiesInfo.getId());
             }
         } finally {
             if (cursor!=null){

@@ -48,6 +48,8 @@
     <string name="textViewConventionsBottomSheet">Conventions</string>
     <string name="textLegend">Legend</string>
     <string name="textEmptyData">Data is empty</string>
+    <string name="textNOInternetConnection">No internet connection</string>
+    <string name="textBadInternetConnection">Bad internet connection!</string>
 </resources>
 
 

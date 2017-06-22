@@ -14,7 +14,6 @@ public class DBConstants {
             public static final String CITIES_INFO_FIELD_NAME = "_name";
             public static final String CITIES_INFO_FIELD_LINK = "_link";
             public static final String CITIES_INFO_FIELD_DATE_UPDATE = "_date_update";
-            public static final String CITIES_INFO_FIELD_TIME_UPDATE = "_time_update";
         }
     }
 
@@ -25,9 +24,7 @@ public class DBConstants {
             public static final String CATEGORY_UNIVERS_INFO_FIELD_ID = "_id";
             public static final String CATEGORY_UNIVERS_INFO_FIELD_CITIES_ID = "_city_id";
             public static final String CATEGORY_UNIVERS_INFO_FIELD_NAME = "_name";
-            public static final String CATEGORY_UNIVERS_INFO_FIELD_LINK = "_link";
             public static final String CATEGORY_UNIVERS_INFO_FIELD_DATE_UPDATE = "_date_update";
-            public static final String CATEGORY_UNIVERS_INFO_FIELD_TIME_UPDATE = "_time_update";
         }
     }
 
@@ -53,7 +50,6 @@ public class DBConstants {
             public static final String UNIVERSITY_DETAIL_INFO_FIELD_NAME = "_name";
             public static final String UNIVERSITY_DETAIL_INFO_FIELD_LINK = "_link";
             public static final String UNIVERSITY_DETAIL_INFO_FIELD_DATE_UPDATE = "_date_update";
-            public static final String UNIVERSITY_DETAIL_INFO_FIELD_TIME_UPDATE = "_time_update";
         }
     }
 
@@ -76,6 +72,7 @@ public class DBConstants {
             public static final String TIME_FORM_INFO_FIELD_DETAIL_UNV_ID = "_detail_unv_id";
             public static final String TIME_FORM_INFO_FIELD_NAME = "_name";
             public static final String TIME_FORM_INFO_FIELD_LINK = "_link";
+            public static final String TIME_FORM_INFO_FIELD_DATE_UPDATE = "_date_update";
         }
     }
 
@@ -94,6 +91,7 @@ public class DBConstants {
             public static final String SPECIALITIES_INFO_FIELD_VOLUME_ORDERS = "_volume_orders";
             public static final String SPECIALITIES_INFO_FIELD_EXAMS = "_exams";
             public static final String SPECIALITIES_INFO_FIELD_LINK = "_link";
+            public static final String SPECIALITIES_INFO_FIELD_DATE_UPDATE = "_date_update";
         }
     }
 
@@ -103,9 +101,6 @@ public class DBConstants {
         public static final class Cols {
             public static final String APPLICATION_INFO_FIELD_ID = "_id";
             public static final String APPLICATION_INFO_FIELD_SPECIALITY_ID = "_speciality_id";
-            public static final String APPLICATION_INFO_FIELD_UNIVERSITY = "_university";
-            public static final String APPLICATION_INFO_FIELD_SPECIALITY = "_speciality";
-            public static final String APPLICATION_FIELD_INFO = "_info";
 
             public static final String APPLICATION_INFO_FIELD_NUMBER = "_number";
             public static final String APPLICATION_INFO_FIELD_NAME = "_name";
@@ -119,6 +114,7 @@ public class DBConstants {
 
             public static final String APPLICATION_INFO_FIELD_LINK = "_link";
             public static final String APPLICATION_INFO_FIELD_BACKGROUND = "_background";
+            public static final String APPLICATION_INFO_FIELD_DATE_UPDATE = "_date_update";
         }
     }
 

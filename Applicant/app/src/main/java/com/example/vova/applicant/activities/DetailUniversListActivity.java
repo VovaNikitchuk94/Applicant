@@ -13,11 +13,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.vova.applicant.R;
-import com.example.vova.applicant.utils.Utils;
 import com.example.vova.applicant.adapters.DetailUniversAdapter;
 import com.example.vova.applicant.model.DetailUniverInfo;
 import com.example.vova.applicant.model.UniversityInfo;
 import com.example.vova.applicant.model.engines.DetailUniverInfoEngine;
+import com.example.vova.applicant.utils.Utils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -26,6 +26,9 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 public class DetailUniversListActivity extends BaseActivity implements
         DetailUniversAdapter.OnClickDetailUniversItem {
@@ -40,6 +43,7 @@ public class DetailUniversListActivity extends BaseActivity implements
     private UniversityInfo mUniversityInfo;
 
     private long mLongDetailUNVId = 0;
+    private String mUniversityCodeLink = "";
 
     @Override
     protected void iniActivity() {
@@ -50,10 +54,14 @@ public class DetailUniversListActivity extends BaseActivity implements
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
                 mUniversityInfo = (UniversityInfo) bundle.get(KEY_DETAIL_UNIVERSITY_LINK);
+                if (mUniversityInfo != null) {
+                    mLongDetailUNVId = mUniversityInfo.getId();
+                    mUniversityCodeLink = mUniversityInfo.getStrUniversityLink();
+                }
             }
         }
 
-        mProgressBar = (ProgressBar)findViewById(R.id.progress_bar);
+        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_detail_university_swipe_refresh_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
@@ -62,8 +70,13 @@ public class DetailUniversListActivity extends BaseActivity implements
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(true);
                 mRecyclerView.setVisibility(View.GONE);
-                parseData();
-                Log.d("My","SwipeRefreshLayout -> parseData -> is start");
+                Log.d("My", "SwipeRefreshLayout -> updateData -> is start");
+                if (!isOnline(getApplicationContext())) {
+                    Toast.makeText(getApplicationContext(), R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
+                } else {
+                    updateData();
+                }
+                Log.d("My", "SwipeRefreshLayout -> updateData -> is finish");
                 mRecyclerView.setVisibility(View.VISIBLE);
                 mSwipeRefreshLayout.setRefreshing(false);
             }
@@ -89,12 +102,31 @@ public class DetailUniversListActivity extends BaseActivity implements
     }
 
     private void setData() {
-        mLongDetailUNVId = mUniversityInfo.getId();
         DetailUniverInfoEngine detailUniverInfoEngine = new DetailUniverInfoEngine(getApplication());
         if (detailUniverInfoEngine.getAllDetailUniversById(mLongDetailUNVId).isEmpty()) {
+            if (!isOnline(this)) {
+                Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
+                finish();
+            }
+            Log.d("My", "DetailUniverInfoEngine -> parseData");
             parseData();
+
         } else {
-            getData(detailUniverInfoEngine);
+
+            //TODO разобраться что за хуйня здесь происходит
+            if (isDateComparison()) {
+                Log.d("My", "DetailUniverInfoEngine -> isDateComparison  getData(); ");
+                getData(detailUniverInfoEngine);
+            } else {
+                if (!isOnline(this)) {
+                    Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.d("My", "DetailUniverInfoEngine -> (isDateComparison()) updateData() is started;");
+                    updateData();
+                    Log.d("My", "DetailUniverInfoEngine -> (isDateComparison()) updateData(); is finished");
+
+                }
+            }
         }
     }
 
@@ -116,7 +148,7 @@ public class DetailUniversListActivity extends BaseActivity implements
             intent.putExtra(AboutUniversityActivity.KEY_ABOUT_UNIVERSITY_ACTIVITY, detailUniverInfo);
             startActivity(intent);
         } else {
-            if (detailUniverInfo.getStrDetailText().contains("(0)")){
+            if (detailUniverInfo.getStrDetailText().contains("(0)")) {
                 Toast.makeText(this, R.string.textEmptyData, Toast.LENGTH_SHORT).show();
             } else {
                 intent = new Intent(this, TimeFormListActivity.class);
@@ -126,6 +158,70 @@ public class DetailUniversListActivity extends BaseActivity implements
         }
     }
 
+    private String parseDateAndTime() {
+
+        Document document;
+        String dateUpdateAndTime = null;
+        try {
+            document = Jsoup.connect(mUniversityCodeLink).get();
+
+            //TODO при обновлении нужно затирать всю цепочку связаных данных в БД
+
+            //get timeUpdate and dateUpdate update page
+            String strLastUpdatePage = document.select("div.title-page > small").text();
+            Log.d("My", "strLastUpdatePage -> " + strLastUpdatePage);
+            String[] arrayTimeDate = strLastUpdatePage.split(" ");
+
+            dateUpdateAndTime = arrayTimeDate[3] + "@" + arrayTimeDate[5];
+            Log.d("My", "dateUpdateAndTime -> " + dateUpdateAndTime);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return dateUpdateAndTime;
+    }
+
+    private Boolean isDateComparison() {
+
+        Callable<Boolean> callable = new Callable<Boolean>() {
+
+            @Override
+            public Boolean call() throws Exception {
+                DetailUniverInfoEngine detailUniverInfoEngine = new DetailUniverInfoEngine(getApplication());
+
+                String parseDate = "";
+                parseDate = parseDateAndTime();
+
+                String dateAndTime = detailUniverInfoEngine.getDetailUniverById(mLongDetailUNVId).getStrDateLastUpdate();
+
+                Log.d("My", " isDateComparison parseDate -> " + parseDate);
+                Log.d("My", " isDateComparison dateAndTime) -> " + dateAndTime);
+
+                if (parseDate.equals(dateAndTime)) {
+
+                    Log.d("My", " isDateComparison parseDate.equals(dateAndTime) -> " + true);
+                    return true;
+                } else {
+                    Log.d("My", " isDateComparison parseDate.equals(dateAndTime) -> " + false);
+                    return false;
+                }
+            }
+        };
+
+        FutureTask<Boolean> task = new FutureTask<>(callable);
+        Thread t = new Thread(task);
+        t.start();
+
+        try {
+            Log.d("My", " isDateComparison task.get() -> " + task.get());
+            return task.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     private void parseData() {
 
         new Thread(new Runnable() {
@@ -133,59 +229,107 @@ public class DetailUniversListActivity extends BaseActivity implements
             public void run() {
                 DetailUniverInfoEngine detailUniverInfoEngine = new DetailUniverInfoEngine(getApplication());
 
-                if (Utils.connectToData(mUniversityInfo.getStrUniversityLink()) && mLongDetailUNVId != 0) {
+                if (Utils.connectToData(mUniversityCodeLink) && mLongDetailUNVId != 0) {
                     parse(mLongDetailUNVId, detailUniverInfoEngine);
-                }
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mProgressBar.setVisibility(View.VISIBLE);
-                        DetailUniverInfoEngine detailUniverInfoEngine = new DetailUniverInfoEngine(getApplication());
-                        getData(detailUniverInfoEngine);
-                    }
-                });
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setVisibility(View.VISIBLE);
+                            DetailUniverInfoEngine detailUniverInfoEngine = new DetailUniverInfoEngine(getApplication());
+                            getData(detailUniverInfoEngine);
+                        }
+                    });
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), R.string.textBadInternetConnection, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
 
             private void parse(long longDetailUNVId, DetailUniverInfoEngine detailUniverInfoEngine) {
-                String html;
-                html = mUniversityInfo.getStrUniversityLink();
-                Log.d("My", "ParseUniversities doInBackground  mHtml ->" + html);
+
                 Document document;
                 try {
-                    document = Jsoup.connect(html).get();
+                    document = Jsoup.connect(mUniversityCodeLink).get();
 
-                    //get timeUpdate and dateUpdate update page
-                    String strLastUpdatePage = document.select("div.title-page > small").text();
-                    Log.d("My", "strLastUpdatePage -> " + strLastUpdatePage );
-                    String[] arrayTimeDate = strLastUpdatePage.split(" ");
-                    String dateUpdate = arrayTimeDate[3];
-                    String timeUpdate = arrayTimeDate[5];
-                    Log.d("My", "dateUpdate -> " + dateUpdate + "\ntimeUpdate -> " + timeUpdate);
+                    String dateUpdate = parseDateAndTime();
 
                     Elements elementsByClass = document.getElementsByClass("accordion-heading togglize");
                     Elements elementsText = elementsByClass.select("a");
-                    if (detailUniverInfoEngine.getAllDetailUniversById(mLongDetailUNVId).isEmpty()) {
-                        for (Element element : elementsText) {
+                    for (Element element : elementsText) {
 
-                            String detailUniversityName = element.text();
-                            String detailUniversityLink = element.attr("abs:href");
+                        String detailUniversityName = element.text();
+                        String detailUniversityLink = element.attr("abs:href");
 
-                            detailUniverInfoEngine.addDetailUniver(new DetailUniverInfo(longDetailUNVId, detailUniversityName,
-                                    detailUniversityLink, dateUpdate, timeUpdate));
-                            Log.d("My", "ParseUniversities doInBackground  addDetailUniver link ->" + element.attr("abs:href"));
-                            Log.d("My", "ParseUniversities doInBackground  addDetailUniver  detailUniversityLink ->" + detailUniversityLink);
+                        detailUniverInfoEngine.addDetailUniver(new DetailUniverInfo(longDetailUNVId, detailUniversityName,
+                                detailUniversityLink, dateUpdate));
+                        Log.d("My", "DetailUniversListActivity doInBackground  addDetailUniver link ->" + element.attr("abs:href"));
+                        Log.d("My", "DetailUniversListActivity doInBackground  addDetailUniver  dateUpdate ->" + dateUpdate);
+                        Log.d("My", "DetailUniversListActivity doInBackground  addDetailUniver  detailUniversityLink ->" + detailUniversityLink);
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }).start();
+    }
+
+    private void updateData() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                DetailUniverInfoEngine detailUniverInfoEngine = new DetailUniverInfoEngine(getApplication());
+
+                if (Utils.connectToData(mUniversityCodeLink) && mLongDetailUNVId != 0) {
+                    update(mLongDetailUNVId, detailUniverInfoEngine);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setVisibility(View.VISIBLE);
+                            DetailUniverInfoEngine detailUniverInfoEngine = new DetailUniverInfoEngine(getApplication());
+                            getData(detailUniverInfoEngine);
                         }
-                    } else {
-                        for (Element element : elementsText) {
-                            String detailUniversityName = element.text();
-                            String detailUniversityLink = element.attr("abs:href");
+                    });
 
-                            detailUniverInfoEngine.updateDetailUniver(new DetailUniverInfo(longDetailUNVId, detailUniversityName,
-                                    detailUniversityLink, dateUpdate, timeUpdate));
-                            Log.d("My", "ParseUniversities doInBackground  addDetailUniver link ->" + element.attr("abs:href"));
-                            Log.d("My", "ParseUniversities doInBackground  addDetailUniver  detailUniversityLink ->" + detailUniversityLink);
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), R.string.textBadInternetConnection, Toast.LENGTH_SHORT).show();
                         }
+                    });
+                }
+            }
+
+            private void update(long longDetailUNVId, DetailUniverInfoEngine detailUniverInfoEngine) {
+
+                Document document;
+                try {
+                    document = Jsoup.connect(mUniversityCodeLink).get();
+
+                    String dateUpdate = parseDateAndTime();
+//                    String dateUpdate = "01/02/17@06:02";
+
+                    Elements elementsByClass = document.getElementsByClass("accordion-heading togglize");
+                    Elements elementsText = elementsByClass.select("a");
+
+                    for (Element element : elementsText) {
+                        String detailUniversityName = element.text();
+                        String detailUniversityLink = element.attr("abs:href");
+
+                        detailUniverInfoEngine.updateDetailUniver(new DetailUniverInfo(longDetailUNVId, detailUniversityName,
+                                detailUniversityLink, dateUpdate));
+                        Log.d("My", "DetailUniversListActivity doInBackground  update link ->" + element.attr("abs:href"));
+                        Log.d("My", "DetailUniversListActivity doInBackground  update  detailUniversityLink ->" + detailUniversityLink);
+                        Log.d("My", "DetailUniversListActivity doInBackground  update  dateUpdate ->" + dateUpdate);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.vova.applicant.R;
 import com.example.vova.applicant.adapters.ApplicationAdapter;
@@ -35,14 +36,13 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 public class ApplicationListActivity extends BaseActivity implements ApplicationAdapter.OnClickApplicationItem {
 
     public static final String INTENT_KEY_APPLICANT_ACTIVITY = "INTENT_KEY_APPLICANT_ACTIVITY";
-
-    private static final long LEGEND_YEAR_ID_2015 = 2015;
-    private static final long LEGEND_YEAR_ID_2016 = 2016;
-    private static final long LEGEND_YEAR_ID_2017 = 2017;
 
     private static final int ITEM_ID_APPLICANT_INFO = 112;
     private static final int MENU_ITEM_LEGEND = 113;
@@ -57,8 +57,7 @@ public class ApplicationListActivity extends BaseActivity implements Application
     private SpecialtiesInfo mSpecialtiesInfo;
 
     private long mLongSpecialityId = 0;
-
-//    ImportantApplicantInfoEngine importantApplicantInfoEngine;
+    private String mStrApplicantCodeLink = "";
 
     @Override
     protected void iniActivity() {
@@ -68,11 +67,16 @@ public class ApplicationListActivity extends BaseActivity implements Application
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
                 mSpecialtiesInfo = (SpecialtiesInfo) bundle.get(INTENT_KEY_APPLICANT_ACTIVITY);
+                if (mSpecialtiesInfo != null) {
+                    mLongSpecialityId = mSpecialtiesInfo.getId();
+                    mStrApplicantCodeLink = mSpecialtiesInfo.getStrLink();
+                }
             }
         }
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
+        //TODO при обновлении и последующем открытии активи пропадает данные и ImportantInfo
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_applicant_swipe_refresh_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -80,8 +84,16 @@ public class ApplicationListActivity extends BaseActivity implements Application
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(true);
                 mRecyclerView.setVisibility(View.GONE);
-                parseData();
-                Log.d("My", "SwipeRefreshLayout -> parseData -> is start");
+                Log.d("My", "SwipeRefreshLayout -> updateData -> is start");
+                if (!isOnline(getApplicationContext())) {
+                    Toast.makeText(getApplicationContext(), R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.d("My", "CitiesListActivity -> (isDateComparison()) updateData() is started;");
+                    updateData();
+                    Log.d("My", "CitiesListActivity -> (isDateComparison()) updateData(); is finished");
+                }
+                Log.d("My", "SwipeRefreshLayout -> updateData -> is finish");
+
                 mRecyclerView.setVisibility(View.VISIBLE);
                 mSwipeRefreshLayout.setRefreshing(false);
             }
@@ -108,24 +120,21 @@ public class ApplicationListActivity extends BaseActivity implements Application
         getToolbar().setOverflowIcon(menuRightIconDrawable);
 
         setData();
-
-        //set recyclerView with legend data
-        setLegendList();
     }
 
     private void setTextImportantTextView() {
         ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getApplicationContext());
-            Log.d("My", "setTextImportantTextView importantApplicantInfoEngine.getImportantInfoById(mLongSpecialityId) - > "
-                    + importantApplicantInfoEngine.getImportantInfoById(mSpecialtiesInfo.getId()));
-            Log.d("My", "setTextImportantTextView start");
-            ImportantInfo importantInfos = importantApplicantInfoEngine.getImportantInfoById(mSpecialtiesInfo.getId());
-            Log.d("My", "setTextImportantTextView start importantInfos - > " + importantInfos);
+        Log.d("My", "setTextImportantTextView importantApplicantInfoEngine.getImportantInfoById(mLongSpecialityId) - > "
+                + importantApplicantInfoEngine.getImportantInfoById(mSpecialtiesInfo.getId()));
+        Log.d("My", "setTextImportantTextView start");
+        ImportantInfo importantInfos = importantApplicantInfoEngine.getImportantInfoById(mSpecialtiesInfo.getId());
+        Log.d("My", "setTextImportantTextView start importantInfos - > " + importantInfos);
 
-            numberTextView.setText(importantInfos.getStrNumber());
-            nameTextView.setText(importantInfos.getStrName());
-            competitionScoreTextView.setText(importantInfos.getStrTotalScores());
-            BDOScoreTextView.setText(importantInfos.getStrMarkDocument());
-            ZNOScoreTextView.setText(importantInfos.getStrMarkTest());
+        numberTextView.setText(importantInfos.getStrNumber());
+        nameTextView.setText(importantInfos.getStrName());
+        competitionScoreTextView.setText(importantInfos.getStrTotalScores());
+        BDOScoreTextView.setText(importantInfos.getStrMarkDocument());
+        ZNOScoreTextView.setText(importantInfos.getStrMarkTest());
     }
 
     private void setLegendList() {
@@ -145,21 +154,13 @@ public class ApplicationListActivity extends BaseActivity implements Application
         // настройка поведения нижнего экрана
         bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-
-        // настройка максимальной высоты
-//        bottomSheetBehavior.setPeekHeight(340);
-//        bottomSheetBehavior.
-
-        // настройка возможности скрыть элемент при свайпе вниз
         bottomSheetBehavior.setHideable(true);
 
         LegendEngine legendEngine = new LegendEngine(getApplication());
-//        mLongSpecialityId = mSpecialtiesInfo.getId();
-        ArrayList<LegendInfo> legendInfos = legendEngine.getLegendsById(LEGEND_YEAR_ID_2016);
+        ArrayList<LegendInfo> legendInfos = legendEngine.getLegendsById(mLongSpecialityId);
         Log.d("My", "setLegendList start legendInfos size- >" + legendInfos.size());
         LegendAdapter legendAdapter = new LegendAdapter(legendInfos);
         legendRecyclerView.setAdapter(legendAdapter);
-//        legendAdapter.notifyDataSetChanged();
 
         Log.d("My", "setLegendList  bottomSheetBehavior.setState - >" + bottomSheetBehavior.getState());
     }
@@ -169,6 +170,7 @@ public class ApplicationListActivity extends BaseActivity implements Application
         return R.layout.activity_applcation_list;
     }
 
+    //TODO пока не трогать
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
 //        //set applicantItem icon
@@ -213,21 +215,45 @@ public class ApplicationListActivity extends BaseActivity implements Application
 //    }
 
     private void setData() {
-        mLongSpecialityId = mSpecialtiesInfo.getId();
         ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
         if (applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId).isEmpty()) {
+            if (!isOnline(this)) {
+                Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
+                finish();
+            }
+            Log.d("My", "CitiesListActivity -> parseData");
             parseData();
         } else {
-            getData(applicationInfoEngine);
+            if (isDateComparison()) {
+                Log.d("My", "CitiesListActivity -> isDateComparison  getData(citiesInfoEngine); ");
+                getData(applicationInfoEngine);
+            } else {
+                if (!isOnline(this)) {
+                    Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
+                } else {
+                    updateData();
+                    Log.d("My", "CitiesListActivity -> (isDateComparison()) updateData(); is finished");
 
-            //set textViews text importantInfo
-            setTextImportantTextView();
+                }
+
+                //set textViews text importantInfo
+                setTextImportantTextView();
+
+                //set recyclerView with legend data
+                setLegendList();
+            }
         }
     }
 
     private void getData(ApplicationInfoEngine applicationInfoEngine) {
         ArrayList<ApplicationsInfo> applicationsInfos = applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId);
         ApplicationAdapter adapter = new ApplicationAdapter(applicationsInfos);
+        Log.d("My", "CitiesListActivity -> applicationsInfos.size() -> " + applicationsInfos.size());
+        for (ApplicationsInfo info: applicationsInfos) {
+            Log.d("My", "CitiesListActivity -> getLongSpecialityId getStrApplicantName getStrDateLastUpdate -> " + info.getLongSpecialityId() + " ~ " + info.getStrApplicantName()
+            + " ~ " + info.getStrDateLastUpdate());
+        }
+
         adapter.setOnClickApplicationItem(ApplicationListActivity.this);
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setVisibility(View.VISIBLE);
@@ -241,37 +267,257 @@ public class ApplicationListActivity extends BaseActivity implements Application
         startActivity(intent);
     }
 
+    private Boolean isDateComparison() {
+
+        Callable<Boolean> callable = new Callable<Boolean>() {
+
+            @Override
+            public Boolean call() throws Exception {
+                ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
+
+                String parseDate = "";
+                parseDate = parseDateAndTime();
+
+                String dateAndTime = applicationInfoEngine.getApplicationById(mLongSpecialityId).getStrDateLastUpdate();
+
+                Log.d("My", "isDateComparison dateAndTimeCities -> " + dateAndTime);
+
+                if (parseDate.equals(dateAndTime)) {
+                    Log.d("My", " isDateComparison parseDate.equals(dateAndTime) -> " + true);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+
+        FutureTask<Boolean> task = new FutureTask<>(callable);
+        Thread t = new Thread(task);
+        t.start();
+
+        try {
+            Log.d("My", " isDateComparison task.get() -> " + task.get());
+            return task.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private String parseDateAndTime() {
+        Document document;
+        String dateUpdateAndTime = null;
+        try {
+            document = Jsoup.connect(mStrApplicantCodeLink).get();
+
+            //TODO при обновлении нужно затирать всю цепочку связаных данных в БД
+
+            //get timeUpdate and dateUpdate update page
+
+            String strLastUpdatePage = document.select("div.title-page > p > small").text();
+            String[] arrayTimeDate = strLastUpdatePage.split(" ");
+
+            dateUpdateAndTime = arrayTimeDate[3] + "@" + arrayTimeDate[5];
+            Log.d("My", "dateUpdateAndTime -> " + dateUpdateAndTime);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return dateUpdateAndTime;
+    }
+
+    //get legend data
+    //todo грузить легеннду для каждого списка абитуры
+    //todo учесть что там есть текст жирным шрифтом, доделать внешний вид легенды
+    private void parseLegendData(Elements selectLegendElements, LegendEngine legendEngine, long specialityId) {
+        final String getStyle = "*[style*='background']";
+
+        for (Element legend : selectLegendElements) {
+            Elements detailLegend = legend.select("td");
+            String legendName = "";
+            String legendDetail = "";
+            String legendBackground = "";
+
+
+            if (detailLegend.get(0).select(getStyle).size() > 0) {
+                String style = detailLegend.get(0).select(getStyle).toString();
+                if (style.length() > 132) {
+                    legendBackground = "#FFFF99";
+                } else {
+                    legendBackground = style.substring(style.indexOf("#"), style.indexOf(";"));
+                }
+            } else {
+                legendBackground = "#ffffff";
+                legendName = detailLegend.get(0).text();
+            }
+
+            if (detailLegend.size() > 1) {
+                legendDetail = detailLegend.get(1).text().trim();
+            }
+
+            if (detailLegend.size() == 1) {
+                Log.d("My", "legendEngine true -> ((");
+                legendName = "";
+                legendDetail = detailLegend.get(0).text().trim();
+                legendBackground = "#e0e0e0";
+            }
+            legendEngine.addLegend(new LegendInfo(specialityId, legendName, legendDetail, legendBackground));
+            Log.d("My", "legendEngine new legendBackground specialityId-> " + specialityId);
+            Log.d("My", "legendEngine new legendBackground legendName-> " + legendBackground);
+            Log.d("My", "legendEngine new legendBackground legendDetail-> " + legendDetail);
+            Log.d("My", "legendEngine new legendBackground legendBackground-> " + legendBackground);
+        }
+    }
+
+    private void parseImportantInfo(Elements detailElements, Elements selectTrMarking) {
+        String universityName = null;
+        String speciality = null;
+        String specialization = null;
+        String faculty = null;
+        String timeForm = null;
+        String lastTimeUpdate = null;
+
+        String number = null;
+        String name = null;
+        String priority = null;
+        String totalScore = null;
+        String markDocument = null;
+        String markTest = null;
+        String markExam = null;
+        String extraPoints = null;
+        String originalDocument = null;
+
+        ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getApplicationContext());
+        Log.d("My", "parseImportantInfo start -> " + importantApplicantInfoEngine.getImportantInfoById(mLongSpecialityId));
+        if (importantApplicantInfoEngine.getImportantInfoById(mLongSpecialityId) == null) {
+
+            universityName = detailElements.select(".title-description").text();
+            String universityInfos = null;
+            if (detailElements.select("p").size() > 1) {
+                universityInfos = (detailElements.select("p").get(1).toString()).replaceAll("(?i)<br[^>]*>", "/");
+            } else {
+                universityInfos = (detailElements.select("p").get(0).toString()).replaceAll("(?i)<br[^>]*>", "/");
+            }
+
+            universityInfos = universityInfos.substring(4, universityInfos.indexOf("<small"));
+            Log.d("My", "detailElements speciality -> " + universityInfos);
+            String[] arrSpecialities = universityInfos.split("[/]");
+            Log.d("My", "detailElements arrSpecialities.length -> " + arrSpecialities.length);
+            if (arrSpecialities.length == 4) {
+                speciality = arrSpecialities[0];
+                specialization = arrSpecialities[1];
+                faculty = arrSpecialities[2];
+                timeForm = arrSpecialities[3];
+            }
+
+            lastTimeUpdate = detailElements.select("p > small").text();
+            Log.d("My", "detailElements lastTimeUpdate -> " + lastTimeUpdate);
+
+            Log.d("My", "parseImportantInfo start");
+
+            //applicant data
+            if (selectTrMarking.size() == 8) {
+                Log.d("My", "parseImportantInfo start selectTrMarking.size() == 8");
+                number = selectTrMarking.get(0).text();
+                name = selectTrMarking.get(1).text();
+                totalScore = selectTrMarking.get(2).text();
+                markDocument = selectTrMarking.get(3).text();
+                markTest = selectTrMarking.get(4).text();
+                markExam = selectTrMarking.get(5).text();
+                extraPoints = selectTrMarking.get(6).text();
+                originalDocument = selectTrMarking.get(7).text();
+
+            } else {
+                Log.d("My", "parseImportantInfo start selectTrMarking.size() == 9");
+                number = selectTrMarking.get(0).text();
+                name = selectTrMarking.get(1).text();
+                priority = selectTrMarking.get(2).text();
+                totalScore = selectTrMarking.get(3).text();
+                markDocument = selectTrMarking.get(4).text();
+                markTest = selectTrMarking.get(5).text();
+                markExam = selectTrMarking.get(6).text();
+                extraPoints = selectTrMarking.get(7).text();
+                originalDocument = selectTrMarking.get(8).text();
+            }
+
+            importantApplicantInfoEngine.addImportantInfo(new ImportantInfo(mLongSpecialityId, universityName,
+                    speciality, specialization, faculty, timeForm, lastTimeUpdate, number, name, priority, totalScore,
+                    markDocument, markTest, markExam, extraPoints, originalDocument));
+
+            Log.d("My", "parseImportantInfo; universityName ->" + universityName);
+            Log.d("My", "parseImportantInfo; speciality ->" + speciality);
+            Log.d("My", "parseImportantInfo; specialization ->" + specialization);
+            Log.d("My", "parseImportantInfo; faculty ->" + faculty);
+            Log.d("My", "parseImportantInfo; timeForm ->" + timeForm);
+            Log.d("My", "parseImportantInfo; name ->" + name);
+
+        }
+    }
+
+
+    //get background color applicant item
+    //TODO get all backgrounds обработать все возможные трехзначные цвета
+    //TODO даже при том что я вітаскиваю все цвета нужно правильно их ковертировать нужные мне цвета
+    private String parseBackgroundApplicant(Elements tdElements) {
+        final String getStyle = "*[style*='background']";
+        String backgroundFirst;
+        String backgroundSecond;
+        String color;
+
+        if ((tdElements.get(0).select(getStyle).size()) > 0) {
+
+            backgroundFirst = tdElements.get(0).select(getStyle).toString();
+            backgroundSecond = tdElements.get(1).select(getStyle).toString();
+
+            backgroundFirst = backgroundFirst.substring(backgroundFirst.indexOf("#"), backgroundFirst.indexOf(">") - 1);
+            backgroundSecond = backgroundSecond.substring(backgroundSecond.indexOf("#"), backgroundSecond.indexOf(">") - 1);
+
+            if (!backgroundFirst.equals(backgroundSecond)) {
+                color = "#FFFF99";
+            } else {
+                color = backgroundFirst;
+            }
+        } else {
+            color = "#FFFFFF";
+        }
+
+        return color;
+    }
+
     private void parseData() {
 
         new Thread(new Runnable() {
 
             final ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
-            String color;
-            final String getStyle = "*[style*='background']";
 
             @Override
             public void run() {
 
-                if (Utils.connectToData(mSpecialtiesInfo.getStrLink()) && mLongSpecialityId != 0) {
+                if (Utils.connectToData(mStrApplicantCodeLink) && mLongSpecialityId != 0) {
                     parse(applicationInfoEngine);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setVisibility(View.VISIBLE);
+                            getData(applicationInfoEngine);
+
+                            //set textViews text importantInfo
+                            setTextImportantTextView();
+                        }
+                    });
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), R.string.textBadInternetConnection, Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mProgressBar.setVisibility(View.VISIBLE);
-                        getData(applicationInfoEngine);
-
-                        //set textViews text importantInfo
-                        setTextImportantTextView();
-                    }
-                });
             }
 
             private void parse(ApplicationInfoEngine applicationInfoEngine) {
-                String html;
-                String applicantInfo;
-
                 //applicant data
                 String number;
                 String name;
@@ -283,50 +529,47 @@ public class ApplicationListActivity extends BaseActivity implements Application
                 String extraPoints;
                 String originalDocument;
 
+                String color;
                 String someLink;
 
                 Document document;
                 try {
-                    html = mSpecialtiesInfo.getStrLink();
-                    document = Jsoup.connect(html).get();
-                    Log.d("My", "html -------> " + html);
+                    document = Jsoup.connect(mStrApplicantCodeLink).get();
+                    Log.d("My", "html -------> " + mStrApplicantCodeLink);
 
-                    //TODO parse the date in SQLite
                     //get time and date update page
-                    String strLastUpdatePage = document.select("div.title-page > p > small").text();
-                    String[] arrayTimeDate = strLastUpdatePage.split(" ");
-                    String date = arrayTimeDate[3];
-                    String time = arrayTimeDate[5];
-                    Log.d("My", "date -> " + date + "\ntime -> " + time);
+                    String dateUpdate = parseDateAndTime();
+//                    String dateUpdate = "31/02/17@23:45";
+                    Log.d("My", "date -> " + dateUpdate);
 
                     //Data of applicants
                     Elements links = document.getElementsByClass("tablesaw tablesaw-stack tablesaw-sortable");
                     Elements elementsBody = links.select("tbody");
-                    Elements selectTr = elementsBody.select("tr");
+                    Elements selectTrApplicant = elementsBody.select("tr");
 
                     //Data of legend
                     Element legendElementById = document.getElementById("legend");
                     Elements selectLegendElements = legendElementById.select("tr");
                     LegendEngine legendEngine = new LegendEngine(getApplication());
-                    if (legendEngine.getLegendsById(LEGEND_YEAR_ID_2016).isEmpty()) {
-                        parseLegendData(selectLegendElements, legendEngine, LEGEND_YEAR_ID_2016);
+                    if (legendEngine.getLegendsById(mLongSpecialityId).isEmpty()) {
+                        parseLegendData(selectLegendElements, legendEngine, mLongSpecialityId);
                     }
 
                     //Data of importantInfo & Data of University information
                     Elements detailElements = document.getElementsByClass("title-page");
                     Elements elementsThead = links.select("thead");
                     Elements selectTrMarking = elementsThead.select("th");
-                    Log.d("My", "selectTrMarking ->" + selectTrMarking);
-                    parseImportantInfo(detailElements, selectTrMarking);
+                    ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getApplication());
+                    if (importantApplicantInfoEngine.getImportantInfoById(mLongSpecialityId) == null) {
+                        parseImportantInfo(detailElements, selectTrMarking);
+                    }
 
-                    if (applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId).isEmpty()) {
-                        for (Element link : selectTr) {
+                    for (Element link : selectTrApplicant) {
                             Elements tdElements = link.select("td");
 
                             //background
-                            getBackgroundApplicant(tdElements);
+                            color = parseBackgroundApplicant(tdElements);
 
-                            Log.d("My", "tdElements.size(); - > " + tdElements.size());
                             if (tdElements.size() == 8) {
                                 number = tdElements.get(0).text();
                                 name = tdElements.get(1).text();
@@ -348,213 +591,135 @@ public class ApplicationListActivity extends BaseActivity implements Application
                                 originalDocument = tdElements.get(8).text();
                             }
 
-                            Log.d("My", "number + name + priority + totalScore + markDocument +\n" +
-                                    "markTest + markExam + extraPoints + originalDocument" +
-                                    number + name + priority + totalScore + markDocument +
-                                    markTest + markExam + extraPoints + originalDocument);
-
                             someLink = tdElements.attr("abs:href");
-
-                            applicantInfo = link.text();
 
                             applicationInfoEngine.addApplication(new ApplicationsInfo(mLongSpecialityId,
-                                    applicantInfo, number, name, priority, totalScore, markDocument,
-                                    markTest, markExam, extraPoints, originalDocument, someLink, color));
+                                    number, name, priority, totalScore, markDocument, markTest, markExam,
+                                    extraPoints, originalDocument, someLink, color, dateUpdate));
                         }
-                    } else {
 
-                        for (Element link : selectTr) {
-                            Elements tdElements = link.select("td");
-
-                            getBackgroundApplicant(tdElements);
-
-                            if (tdElements.size() == 8) {
-                                number = tdElements.get(0).text();
-                                name = tdElements.get(1).text();
-                                totalScore = tdElements.get(2).text();
-                                markDocument = tdElements.get(3).text();
-                                markTest = tdElements.get(4).text();
-                                markExam = tdElements.get(5).text();
-                                extraPoints = tdElements.get(6).text();
-                                originalDocument = tdElements.get(7).text();
-                            } else {
-                                number = tdElements.get(0).text();
-                                name = tdElements.get(1).text();
-                                priority = tdElements.get(2).text();
-                                totalScore = tdElements.get(3).text();
-                                markDocument = tdElements.get(4).text();
-                                markTest = tdElements.get(5).text();
-                                markExam = tdElements.get(6).text();
-                                extraPoints = tdElements.get(7).text();
-                                originalDocument = tdElements.get(8).text();
-                            }
-
-                            someLink = tdElements.attr("abs:href");
-                            applicantInfo = link.text();
-
-                            applicationInfoEngine.updateApplicant(new ApplicationsInfo(mLongSpecialityId,
-                                   applicantInfo, number, name, priority, totalScore, markDocument,
-                                    markTest, markExam, extraPoints, originalDocument, someLink, color));
-                        }
-                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+        }).start();
+    }
 
-            private void parseImportantInfo(Elements detailElements, Elements selectTrMarking) {
-                String universityName = null;
-                String speciality = null;
-                String specialization = null;
-                String faculty = null;
-                String timeForm = null;
-                String lastTimeUpdate = null;
+    private void updateData() {
 
-                String number = null;
-                String name = null;
-                String priority = null;
-                String totalScore = null;
-                String markDocument = null;
-                String markTest = null;
-                String markExam = null;
-                String extraPoints = null;
-                String originalDocument = null;
+        new Thread(new Runnable() {
 
-                ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getApplicationContext());
-                Log.d("My", "parseImportantInfo start -> " + importantApplicantInfoEngine.getImportantInfoById(mLongSpecialityId));
-                if (importantApplicantInfoEngine.getImportantInfoById(mLongSpecialityId) == null) {
+            final ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
 
-                    universityName = detailElements.select(".title-description").text();
-                    String universityInfos = null;
-                    if (detailElements.select("p").size() > 1) {
-                         universityInfos = (detailElements.select("p").get(1).toString()).replaceAll("(?i)<br[^>]*>", "/");
-                    } else {
-                        universityInfos = (detailElements.select("p").get(0).toString()).replaceAll("(?i)<br[^>]*>", "/");
-                    }
+            @Override
+            public void run() {
 
-                    universityInfos = universityInfos.substring(4, universityInfos.indexOf("<small"));
-                    Log.d("My", "detailElements speciality -> " + universityInfos);
-                    String[] arrSpecialities = universityInfos.split("[/]");
-                    Log.d("My", "detailElements arrSpecialities.length -> " + arrSpecialities.length);
-                    if (arrSpecialities.length == 4) {
-                        speciality = arrSpecialities[0];
-                        specialization = arrSpecialities[1];
-                        faculty = arrSpecialities[2];
-                        timeForm = arrSpecialities[3];
-                    }
+                if (Utils.connectToData(mStrApplicantCodeLink) && mLongSpecialityId != 0) {
+                    update(applicationInfoEngine);
 
-                    lastTimeUpdate = detailElements.select("p > small").text();
-                    Log.d("My", "detailElements lastTimeUpdate -> " + lastTimeUpdate);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setVisibility(View.VISIBLE);
+                            getData(applicationInfoEngine);
 
-                    Log.d("My", "parseImportantInfo start");
-
-                    //applicant data
-                    if (selectTrMarking.size() == 8) {
-                        Log.d("My", "parseImportantInfo start selectTrMarking.size() == 8");
-                        number = selectTrMarking.get(0).text();
-                        name = selectTrMarking.get(1).text();
-                        totalScore = selectTrMarking.get(2).text();
-                        markDocument = selectTrMarking.get(3).text();
-                        markTest = selectTrMarking.get(4).text();
-                        markExam = selectTrMarking.get(5).text();
-                        extraPoints = selectTrMarking.get(6).text();
-                        originalDocument = selectTrMarking.get(7).text();
-
-                    } else {
-                        Log.d("My", "parseImportantInfo start selectTrMarking.size() == 9");
-                        number = selectTrMarking.get(0).text();
-                        name = selectTrMarking.get(1).text();
-                        priority = selectTrMarking.get(2).text();
-                        totalScore = selectTrMarking.get(3).text();
-                        markDocument = selectTrMarking.get(4).text();
-                        markTest = selectTrMarking.get(5).text();
-                        markExam = selectTrMarking.get(6).text();
-                        extraPoints = selectTrMarking.get(7).text();
-                        originalDocument = selectTrMarking.get(8).text();
-                    }
-
-                    importantApplicantInfoEngine.addImportantInfo(new ImportantInfo(mLongSpecialityId, universityName,
-                            speciality, specialization, faculty, timeForm, lastTimeUpdate, number, name, priority, totalScore,
-                            markDocument, markTest, markExam, extraPoints, originalDocument));
-
-                    Log.d("My", "parseImportantInfo; universityName ->" + universityName);
-                    Log.d("My", "parseImportantInfo; speciality ->" + speciality);
-                    Log.d("My", "parseImportantInfo; specialization ->" + specialization);
-                    Log.d("My", "parseImportantInfo; faculty ->" + faculty);
-                    Log.d("My", "parseImportantInfo; timeForm ->" + timeForm);
-                    Log.d("My", "parseImportantInfo; name ->" + name);
-
-                }
-            }
-
-            //get background color applicant item
-            //TODO get all backgrounds обработать все возможные трехзначные цвета
-            //TODO даже при том что я вітаскиваю все цвета нужно правильно их ковертировать нужные мне цвета
-            private void getBackgroundApplicant(Elements tdElements) {
-
-                String backgroundFirst;
-                String backgroundSecond;
-
-                Log.d("My", "tdElements.size() -> " + tdElements.size());
-                if ((tdElements.get(0).select(getStyle).size()) > 0) {
-
-                    backgroundFirst = tdElements.get(0).select(getStyle).toString();
-                    backgroundSecond = tdElements.get(1).select(getStyle).toString();
-
-                    backgroundFirst = backgroundFirst.substring(backgroundFirst.indexOf("#"), backgroundFirst.indexOf(">") - 1);
-                    backgroundSecond = backgroundSecond.substring(backgroundSecond.indexOf("#"), backgroundSecond.indexOf(">") - 1);
-
-                    if (!backgroundFirst.equals(backgroundSecond)) {
-                        color = "#FFFF99";
-                    } else {
-                        color = backgroundFirst;
-                    }
-                } else {
-                    color = "#FFFFFF";
-                }
-            }
-
-            //get legend data
-            //todo грузить легеннду для каждого списка абитуры
-            //todo учесть что там есть текст жирным шрифтом, доделать внешний вид легенды
-            private void parseLegendData(Elements selectLegendElements, LegendEngine legendEngine, long yearId) {
-
-//                for (int i = 1; i < selectLegendElements.size(); i++ ) {
-                for (Element legend : selectLegendElements) {
-//                    Elements detailLegend = selectLegendElements.get(i).select("td");
-                    Elements detailLegend = legend.select("td");
-                    String legendName = "";
-                    String legendDetail = "";
-                    String legendBackground = "";
-
-
-                    if ((detailLegend.get(0).select(getStyle).size()) > 0) {
-                        String style = detailLegend.get(0).select(getStyle).toString();
-                        if (style.length() > 132) {
-                            legendBackground = "#FFFF99";
-                        } else {
-                            legendBackground = style.substring(style.indexOf("#"), style.indexOf(";"));
+                            //set textViews text importantInfo
+                            setTextImportantTextView();
                         }
-//                        Log.d("My", "legendEngine new legendBackground getStyle).size()) > 0 -> " + legendBackground);
-                    } else {
-                        legendBackground = "#ffffff";
-                        legendName = detailLegend.get(0).text();
-//                        Log.d("My", "legendEngine new legendBackground getStyle).size()) < 0 -> " + legendBackground);
+                    });
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), R.string.textBadInternetConnection, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+
+            private void update(ApplicationInfoEngine applicationInfoEngine) {
+                //applicant data
+                String number;
+                String name;
+                String priority = "";
+                String totalScore;
+                String markDocument;
+                String markTest;
+                String markExam;
+                String extraPoints;
+                String originalDocument;
+
+                String color;
+                String someLink;
+
+                Document document;
+                try {
+                    document = Jsoup.connect(mStrApplicantCodeLink).get();
+                    Log.d("My", "html -------> " + mStrApplicantCodeLink);
+
+                    //get time and date update page
+                    String dateUpdate = parseDateAndTime();
+//                    String dateUpdate = "test";
+                    Log.d("My", "date -> " + dateUpdate);
+
+                    //Data of applicants
+                    Elements links = document.getElementsByClass("tablesaw tablesaw-stack tablesaw-sortable");
+                    Elements elementsBody = links.select("tbody");
+                    Elements selectTrApplicant = elementsBody.select("tr");
+
+                    //Data of legend
+                    Element legendElementById = document.getElementById("legend");
+                    Elements selectLegendElements = legendElementById.select("tr");
+                    LegendEngine legendEngine = new LegendEngine(getApplication());
+                    if (legendEngine.getLegendsById(mLongSpecialityId).isEmpty()) {
+                        parseLegendData(selectLegendElements, legendEngine, mLongSpecialityId);
                     }
 
-                    if (detailLegend.size() > 1) {
-                        legendDetail = detailLegend.get(1).text().trim();
+                    //Data of importantInfo & Data of University information
+                    Elements detailElements = document.getElementsByClass("title-page");
+                    Elements elementsThead = links.select("thead");
+                    Elements selectTrMarking = elementsThead.select("th");
+                    ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getApplication());
+                    if (importantApplicantInfoEngine.getImportantInfoById(mLongSpecialityId) == null) {
+                        parseImportantInfo(detailElements, selectTrMarking);
                     }
 
-                    if (detailLegend.size() == 1) {
-                        Log.d("My", "legendEngine true -> ((");
-                        legendName = "";
-                        legendDetail = detailLegend.get(0).text().trim();
-                    }
-                    legendEngine.addLegend(new LegendInfo(yearId, legendName, legendDetail, legendBackground));
-                    Log.d("My", "legendEngine new legendBackground legendName-> " + legendBackground);
-                    Log.d("My", "legendEngine new legendBackground legendDetail-> " + legendDetail);
-                    Log.d("My", "legendEngine new legendBackground legendBackground-> " + legendBackground);
+                        for (Element link : selectTrApplicant) {
+                            Elements tdElements = link.select("td");
+
+                            //background
+                            color = parseBackgroundApplicant(tdElements);
+
+                            if (tdElements.size() == 8) {
+                                number = tdElements.get(0).text();
+                                name = tdElements.get(1).text();
+                                totalScore = tdElements.get(2).text();
+                                markDocument = tdElements.get(3).text();
+                                markTest = tdElements.get(4).text();
+                                markExam = tdElements.get(5).text();
+                                extraPoints = tdElements.get(6).text();
+                                originalDocument = tdElements.get(7).text();
+                            } else {
+                                number = tdElements.get(0).text();
+                                name = tdElements.get(1).text();
+                                priority = tdElements.get(2).text();
+                                totalScore = tdElements.get(3).text();
+                                markDocument = tdElements.get(4).text();
+                                markTest = tdElements.get(5).text();
+                                markExam = tdElements.get(6).text();
+                                extraPoints = tdElements.get(7).text();
+                                originalDocument = tdElements.get(8).text();
+                            }
+
+                            someLink = tdElements.attr("abs:href");
+
+                            applicationInfoEngine.updateApplicant(new ApplicationsInfo(mLongSpecialityId,
+                                    number, name, priority, totalScore, markDocument, markTest, markExam,
+                                    extraPoints, originalDocument, someLink, color, dateUpdate));
+                        }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }).start();

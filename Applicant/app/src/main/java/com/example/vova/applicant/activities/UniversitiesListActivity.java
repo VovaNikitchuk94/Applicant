@@ -40,7 +40,7 @@ public class UniversitiesListActivity extends BaseActivity implements
         }
 
         TextView textViewHeadText = (TextView) findViewById(R.id.textViewChooseUniversityDetailUniversityActivity);
-        textViewHeadText.setText(mCategoryUniversInfo.getStrCategoryUniversName());
+        textViewHeadText.setText(mCategoryUniversInfo.getStrCategoryName());
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewUniversitiesListActivity);
         LinearLayoutManager layoutManager
@@ -66,7 +66,7 @@ public class UniversitiesListActivity extends BaseActivity implements
     private void getData() {
         UniversitiesInfoEngine universityInfoEngine = new UniversitiesInfoEngine(getApplication());
         nLongCityId = mCategoryUniversInfo.getLongCityId();
-        mStringCategory = mCategoryUniversInfo.getStrCategoryUniversName();
+        mStringCategory = mCategoryUniversInfo.getStrCategoryName();
 
         Log.d("My","nLongCityId -> " + nLongCityId);
         Log.d("My","mStringCategory -> " + mStringCategory);

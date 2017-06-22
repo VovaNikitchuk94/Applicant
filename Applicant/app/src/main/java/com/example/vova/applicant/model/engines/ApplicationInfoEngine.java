@@ -16,13 +16,13 @@ public class ApplicationInfoEngine extends BaseEngine {
 
     public ArrayList<ApplicationsInfo> getAllApplicantions() {
         ApplicationDBWrapper applicationDBWrapper = new ApplicationDBWrapper(getContext());
-        return applicationDBWrapper.getAllApplicantions();
+        return applicationDBWrapper.getAllApplications();
     }
 
     public ArrayList<ApplicationsInfo> getAllApplicantionsById(long nId) {
-        Log.d("My", "ApplicationInfoEngine ----------> getAllApplicantionsById");
+        Log.d("My", "ApplicationInfoEngine ----------> getAllApplicationsById");
         ApplicationDBWrapper applicationDBWrapper = new ApplicationDBWrapper(getContext());
-        return applicationDBWrapper.getAllApplicantionsById(nId);
+        return applicationDBWrapper.getAllApplicationsById(nId);
     }
 
     public void updateApplicant(ApplicationsInfo applicationsInfo) {

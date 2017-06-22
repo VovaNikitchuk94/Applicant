@@ -40,7 +40,7 @@ public class TimeFormDBWrapper extends BaseDBWrapper {
         SQLiteDatabase database = getReadable();
         String strRequest = TimeFormTable.Cols.TIME_FORM_INFO_FIELD_DETAIL_UNV_ID + "=?";
         String arrArgs[] = new String[]{Long.toString(nId)};
-        Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
+        Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null);
         try {
             if (cursor != null && cursor.moveToFirst()) {
                 do {
@@ -74,9 +74,9 @@ public class TimeFormDBWrapper extends BaseDBWrapper {
     public TimeFormInfo getTimeFormById(long nId) {
         TimeFormInfo timeFormInfo = null;
         SQLiteDatabase database = getReadable();
-        String strRequest = TimeFormTable.Cols.TIME_FORM_INFO_FIELD_ID + "=?";
+        String strRequest = TimeFormTable.Cols.TIME_FORM_INFO_FIELD_DETAIL_UNV_ID + "=?";
         String arrArgs[] = new String[]{Long.toString(nId)};
-        Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
+        Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null);
         try{
             if (cursor != null && cursor.moveToFirst()){
                 timeFormInfo = new TimeFormInfo(cursor);

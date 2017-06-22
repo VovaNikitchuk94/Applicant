@@ -38,7 +38,7 @@ public class CategoryUniversAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         CategoryUniversInfoViewHolder categoryUniversInfoViewHolder = (CategoryUniversInfoViewHolder) holder;
         final CategoryUniversInfo categoryUniversInfo = mCategoryUniversInfos.get(position);
-        categoryUniversInfoViewHolder.nameTextView.setText(categoryUniversInfo.getStrCategoryUniversName());
+        categoryUniversInfoViewHolder.nameTextView.setText(categoryUniversInfo.getStrCategoryName());
         categoryUniversInfoViewHolder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

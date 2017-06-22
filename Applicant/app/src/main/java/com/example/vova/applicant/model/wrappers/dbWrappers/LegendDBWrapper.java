@@ -17,8 +17,10 @@ public class LegendDBWrapper extends BaseDBWrapper {
 
     public void updateLegend(LegendInfo legendInfo) {
         SQLiteDatabase database = getWritable();
-        String strRequest = LegendInfoTable.Cols.LEGEND_INFO_FIELD_YEAR_ID + "=?";
-        String arrArgs[] = new String[]{Long.toString(legendInfo.getId())};
+        String strRequest = LegendInfoTable.Cols.LEGEND_INFO_FIELD_YEAR_ID + "=?" + " AND "
+                + LegendInfoTable.Cols.LEGEND_INFO_FIELD_NAME + "=?";
+        String arrArgs[] = new String[]{Long.toString(legendInfo.getLongYearId()),
+                legendInfo.getStrNameLegend()};
         database.update(getTableName(), legendInfo.getContentValues(), strRequest, arrArgs);
         database.close();
     }

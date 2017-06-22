@@ -64,8 +64,10 @@ public class SpecialityDBWrapper extends BaseDBWrapper {
 
     public void updateSpeciality(SpecialtiesInfo specialtiesInfo) {
         SQLiteDatabase database = getWritable();
-        String strRequest = SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_TIME_FORM_ID + "=?";
-        String arrArgs[] = new String[]{Long.toString(specialtiesInfo.getId())};
+        String strRequest = SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_TIME_FORM_ID + "=?" + " AND "
+                + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_SPECIALITY + "=?";
+        String arrArgs[] = new String[]{Long.toString(specialtiesInfo.getLongTimeFormId()),
+                specialtiesInfo.getStrSpecialty()};
         database.update(getTableName(), specialtiesInfo.getContentValues(), strRequest, arrArgs);
         database.close();
     }
@@ -81,7 +83,7 @@ public class SpecialityDBWrapper extends BaseDBWrapper {
         SQLiteDatabase database = getReadable();
         String strRequest = SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_ID + "=?";
         String arrArgs[] = new String[]{Long.toString(nId)};
-        Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
+        Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null);
         try{
             if (cursor != null && cursor.moveToFirst()){
                 specialtiesInfo = new SpecialtiesInfo(cursor);

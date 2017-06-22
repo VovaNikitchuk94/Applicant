@@ -39,8 +39,10 @@ public class CategoryUniversInfoDBWrapper extends BaseDBWrapper {
 
     public void updateCategory(CategoryUniversInfo categoryUniversInfo) {
         SQLiteDatabase database = getWritable();
-        String strRequest = CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_CITIES_ID + "=?";
-        String arrArgs[] = new String[]{Long.toString(categoryUniversInfo.getId())};
+        String strRequest = CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_CITIES_ID + "=?" + " AND "
+                + CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_NAME + "=?";
+        String arrArgs[] = new String[]{Long.toString(categoryUniversInfo.getLongCityId()),
+                categoryUniversInfo.getStrCategoryName()};
         database.update(getTableName(), categoryUniversInfo.getContentValues(), strRequest, arrArgs);
         database.close();
     }

@@ -27,59 +27,58 @@
         android:orientation="horizontal"
         android:stretchColumns="*">
 
-        <TableRow
-            android:background="#f4c6aa">
+        <TableRow>
 
             <TextView
-                android:background="#b6b4b4"
+                android:background="#e0e0e0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textNumberApplicantFragmentImportantInfoApplicant"/>
 
             <TextView
-                android:background="#b6c9e7"
+                android:background="#bbdefb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textFullNameApplicantFragmentImportantInfoApplicant"/>
 
             <TextView
-                android:background="#b6b4b4"
+                android:background="#e0e0e0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textPriorityApplicantFragmentImportantInfoApplicant"/>
 
             <TextView
-                android:background="#b6c9e7"
+                android:background="#bbdefb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textTotalScoreApplicantFragmentImportantInfoApplicant"/>
 
             <TextView
-                android:background="#b6b4b4"
+                android:background="#e0e0e0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textMarkDocumentApplicantFragmentImportantInfoApplicant"/>
 
             <TextView
-                android:background="#b6c9e7"
+                android:background="#bbdefb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textMarkTestApplicantFragmentImportantInfoApplicant"/>
 
             <TextView
-                android:background="#b6b4b4"
+                android:background="#e0e0e0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textMarkExamApplicantFragmentImportantInfoApplicant"/>
 
             <TextView
-                android:background="#b6c9e7"
+                android:background="#bbdefb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textExtraPointsApplicantFragmentImportantInfoApplicant"/>
 
             <TextView
-                android:background="#b6b4b4"
+                android:background="#e0e0e0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textOriginalDocumentApplicantFragmentImportantInfoApplicant"/>
@@ -87,59 +86,58 @@
 
         </TableRow>
 
-        <TableRow
-            android:background="#d4efcb">
+        <TableRow>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textNumberApplicantFragmentDetailApplicant"
-                android:background="#b6b4b4"/>
+                android:background="#e0e0e0"/>
 
             <TextView
-                android:background="#b6c9e7"
+                android:background="#bbdefb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textFullNameApplicantFragmentDetailApplicant"/>
 
             <TextView
-                android:background="#b6b4b4"
+                android:background="#e0e0e0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textPriorityApplicantFragmentDetailApplicant"/>
 
             <TextView
-                android:background="#b6c9e7"
+                android:background="#bbdefb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textTotalScoreApplicantFragmentDetailApplicant"/>
 
             <TextView
-                android:background="#b6b4b4"
+                android:background="#e0e0e0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textMarkDocumentApplicantFragmentDetailApplicant"/>
 
             <TextView
-                android:background="#b6c9e7"
+                android:background="#bbdefb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textMarkTestApplicantFragmentDetailApplicant"/>
 
             <TextView
-                android:background="#b6b4b4"
+                android:background="#e0e0e0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textMarkExamApplicantFragmentDetailApplicant"/>
 
             <TextView
-                android:background="#b6c9e7"
+                android:background="#bbdefb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textExtraPointsApplicantFragmentDetailApplicant"/>
 
             <TextView
-                android:background="#b6b4b4"
+                android:background="#e0e0e0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textOriginalDocumentApplicantFragmentDetailApplicant"/>

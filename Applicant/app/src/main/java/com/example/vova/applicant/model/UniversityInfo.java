@@ -9,7 +9,7 @@ import com.example.vova.applicant.toolsAndConstans.DBConstants.UniversityTable;
 
 public class UniversityInfo extends BaseEntity implements Parcelable {
 
-    private long mLongCityId = -1;
+    private long mLongCityId;
     private String mStrCategoryUniversName;
     private String mStrCategoryUniversLink;
     private String mStrUniversityName;
@@ -50,36 +50,17 @@ public class UniversityInfo extends BaseEntity implements Parcelable {
         return mStrUniversityLink;
     }
 
-    public void setStrUniversityName(String strUniversityName) {
-        mStrUniversityName = strUniversityName;
-    }
-
-    public void setStrUniversityLink(String strUniversityLink) {
-        mStrUniversityLink = strUniversityLink;
-    }
-
     public long getLongCityId() {
         return mLongCityId;
-    }
-
-    public void setLongCityId(long longCityId) {
-        mLongCityId = longCityId;
     }
 
     public String getStrCategoryUniversName() {
         return mStrCategoryUniversName;
     }
 
-    public void setStrCategoryUniversName(String strCategoryUniversName) {
-        mStrCategoryUniversName = strCategoryUniversName;
-    }
 
     public String getStrCategoryUniversLink() {
         return mStrCategoryUniversLink;
-    }
-
-    public void setStrCategoryUniversLink(String strCategoryUniversLink) {
-        mStrCategoryUniversLink = strCategoryUniversLink;
     }
 
     @Override

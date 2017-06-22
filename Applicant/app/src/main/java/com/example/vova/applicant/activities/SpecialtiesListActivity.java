@@ -26,6 +26,9 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 public class SpecialtiesListActivity extends BaseActivity implements
         SpecialitiesAdapter.OnClickSpecialityItem {
@@ -39,6 +42,7 @@ public class SpecialtiesListActivity extends BaseActivity implements
 
     private long mLongTimeFormId = 0;
     private long mLongDegree = 0;
+    private String mTimeFormCodeLink = "";
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
@@ -56,6 +60,12 @@ public class SpecialtiesListActivity extends BaseActivity implements
                 // TODO rename all fields
                 mTimeFormInfo = (TimeFormInfo) bundle.get(KEY_SPECIALITIES_LINK);
                 strTitle = bundle.getString(KEY_SPECIALITIES_TITLE_STRING, "");
+                if (mTimeFormInfo != null) {
+                    mLongTimeFormId = mTimeFormInfo.getId();
+                    mTimeFormCodeLink = mTimeFormInfo.getStrTimeFormLink();
+                    mLongDegree = Long.parseLong(mTimeFormInfo.getStrTimeFormLink().substring(mTimeFormInfo.getStrTimeFormLink().length() - 1));
+                    Log.d("My", "SpecialtiesListActivity -> mLongDegree -> " + mLongDegree);
+                }
             }
         }
 
@@ -68,8 +78,16 @@ public class SpecialtiesListActivity extends BaseActivity implements
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(true);
                 mRecyclerView.setVisibility(View.GONE);
-                parseData();
-                Log.d("My", "SwipeRefreshLayout -> parseData -> is start");
+                Log.d("My", "SwipeRefreshLayout -> updateData -> is start");
+                if (!isOnline(getApplicationContext())) {
+                    Toast.makeText(getApplicationContext(), R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.d("My", "SpecialtiesListActivity -> (isDateComparison()) updateData() is started;");
+                    updateData();
+                    Log.d("My", "SpecialtiesListActivity -> (isDateComparison()) updateData(); is finished");
+                }
+                Log.d("My", "SwipeRefreshLayout -> updateData -> is finish");
+
                 mRecyclerView.setVisibility(View.VISIBLE);
                 mSwipeRefreshLayout.setRefreshing(false);
             }
@@ -100,19 +118,41 @@ public class SpecialtiesListActivity extends BaseActivity implements
     }
 
     private void setData() {
-        mLongTimeFormId = mTimeFormInfo.getId();
-        mLongDegree = Long.parseLong(mTimeFormInfo.getStrTimeFormLink().substring(mTimeFormInfo.getStrTimeFormLink().length() - 1));
+
         SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplication());
         if (specialityInfoEngine.getAllSpecialitiesById(mLongTimeFormId).isEmpty()) {
+            if (!isOnline(this)) {
+                Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
+                finish();
+            }
+            Log.d("My", "SpecialtiesListActivity -> parseData");
             parseData();
+
         } else {
-            getData(specialityInfoEngine);
+            if (isDateComparison()) {
+                Log.d("My", "SpecialtiesListActivity -> isDateComparison  getData(citiesInfoEngine); ");
+                getData(specialityInfoEngine);
+            } else {
+                if (!isOnline(this)) {
+                    Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.d("My", "SpecialtiesListActivity -> (isDateComparison()) updateData() is started;");
+                    updateData();
+                    Log.d("My", "SpecialtiesListActivity -> (isDateComparison()) updateData(); is finished");
+
+                }
+            }
         }
     }
 
     private void getData(SpecialityInfoEngine specialityInfoEngine) {
         ArrayList<SpecialtiesInfo> specialtiesInfos = specialityInfoEngine.getAllSpecialitiesByIdAndDegree(mLongTimeFormId, mLongDegree);
         SpecialitiesAdapter specialitiesAdapter = new SpecialitiesAdapter(specialtiesInfos);
+        Log.d("My", "specialityInfoEngine.getAllSpecialitiesByIdAndDegree(mLongTimeFormId, mLongDegree) size - > " + specialityInfoEngine.getAllSpecialitiesByIdAndDegree(mLongTimeFormId, mLongDegree).size());
+        Log.d("My", "specialityInfoEngine.getAllSpecialitiesById(mLongTimeFormId) size - > " + specialityInfoEngine.getAllSpecialitiesById(mLongTimeFormId).size());
+        for (SpecialtiesInfo info : specialityInfoEngine.getAllSpecialitiesByIdAndDegree(mLongTimeFormId, mLongDegree))  {
+            Log.d("My", "info.getStrSpecialty() + info.getStrDateLastUpdate() - > " + info.getStrSpecialty() + " ~ " + info.getStrDateLastUpdate());
+        }
         specialitiesAdapter.setOnClickSpecialityItem(SpecialtiesListActivity.this);
         mRecyclerView.setAdapter(specialitiesAdapter);
         mRecyclerView.setVisibility(View.VISIBLE);
@@ -131,26 +171,100 @@ public class SpecialtiesListActivity extends BaseActivity implements
         }
     }
 
+    private Boolean isDateComparison() {
+
+        Callable<Boolean> callable = new Callable<Boolean>() {
+
+            @Override
+            public Boolean call() throws Exception {
+                SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplication());
+
+                String parseDate = "";
+                parseDate = parseDateAndTime();
+
+                String dateAndTime = specialityInfoEngine.getSpecialityById(mLongTimeFormId).getStrDateLastUpdate();
+                String dateAndTime2 = specialityInfoEngine.getAllSpecialitiesByIdAndDegree(mLongTimeFormId, mLongDegree).get(0).getStrDateLastUpdate();
+                String dateAndTime3 = parseDateAndTime();
+
+                Log.d("My", "isDateComparison dateAndTimeCities -> " + dateAndTime);
+                Log.d("My", "isDateComparison parseDate -> " + parseDate);
+                Log.d("My", "isDateComparison dateAndTime2 -> " + dateAndTime2);
+                Log.d("My", "isDateComparison dateAndTime3 -> " + dateAndTime3);
+
+                if (parseDate.equals(dateAndTime)) {
+                    Log.d("My", " isDateComparison parseDate.equals(dateAndTime) -> " + true);
+                    return true;
+                } else {
+                    Log.d("My", " isDateComparison parseDate.equals(dateAndTime) -> " + false);
+                    return false;
+                }
+
+            }
+        };
+
+        FutureTask<Boolean> task = new FutureTask<>(callable);
+        Thread t = new Thread(task);
+        t.start();
+
+        try {
+            Log.d("My", " isDateComparison task.get() -> " + task.get());
+            return task.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private String parseDateAndTime() {
+        Document document;
+        String dateUpdateAndTime = null;
+        try {
+            document = Jsoup.connect(mTimeFormCodeLink).get();
+
+            //TODO при обновлении нужно затирать всю цепочку связаных данных в БД
+
+            //get timeUpdate and dateUpdate update page
+            String strLastUpdatePage = document.select("div.title-page > small").text();
+            Log.d("My", "strLastUpdatePage -> " + strLastUpdatePage);
+            String[] arrayTimeDate = strLastUpdatePage.split(" ");
+
+            dateUpdateAndTime = arrayTimeDate[3] + "@" + arrayTimeDate[5];
+            Log.d("My", "dateUpdateAndTime -> " + dateUpdateAndTime);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return dateUpdateAndTime;
+    }
+
     private void parseData() {
 
         new Thread(new Runnable() {
 
             SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplication());
-            String mHtml = mTimeFormInfo.getStrTimeFormLink();
 
             @Override
             public void run() {
                 if (Utils.connectToData(mTimeFormInfo.getStrTimeFormLink()) && mLongTimeFormId != 0) {
                     parse();
-                }
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mProgressBar.setVisibility(View.VISIBLE);
-                        getData(specialityInfoEngine);
-                    }
-                });
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setVisibility(View.VISIBLE);
+                            getData(specialityInfoEngine);
+                        }
+                    });
+
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), R.string.textBadInternetConnection, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
 
             private void parse() {
@@ -164,20 +278,21 @@ public class SpecialtiesListActivity extends BaseActivity implements
                 String volumeOrder = null;
                 String exam = null;
                 String newLink = null;
+                String dateUpdate = null;
 
-                String strCategory = mHtml.substring(mHtml.length() - 5, mHtml.length());
+                String strCategory = mTimeFormCodeLink.substring(mTimeFormCodeLink.length() - 5, mTimeFormCodeLink.length());
 
                 try {
-                    document = Jsoup.connect(mHtml).get();
+                    document = Jsoup.connect(mTimeFormCodeLink).get();
 
                     Log.d("My", "SpecialtiesListActivity -> ParseSpecialistList - > documentLink" + document.text());
-                    Log.d("My", "SpecialtiesListActivity -> ParseSpecialistList - > mHtml -> " + mHtml);
+                    Log.d("My", "SpecialtiesListActivity -> ParseSpecialistList - > mHtml -> " + mTimeFormCodeLink);
 
                     Element form = document.getElementById(strCategory);
                     Elements links = form.select("tbody > tr");
                     //TODO правильно обработать загрузку данных
                     //TODO пустые данные о (рекомендовано, зараховано) получают  поля с прошлых не пустых данных
-                    if (specialityInfoEngine.getAllSpecialitiesById(mLongTimeFormId).isEmpty()) {
+//                    if (specialityInfoEngine.getAllSpecialitiesById(mLongTimeFormId).isEmpty()) {
                         for (Element link : links) {
                             Elements elements = link.getElementsByClass("button button-mini");
                             Elements tdElements = link.select("td");
@@ -198,71 +313,40 @@ public class SpecialtiesListActivity extends BaseActivity implements
                                     .replaceAll("(?i)<[/]td[^>]*>", "").replaceAll("(?i)<br[^>]*>", "\n");
                             Log.d("My", "specialty -> " + specialty);
 
-                            //try get more data applications
+                            // get more data applications
                             applications = tdElements.get(1).select("span").text();
-                            Log.d("My", "applications -> " + tdElements.get(1).select("span").text());
                             if (tdElements.get(1).select("nobr").size() == 2) {
                                 accepted = tdElements.get(1).select("nobr").get(0).text();
                                 recommended = tdElements.get(1).select("nobr").get(1).text();
-                                Log.d("My", "applications -> " + tdElements.get(1).select("nobr").get(0).text());
-                                Log.d("My", "applications -> " + tdElements.get(1).select("nobr").get(1).text());
                             } else if (tdElements.get(1).select("nobr").size() == 1) {
-                                Log.d("My", "applications -> " + tdElements.get(1).select("nobr").get(0).text());
                                 recommended = tdElements.get(1).select("nobr").get(0).text();
                             } else {
-                                Log.d("My", "get more data applications -> is empty");
+                                recommended = null;
                             }
 
-                            //try get more data amount
+                            // get more data amount
                             if (tdElements.get(2).select("nobr").size() == 2) {
                                 licenseOrder = tdElements.get(2).select("nobr").get(0).text();
                                 volumeOrder = tdElements.get(2).select("nobr").get(1).text();
-
-                                Log.d("My", "get more data amount -> " + tdElements.get(2).select("nobr").get(0).text());
-                                Log.d("My", "get more data amount -> " + tdElements.get(2).select("nobr").get(1).text());
                             } else if (tdElements.get(2).select("nobr").size() == 1) {
-                                Log.d("My", "get more data amount -> " + tdElements.get(2).select("nobr").get(0).text());
                                 volumeOrder = tdElements.get(2).select("nobr").get(0).text();
                             } else {
-                                Log.d("My", "get more data amount -> is empty");
+                                volumeOrder = null;
                             }
 
                             //attempt to get more data from exams
                             exam = (tdElements.get(3).toString()).replaceAll("(?i)<td[^>]*>", "")
                                     .replaceAll("(?i)<[/]td[^>]*>", "").replaceAll("(?i)<br[^>]*>", "\n");
-                            Log.d("My", "get more data amount -> " + exam);
 
                             newLink = elements.attr("abs:href");
 
-                            specialityInfoEngine.addSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
-                                    specialty, applications, accepted, recommended, licenseOrder, volumeOrder, exam, newLink));
-
-//                            }
-                        }
-                    } else {
-                        for (Element link : links) {
-                            Elements elements = link.getElementsByClass("button button-mini");
-                            Elements tds = link.select("td");
-//                            if (isContains2015()) {
-//                                specialty = tds.get(0).text();
-//                                applications = tds.get(1).text();
-//                                exam = tds.get(3).text();
-//                                newLink = elements.attr("abs:href");
-//
-//                                specialityInfoEngine.addSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
-//                                        specialty, applications, accepted, recommended, licenseOrder, volumeOrder, exam, newLink));
-//                            } else {
-                            specialty = tds.get(0).text();
-                            applications = tds.get(1).select("span").text();
-                            accepted = tds.get(1).select("nobr").text();
-                            exam = tds.get(3).text();
-                            newLink = elements.attr("abs:href");
+                            dateUpdate = parseDateAndTime();
+                            Log.d("My", "SpecialtiesListActivity get more data dateUpdate -> " + dateUpdate);
 
                             specialityInfoEngine.addSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
-                                    specialty, applications, accepted, recommended, licenseOrder, volumeOrder, exam, newLink));
-//                            }
+                                    specialty, applications, accepted, recommended, licenseOrder, volumeOrder, exam, newLink, dateUpdate));
+
                         }
-                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -272,6 +356,110 @@ public class SpecialtiesListActivity extends BaseActivity implements
 //                return mHtml.contains("2015");
 //            }
 
+        }).start();
+    }
+
+    private void updateData() {
+
+        new Thread(new Runnable() {
+
+            SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplication());
+
+            @Override
+            public void run() {
+                if (Utils.connectToData(mTimeFormInfo.getStrTimeFormLink()) && mLongTimeFormId != 0) {
+                    update();
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setVisibility(View.VISIBLE);
+                            getData(specialityInfoEngine);
+                        }
+                    });
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), R.string.textBadInternetConnection, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+
+            private void update() {
+                Document document;
+
+                String specialty;
+                String applications;
+                String accepted = null;
+                String recommended = null;
+                String licenseOrder = null;
+                String volumeOrder = null;
+                String exam = null;
+                String newLink = null;
+                String dateUpdate = null;
+
+                String strCategory = mTimeFormCodeLink.substring(mTimeFormCodeLink.length() - 5, mTimeFormCodeLink.length());
+
+                try {
+                    document = Jsoup.connect(mTimeFormCodeLink).get();
+
+                    Log.d("My", "SpecialtiesListActivity -> ParseSpecialistList - > documentLink" + document.text());
+                    Log.d("My", "SpecialtiesListActivity -> ParseSpecialistList - > mHtml -> " + mTimeFormCodeLink);
+
+                    Element form = document.getElementById(strCategory);
+                    Elements links = form.select("tbody > tr");
+                    //TODO правильно обработать загрузку данных
+                    //TODO загружает данные всех бакалавров, например Гетьмана веч форма -> бакалавр показало всех бакалавров, нужно открывать не только по специальности а еще и по timeForm
+                    //TODO пустые данные о (рекомендовано, зараховано) получают  поля с прошлых не пустых данных
+                        for (Element link : links) {
+                            Elements elements = link.getElementsByClass("button button-mini");
+                            Elements tdElements = link.select("td");
+
+                            //try to get data from speciality
+                            specialty = (tdElements.get(0).toString()).replaceAll("(?i)<td[^>]*>", "")
+                                    .replaceAll("(?i)<[/]td[^>]*>", "").replaceAll("(?i)<br[^>]*>", "\n");
+                            Log.d("My", "SpecialtiesListActivity specialty -> " + specialty);
+
+                            // get more data applications
+                            applications = tdElements.get(1).select("span").text();
+                            if (tdElements.get(1).select("nobr").size() == 2) {
+                                accepted = tdElements.get(1).select("nobr").get(0).text();
+                                recommended = tdElements.get(1).select("nobr").get(1).text();
+                            } else if (tdElements.get(1).select("nobr").size() == 1) {
+                                recommended = tdElements.get(1).select("nobr").get(0).text();
+                            } else {
+                                recommended = null;
+                            }
+
+                            // get more data amount
+                            if (tdElements.get(2).select("nobr").size() == 2) {
+                                licenseOrder = tdElements.get(2).select("nobr").get(0).text();
+                                volumeOrder = tdElements.get(2).select("nobr").get(1).text();
+                            } else if (tdElements.get(2).select("nobr").size() == 1) {
+                                volumeOrder = tdElements.get(2).select("nobr").get(0).text();
+                            } else {
+                                volumeOrder = null;
+                            }
+
+                            //attempt to get more data from exams
+                            exam = (tdElements.get(3).toString()).replaceAll("(?i)<td[^>]*>", "")
+                                    .replaceAll("(?i)<[/]td[^>]*>", "").replaceAll("(?i)<br[^>]*>", "\n");
+
+                            newLink = elements.attr("abs:href");
+
+                            dateUpdate = parseDateAndTime();
+//                            dateUpdate = "test";
+                            Log.d("My", "SpecialtiesListActivity get more data dateUpdate -> " + dateUpdate);
+
+                            specialityInfoEngine.updateSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
+                                    specialty, applications, accepted, recommended, licenseOrder, volumeOrder, exam, newLink, dateUpdate));
+                        }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }).start();
     }
 }

@@ -22,7 +22,6 @@ public class DetailUniverInfoEngine extends BaseEngine {
     }
 
     public ArrayList<DetailUniverInfo> getAllDetailUniversById(long nId) {
-        Log.d("My", "DetailUniverInfoEngine ----------> getAllDetailUniversById");
         DetailUniverDBWrapper detailUniverDBWrapper = new DetailUniverDBWrapper(getContext());
         return detailUniverDBWrapper.getAllDetailUniversById(nId);
     }

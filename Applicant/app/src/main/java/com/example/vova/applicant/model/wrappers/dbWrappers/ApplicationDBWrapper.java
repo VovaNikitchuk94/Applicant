@@ -15,7 +15,7 @@ public class ApplicationDBWrapper extends BaseDBWrapper<ApplicationsInfo> {
         super(context, ApplicationTable.TABLE_NAME);
     }
 
-    public ArrayList<ApplicationsInfo> getAllApplicantions() {
+    public ArrayList<ApplicationsInfo> getAllApplications() {
         ArrayList<ApplicationsInfo> arrResult = new ArrayList<>();
         SQLiteDatabase database = getReadable();
         Cursor cursor = database.query(getTableName(), null, null, null, null, null, null);
@@ -35,7 +35,7 @@ public class ApplicationDBWrapper extends BaseDBWrapper<ApplicationsInfo> {
         return arrResult;
     }
 
-    public ArrayList<ApplicationsInfo> getAllApplicantionsById(long nId) {
+    public ArrayList<ApplicationsInfo> getAllApplicationsById(long nId) {
         ArrayList<ApplicationsInfo> arrResult = new ArrayList<>();
         SQLiteDatabase database = getReadable();
         String strRequest = ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY_ID + "=?";
@@ -59,8 +59,10 @@ public class ApplicationDBWrapper extends BaseDBWrapper<ApplicationsInfo> {
 
     public void updateApplicant(ApplicationsInfo applicationsInfo) {
         SQLiteDatabase database = getWritable();
-        String strRequest = ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY_ID + "=?";
-        String arrArgs[] = new String[]{Long.toString(applicationsInfo.getId())};
+        String strRequest = ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY_ID + "=?" + " AND "
+                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_NAME + "=?";
+        String arrArgs[] = new String[]{Long.toString(applicationsInfo.getLongSpecialityId()),
+                applicationsInfo.getStrApplicantName()};
         database.update(getTableName(), applicationsInfo.getContentValues(), strRequest, arrArgs);
         database.close();
     }
@@ -74,7 +76,7 @@ public class ApplicationDBWrapper extends BaseDBWrapper<ApplicationsInfo> {
     public ApplicationsInfo getApplicationById(long nId) {
         ApplicationsInfo applicationsInfo = null;
         SQLiteDatabase database = getReadable();
-        String strRequest = ApplicationTable.Cols.APPLICATION_INFO_FIELD_ID + "=?";
+        String strRequest = ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY_ID + "=?";
         String arrArgs[] = new String[]{Long.toString(nId)};
         Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
         try{

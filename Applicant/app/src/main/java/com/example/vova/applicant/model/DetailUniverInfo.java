@@ -13,15 +13,12 @@ public class DetailUniverInfo extends BaseEntity implements Parcelable {
     private String mStrDetailText;
     private String mStrDetailLink;
     private String mStrDateLastUpdate;
-    private String mStrTimeLastUpdate;
 
-    public DetailUniverInfo(long longUniversityId, String strDetailText, String strDetailLink,
-                            String strDateLastUpdate, String strTimeLastUpdate) {
+    public DetailUniverInfo(long longUniversityId, String strDetailText, String strDetailLink, String strDateLastUpdate) {
         mLongUniversityId = longUniversityId;
         mStrDetailText = strDetailText;
         mStrDetailLink = strDetailLink;
         mStrDateLastUpdate = strDateLastUpdate;
-        mStrTimeLastUpdate = strTimeLastUpdate;
     }
 
     public DetailUniverInfo(Cursor cursor) {
@@ -30,7 +27,6 @@ public class DetailUniverInfo extends BaseEntity implements Parcelable {
         mStrDetailText = cursor.getString(cursor.getColumnIndex(UniversityDetailTable.Cols.UNIVERSITY_DETAIL_INFO_FIELD_NAME));
         mStrDetailLink = cursor.getString(cursor.getColumnIndex(UniversityDetailTable.Cols.UNIVERSITY_DETAIL_INFO_FIELD_LINK));
         mStrDateLastUpdate = cursor.getString(cursor.getColumnIndex(UniversityDetailTable.Cols.UNIVERSITY_DETAIL_INFO_FIELD_DATE_UPDATE));
-        mStrTimeLastUpdate = cursor.getString(cursor.getColumnIndex(UniversityDetailTable.Cols.UNIVERSITY_DETAIL_INFO_FIELD_TIME_UPDATE));
     }
 
     private DetailUniverInfo(Parcel parcel) {
@@ -39,39 +35,22 @@ public class DetailUniverInfo extends BaseEntity implements Parcelable {
         mStrDetailText = parcel.readString();
         mStrDetailLink = parcel.readString();
         mStrDateLastUpdate = parcel.readString();
-        mStrTimeLastUpdate = parcel.readString();
     }
 
     public String getStrDetailText() {
         return mStrDetailText;
     }
 
-    public void setStrDetailText(String strDetailText) {
-        mStrDetailText = strDetailText;
-    }
-
     public String getStrDetailLink() {
         return mStrDetailLink;
-    }
-
-    public void setStrDetailLink(String strDetailLink) {
-        mStrDetailLink = strDetailLink;
     }
 
     public long getLongUniversityId() {
         return mLongUniversityId;
     }
 
-    public void setLongUniversityId(long longUniversityId) {
-        mLongUniversityId = longUniversityId;
-    }
-
     public String getStrDateLastUpdate() {
         return mStrDateLastUpdate;
-    }
-
-    public String getStrTimeLastUpdate() {
-        return mStrTimeLastUpdate;
     }
 
     @Override
@@ -81,7 +60,6 @@ public class DetailUniverInfo extends BaseEntity implements Parcelable {
         values.put(UniversityDetailTable.Cols.UNIVERSITY_DETAIL_INFO_FIELD_NAME, getStrDetailText());
         values.put(UniversityDetailTable.Cols.UNIVERSITY_DETAIL_INFO_FIELD_LINK, getStrDetailLink());
         values.put(UniversityDetailTable.Cols.UNIVERSITY_DETAIL_INFO_FIELD_DATE_UPDATE, getStrDateLastUpdate());
-        values.put(UniversityDetailTable.Cols.UNIVERSITY_DETAIL_INFO_FIELD_TIME_UPDATE, getStrTimeLastUpdate());
         return values;
     }
 
@@ -97,7 +75,6 @@ public class DetailUniverInfo extends BaseEntity implements Parcelable {
         dest.writeString(mStrDetailText);
         dest.writeString(mStrDetailLink);
         dest.writeString(mStrDateLastUpdate);
-        dest.writeString(mStrTimeLastUpdate);
     }
 
     public static final Parcelable.Creator<DetailUniverInfo> CREATOR
