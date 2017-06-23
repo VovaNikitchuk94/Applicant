@@ -45,4 +45,10 @@ public class SpecialityInfoEngine extends BaseEngine {
         return specialityDBWrapper.getSpecialityById(nId);
     }
 
-}
+    public ArrayList<SpecialtiesInfo> getAllSpecialitiesBySearchString(long nId, long degree, String strSearch){
+        SpecialityDBWrapper specialityDBWrapper = new SpecialityDBWrapper(getContext());
+        return specialityDBWrapper.getAllSpecialitiesBySearchString(nId, degree, strSearch);
+    }
+
+
+    }

@@ -19,7 +19,7 @@ public class Applicant2017Activity extends BaseActivity {
             "https://drive.google.com/open?id=0B4__5KtwLylAazV3TEtmWmNYMjQ";
 
     @Override
-    protected void iniActivity() {
+    protected void initActivity() {
 
         TextView textView = (TextView) findViewById(R.id.textViewApplication2017Activity);
         textView.setText(R.string.textImportantInfoForApplicant2017);

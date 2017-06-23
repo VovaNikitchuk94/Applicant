@@ -1,5 +1,7 @@
 package com.example.vova.applicant.activities;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -10,7 +12,9 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -51,16 +55,18 @@ public class ApplicationListActivity extends BaseActivity implements Application
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ProgressBar mProgressBar;
     private BottomSheetBehavior bottomSheetBehavior;
-
+    private SearchView searchView;
     private TextView numberTextView, nameTextView, competitionScoreTextView, BDOScoreTextView, ZNOScoreTextView;
 
     private SpecialtiesInfo mSpecialtiesInfo;
+    private ArrayList<ApplicationsInfo> mApplicationsInfos = new ArrayList<>();
+    private ApplicationAdapter mApplicationAdapter;
 
     private long mLongSpecialityId = 0;
     private String mStrApplicantCodeLink = "";
 
     @Override
-    protected void iniActivity() {
+    protected void initActivity() {
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -73,6 +79,8 @@ public class ApplicationListActivity extends BaseActivity implements Application
                 }
             }
         }
+
+        Log.d("My", "initActivity -> mLongSpecialityId -> " + mLongSpecialityId);
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
@@ -170,6 +178,104 @@ public class ApplicationListActivity extends BaseActivity implements Application
         return R.layout.activity_applcation_list;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_activity_main, menu);
+
+        //зачем он нужен?
+//        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+//        searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+//            @Override
+//            public boolean onMenuItemActionExpand(MenuItem item) {
+//
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean onMenuItemActionCollapse(MenuItem item) {
+//
+//                return true;
+//            }
+//        });
+//        searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+//            @Override
+//            public boolean onMenuItemActionExpand(MenuItem item) {
+//                Log.d("My", "onMenuItemActionExpand");
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean onMenuItemActionCollapse(MenuItem item) {
+//                Log.d("My", "onMenuItemActionCollapse");
+//                updateInfo("");
+//                return true;
+//            }
+//        });
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                updateInfo(query);
+//                if(!searchView.isIconified()) {
+//                    searchView.setIconified(true);
+//                }
+                searchView.setIconified(false);
+                searchView.clearFocus();
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (!newText.isEmpty()) {
+                    updateInfo(newText);
+                }
+                return false;
+            }
+        });
+
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                Log.d("My", "setOnQueryTextFocusChangeListener onFocusChange");
+                Log.d("My", "setOnQueryTextFocusChangeListener hasFocus -> " + hasFocus);
+                if (!hasFocus) {
+                    searchView.onActionViewCollapsed();
+                }
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    private void updateInfo() {
+        mApplicationsInfos.clear();
+        ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
+        mApplicationsInfos.addAll(applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId));
+        if (mApplicationAdapter != null) {
+            mApplicationAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void updateInfo(String search) {
+        mApplicationsInfos.clear();
+        ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
+        if (search.isEmpty()) {
+            mApplicationsInfos.addAll(applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId));
+        } else {
+            mApplicationsInfos.addAll(applicationInfoEngine.getAllApplicationsBySearchString(mLongSpecialityId, search));
+        }
+        if (mApplicationAdapter != null) {
+            mApplicationAdapter.notifyDataSetChanged();
+        }
+    }
+
     //TODO пока не трогать
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
@@ -246,22 +352,19 @@ public class ApplicationListActivity extends BaseActivity implements Application
     }
 
     private void getData(ApplicationInfoEngine applicationInfoEngine) {
-        ArrayList<ApplicationsInfo> applicationsInfos = applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId);
-        ApplicationAdapter adapter = new ApplicationAdapter(applicationsInfos);
-        Log.d("My", "CitiesListActivity -> applicationsInfos.size() -> " + applicationsInfos.size());
-        for (ApplicationsInfo info: applicationsInfos) {
-            Log.d("My", "CitiesListActivity -> getLongSpecialityId getStrApplicantName getStrDateLastUpdate -> " + info.getLongSpecialityId() + " ~ " + info.getStrApplicantName()
-            + " ~ " + info.getStrDateLastUpdate());
-        }
-
-        adapter.setOnClickApplicationItem(ApplicationListActivity.this);
-        mRecyclerView.setAdapter(adapter);
+        mApplicationsInfos.clear();
+        mApplicationsInfos.addAll(applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId));
+        mApplicationAdapter = new ApplicationAdapter(mApplicationsInfos);
+//        mApplicationAdapter.notifyDataSetChanged();
+        mApplicationAdapter.setOnClickApplicationItem(ApplicationListActivity.this);
+        mRecyclerView.setAdapter(mApplicationAdapter);
         mRecyclerView.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.GONE);
     }
 
     @Override
     public void onClickApplicationItem(ApplicationsInfo applicationInfo) {
+        Log.d("My", "isDateComparison dateAndTimeCitiesonClickApplicationItem(ApplicationsInfo  -> " + applicationInfo.getLongSpecialityId() + " ~ " + applicationInfo.getStrApplicantName());
         Intent intent = new Intent(this, DetailApplicantPagerActivity.class);
         intent.putExtra(DetailApplicantPagerActivity.INTENT_KEY_APPLICANT_INFO, applicationInfo);
         startActivity(intent);
@@ -370,7 +473,7 @@ public class ApplicationListActivity extends BaseActivity implements Application
         }
     }
 
-    private void parseImportantInfo(Elements detailElements, Elements selectTrMarking) {
+    private void parseImportantInfo(Elements detailElements, Elements selectTrMarking, long specialityId) {
         String universityName = null;
         String speciality = null;
         String specialization = null;
@@ -389,8 +492,8 @@ public class ApplicationListActivity extends BaseActivity implements Application
         String originalDocument = null;
 
         ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getApplicationContext());
-        Log.d("My", "parseImportantInfo start -> " + importantApplicantInfoEngine.getImportantInfoById(mLongSpecialityId));
-        if (importantApplicantInfoEngine.getImportantInfoById(mLongSpecialityId) == null) {
+        Log.d("My", "parseImportantInfo start -> " + importantApplicantInfoEngine.getImportantInfoById(specialityId));
+        if (importantApplicantInfoEngine.getImportantInfoById(specialityId) == null) {
 
             universityName = detailElements.select(".title-description").text();
             String universityInfos = null;
@@ -441,7 +544,7 @@ public class ApplicationListActivity extends BaseActivity implements Application
                 originalDocument = selectTrMarking.get(8).text();
             }
 
-            importantApplicantInfoEngine.addImportantInfo(new ImportantInfo(mLongSpecialityId, universityName,
+            importantApplicantInfoEngine.addImportantInfo(new ImportantInfo(specialityId, universityName,
                     speciality, specialization, faculty, timeForm, lastTimeUpdate, number, name, priority, totalScore,
                     markDocument, markTest, markExam, extraPoints, originalDocument));
 
@@ -561,42 +664,43 @@ public class ApplicationListActivity extends BaseActivity implements Application
                     Elements selectTrMarking = elementsThead.select("th");
                     ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getApplication());
                     if (importantApplicantInfoEngine.getImportantInfoById(mLongSpecialityId) == null) {
-                        parseImportantInfo(detailElements, selectTrMarking);
+                        Log.d("My", "getImportantInfoById == null");
+                        parseImportantInfo(detailElements, selectTrMarking, mLongSpecialityId);
                     }
 
                     for (Element link : selectTrApplicant) {
-                            Elements tdElements = link.select("td");
+                        Elements tdElements = link.select("td");
 
-                            //background
-                            color = parseBackgroundApplicant(tdElements);
+                        //background
+                        color = parseBackgroundApplicant(tdElements);
 
-                            if (tdElements.size() == 8) {
-                                number = tdElements.get(0).text();
-                                name = tdElements.get(1).text();
-                                totalScore = tdElements.get(2).text();
-                                markDocument = tdElements.get(3).text();
-                                markTest = tdElements.get(4).text();
-                                markExam = tdElements.get(5).text();
-                                extraPoints = tdElements.get(6).text();
-                                originalDocument = tdElements.get(7).text();
-                            } else {
-                                number = tdElements.get(0).text();
-                                name = tdElements.get(1).text();
-                                priority = tdElements.get(2).text();
-                                totalScore = tdElements.get(3).text();
-                                markDocument = tdElements.get(4).text();
-                                markTest = tdElements.get(5).text();
-                                markExam = tdElements.get(6).text();
-                                extraPoints = tdElements.get(7).text();
-                                originalDocument = tdElements.get(8).text();
-                            }
-
-                            someLink = tdElements.attr("abs:href");
-
-                            applicationInfoEngine.addApplication(new ApplicationsInfo(mLongSpecialityId,
-                                    number, name, priority, totalScore, markDocument, markTest, markExam,
-                                    extraPoints, originalDocument, someLink, color, dateUpdate));
+                        if (tdElements.size() == 8) {
+                            number = tdElements.get(0).text();
+                            name = tdElements.get(1).text();
+                            totalScore = tdElements.get(2).text();
+                            markDocument = tdElements.get(3).text();
+                            markTest = tdElements.get(4).text();
+                            markExam = tdElements.get(5).text();
+                            extraPoints = tdElements.get(6).text();
+                            originalDocument = tdElements.get(7).text();
+                        } else {
+                            number = tdElements.get(0).text();
+                            name = tdElements.get(1).text();
+                            priority = tdElements.get(2).text();
+                            totalScore = tdElements.get(3).text();
+                            markDocument = tdElements.get(4).text();
+                            markTest = tdElements.get(5).text();
+                            markExam = tdElements.get(6).text();
+                            extraPoints = tdElements.get(7).text();
+                            originalDocument = tdElements.get(8).text();
                         }
+
+                        someLink = tdElements.attr("abs:href");
+
+                        applicationInfoEngine.addApplication(new ApplicationsInfo(mLongSpecialityId,
+                                number, name, priority, totalScore, markDocument, markTest, markExam,
+                                extraPoints, originalDocument, someLink, color, dateUpdate));
+                    }
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -667,56 +771,56 @@ public class ApplicationListActivity extends BaseActivity implements Application
                     Elements elementsBody = links.select("tbody");
                     Elements selectTrApplicant = elementsBody.select("tr");
 
-                    //Data of legend
-                    Element legendElementById = document.getElementById("legend");
-                    Elements selectLegendElements = legendElementById.select("tr");
-                    LegendEngine legendEngine = new LegendEngine(getApplication());
-                    if (legendEngine.getLegendsById(mLongSpecialityId).isEmpty()) {
-                        parseLegendData(selectLegendElements, legendEngine, mLongSpecialityId);
-                    }
+//                    //Data of legend
+//                    Element legendElementById = document.getElementById("legend");
+//                    Elements selectLegendElements = legendElementById.select("tr");
+//                    LegendEngine legendEngine = new LegendEngine(getApplication());
+//                    if (legendEngine.getLegendsById(mLongSpecialityId).isEmpty()) {
+//                        parseLegendData(selectLegendElements, legendEngine, mLongSpecialityId);
+//                    }
+//
+//                    //Data of importantInfo & Data of University information
+//                    Elements detailElements = document.getElementsByClass("title-page");
+//                    Elements elementsThead = links.select("thead");
+//                    Elements selectTrMarking = elementsThead.select("th");
+//                    ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getApplication());
+//                    if (importantApplicantInfoEngine.getImportantInfoById(mLongSpecialityId) == null) {
+//                        parseImportantInfo(detailElements, selectTrMarking, mLongSpecialityId);
+//                    }
 
-                    //Data of importantInfo & Data of University information
-                    Elements detailElements = document.getElementsByClass("title-page");
-                    Elements elementsThead = links.select("thead");
-                    Elements selectTrMarking = elementsThead.select("th");
-                    ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getApplication());
-                    if (importantApplicantInfoEngine.getImportantInfoById(mLongSpecialityId) == null) {
-                        parseImportantInfo(detailElements, selectTrMarking);
-                    }
+                    for (Element link : selectTrApplicant) {
+                        Elements tdElements = link.select("td");
 
-                        for (Element link : selectTrApplicant) {
-                            Elements tdElements = link.select("td");
+                        //background
+                        color = parseBackgroundApplicant(tdElements);
 
-                            //background
-                            color = parseBackgroundApplicant(tdElements);
-
-                            if (tdElements.size() == 8) {
-                                number = tdElements.get(0).text();
-                                name = tdElements.get(1).text();
-                                totalScore = tdElements.get(2).text();
-                                markDocument = tdElements.get(3).text();
-                                markTest = tdElements.get(4).text();
-                                markExam = tdElements.get(5).text();
-                                extraPoints = tdElements.get(6).text();
-                                originalDocument = tdElements.get(7).text();
-                            } else {
-                                number = tdElements.get(0).text();
-                                name = tdElements.get(1).text();
-                                priority = tdElements.get(2).text();
-                                totalScore = tdElements.get(3).text();
-                                markDocument = tdElements.get(4).text();
-                                markTest = tdElements.get(5).text();
-                                markExam = tdElements.get(6).text();
-                                extraPoints = tdElements.get(7).text();
-                                originalDocument = tdElements.get(8).text();
-                            }
-
-                            someLink = tdElements.attr("abs:href");
-
-                            applicationInfoEngine.updateApplicant(new ApplicationsInfo(mLongSpecialityId,
-                                    number, name, priority, totalScore, markDocument, markTest, markExam,
-                                    extraPoints, originalDocument, someLink, color, dateUpdate));
+                        if (tdElements.size() == 8) {
+                            number = tdElements.get(0).text();
+                            name = tdElements.get(1).text();
+                            totalScore = tdElements.get(2).text();
+                            markDocument = tdElements.get(3).text();
+                            markTest = tdElements.get(4).text();
+                            markExam = tdElements.get(5).text();
+                            extraPoints = tdElements.get(6).text();
+                            originalDocument = tdElements.get(7).text();
+                        } else {
+                            number = tdElements.get(0).text();
+                            name = tdElements.get(1).text();
+                            priority = tdElements.get(2).text();
+                            totalScore = tdElements.get(3).text();
+                            markDocument = tdElements.get(4).text();
+                            markTest = tdElements.get(5).text();
+                            markExam = tdElements.get(6).text();
+                            extraPoints = tdElements.get(7).text();
+                            originalDocument = tdElements.get(8).text();
                         }
+
+                        someLink = tdElements.attr("abs:href");
+
+                        applicationInfoEngine.updateApplicant(new ApplicationsInfo(mLongSpecialityId,
+                                number, name, priority, totalScore, markDocument, markTest, markExam,
+                                extraPoints, originalDocument, someLink, color, dateUpdate));
+                    }
 
                 } catch (IOException e) {
                     e.printStackTrace();

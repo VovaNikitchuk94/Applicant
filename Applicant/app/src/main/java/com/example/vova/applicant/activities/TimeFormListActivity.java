@@ -50,8 +50,8 @@ public class TimeFormListActivity extends BaseActivity implements
     private String mDetailCodeLink = "";
 
     @Override
-    protected void iniActivity() {
-        Log.d("My", "TimeFormListActivity --------> iniActivity");
+    protected void initActivity() {
+        Log.d("My", "TimeFormListActivity --------> initActivity");
 
         Intent intent = getIntent();
         if (intent != null) {

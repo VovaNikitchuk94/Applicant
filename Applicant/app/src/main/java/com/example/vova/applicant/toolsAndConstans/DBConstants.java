@@ -149,7 +149,7 @@ public class DBConstants {
 
         public static final class Cols {
             public static final String LEGEND_INFO_FIELD_ID = "_id";
-            public static final String LEGEND_INFO_FIELD_YEAR_ID = "_year_id";
+            public static final String LEGEND_INFO_FIELD_SPECIALITY_ID = "_speciality_id";
             public static final String LEGEND_INFO_FIELD_NAME = "_name";
             public static final String LEGEND_INFO_FIELD_DETAIL = "_detail";
             public static final String LEGEND_INFO_FIELD_BACKGROUND = "_background";

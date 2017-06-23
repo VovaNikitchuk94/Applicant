@@ -29,7 +29,7 @@ public class TopLevelActivity extends BaseActivity implements View.OnClickListen
     public String yearsCodeLink = "";
 
     @Override
-    protected void iniActivity() {
+    protected void initActivity() {
         initializeView();
     }
 

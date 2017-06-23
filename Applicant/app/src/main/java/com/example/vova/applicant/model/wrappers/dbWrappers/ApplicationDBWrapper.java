@@ -59,7 +59,7 @@ public class ApplicationDBWrapper extends BaseDBWrapper<ApplicationsInfo> {
 
     public void updateApplicant(ApplicationsInfo applicationsInfo) {
         SQLiteDatabase database = getWritable();
-        String strRequest = ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY_ID + "=?" + " AND "
+        String strRequest = ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY_ID + "=? AND "
                 + ApplicationTable.Cols.APPLICATION_INFO_FIELD_NAME + "=?";
         String arrArgs[] = new String[]{Long.toString(applicationsInfo.getLongSpecialityId()),
                 applicationsInfo.getStrApplicantName()};
@@ -76,7 +76,8 @@ public class ApplicationDBWrapper extends BaseDBWrapper<ApplicationsInfo> {
     public ApplicationsInfo getApplicationById(long nId) {
         ApplicationsInfo applicationsInfo = null;
         SQLiteDatabase database = getReadable();
-        String strRequest = ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY_ID + "=?";
+//        String strRequest = ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY_ID + "=?";
+        String strRequest = ApplicationTable.Cols.APPLICATION_INFO_FIELD_ID + "=?";
         String arrArgs[] = new String[]{Long.toString(nId)};
         Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
         try{
@@ -90,5 +91,33 @@ public class ApplicationDBWrapper extends BaseDBWrapper<ApplicationsInfo> {
             database.close();
         }
         return applicationsInfo;
+    }
+
+    public ArrayList<ApplicationsInfo> getAllApplicationsBySearchString(long nId, String strSearch){
+        strSearch = "%" + strSearch + "%";
+        ArrayList<ApplicationsInfo> arrResult = new ArrayList<>();
+        SQLiteDatabase db = getReadable();
+        String strRequest = ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY_ID + "=? AND "
+                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_NAME + " LIKE ? OR "
+                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_TOTAL_SCORE + " LIKE ? OR "
+                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_MARK_DOCUMENT + " LIKE ? OR "
+                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_MARK_TEST + " LIKE ? ";
+        String arrArgs[] = new String[]{Long.toString(nId), strSearch, strSearch, strSearch, strSearch};
+        Cursor cursor = db.query(getTableName(),null,strRequest,arrArgs,null,null,null);
+        try{
+            if (cursor!=null && cursor.moveToFirst()){
+                do{
+                    ApplicationsInfo applicationsInfo = new ApplicationsInfo(cursor);
+                    arrResult.add(applicationsInfo);
+
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            if (cursor!=null){
+                cursor.close();
+            }
+            db.close();
+        }
+        return arrResult;
     }
 }

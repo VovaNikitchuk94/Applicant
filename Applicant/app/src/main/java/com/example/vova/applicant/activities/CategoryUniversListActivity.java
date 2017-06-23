@@ -52,8 +52,8 @@ public class CategoryUniversListActivity extends BaseActivity implements
     }
 
     @Override
-    protected void iniActivity() {
-        Log.d("My", "CategoryUniversListActivity --------> iniActivity");
+    protected void initActivity() {
+        Log.d("My", "CategoryUniversListActivity --------> initActivity");
 
         Intent intent = getIntent();
         if (intent != null) {

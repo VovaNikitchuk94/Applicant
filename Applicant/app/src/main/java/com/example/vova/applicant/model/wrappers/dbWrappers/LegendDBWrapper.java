@@ -17,9 +17,9 @@ public class LegendDBWrapper extends BaseDBWrapper {
 
     public void updateLegend(LegendInfo legendInfo) {
         SQLiteDatabase database = getWritable();
-        String strRequest = LegendInfoTable.Cols.LEGEND_INFO_FIELD_YEAR_ID + "=?" + " AND "
+        String strRequest = LegendInfoTable.Cols.LEGEND_INFO_FIELD_SPECIALITY_ID + "=?  AND "
                 + LegendInfoTable.Cols.LEGEND_INFO_FIELD_NAME + "=?";
-        String arrArgs[] = new String[]{Long.toString(legendInfo.getLongYearId()),
+        String arrArgs[] = new String[]{Long.toString(legendInfo.getLongSpecialityId()),
                 legendInfo.getStrNameLegend()};
         database.update(getTableName(), legendInfo.getContentValues(), strRequest, arrArgs);
         database.close();
@@ -34,7 +34,7 @@ public class LegendDBWrapper extends BaseDBWrapper {
     public ArrayList<LegendInfo> getLegendsById(long nId) {
         ArrayList<LegendInfo> arrResult = new ArrayList<>();
         SQLiteDatabase database = getReadable();
-        String strRequest = LegendInfoTable.Cols.LEGEND_INFO_FIELD_YEAR_ID + "=?";
+        String strRequest = LegendInfoTable.Cols.LEGEND_INFO_FIELD_SPECIALITY_ID + "=?";
         String arrArgs[] = new String[]{Long.toString(nId)};
         Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
         try {

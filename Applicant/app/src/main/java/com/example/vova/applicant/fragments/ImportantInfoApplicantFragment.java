@@ -27,7 +27,7 @@ public class ImportantInfoApplicantFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mApplicationsInfo = DetailApplicantPagerActivity.mInfo;
-        Log.d("My", "mApplicationsInfo ->" + mApplicationsInfo);
+        Log.d("My", "ImportantInfoApplicantFragment mApplicationsInfo ->" + mApplicationsInfo);
 
     }
 
@@ -35,7 +35,7 @@ public class ImportantInfoApplicantFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_important_info_applicant, container, false);
-        Log.d("My", "onCreateView ->");
+        Log.d("My", "ImportantInfoApplicantFragment onCreateView ->");
 
         TextView textViewNameOfUniversity = (TextView) view.findViewById(R.id.textNameOfUniversityFragmentDetailApplicant);
         TextView textViewSpeciality = (TextView) view.findViewById(R.id.textSpecialityFragmentDetailApplicant);

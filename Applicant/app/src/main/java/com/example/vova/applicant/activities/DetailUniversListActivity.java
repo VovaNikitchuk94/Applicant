@@ -46,8 +46,8 @@ public class DetailUniversListActivity extends BaseActivity implements
     private String mUniversityCodeLink = "";
 
     @Override
-    protected void iniActivity() {
-        Log.d("My", "DetailUniversListActivity --------> iniActivity");
+    protected void initActivity() {
+        Log.d("My", "DetailUniversListActivity --------> initActivity");
 
         Intent intent = getIntent();
         if (intent != null) {

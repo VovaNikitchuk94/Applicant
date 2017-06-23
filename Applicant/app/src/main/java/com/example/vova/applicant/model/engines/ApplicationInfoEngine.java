@@ -40,4 +40,10 @@ public class ApplicationInfoEngine extends BaseEngine {
         return applicationDBWrapper.getApplicationById(nId);
     }
 
-}
+    public ArrayList<ApplicationsInfo> getAllApplicationsBySearchString(long nId, String strSearch){
+        ApplicationDBWrapper applicationDBWrapper = new ApplicationDBWrapper(getContext());
+        return applicationDBWrapper.getAllApplicationsBySearchString(nId, strSearch);
+    }
+
+
+    }

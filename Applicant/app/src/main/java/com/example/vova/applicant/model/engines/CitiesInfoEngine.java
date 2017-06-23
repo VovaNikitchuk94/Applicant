@@ -39,4 +39,9 @@ public class CitiesInfoEngine extends BaseEngine {
         CitiesInfoDBWrapper citiesInfoDBWrapper = new CitiesInfoDBWrapper(getContext());
         return citiesInfoDBWrapper.getCityById(nId);
     }
+
+    public ArrayList<CitiesInfo> getAllCitiesBySearchString(long nId, String strSearch){
+        CitiesInfoDBWrapper citiesInfoDBWrapper = new CitiesInfoDBWrapper(getContext());
+        return citiesInfoDBWrapper.getAllCitiesBySearchString(nId, strSearch);
+    }
 }

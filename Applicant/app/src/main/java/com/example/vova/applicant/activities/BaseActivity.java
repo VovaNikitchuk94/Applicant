@@ -100,10 +100,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         setToolbar();
         setDrawer();
-        iniActivity();
+        initActivity();
     }
 
-    protected abstract void iniActivity();
+    protected abstract void initActivity();
 
     protected abstract int getLayoutId();
 }

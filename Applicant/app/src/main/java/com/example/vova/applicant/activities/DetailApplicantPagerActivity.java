@@ -36,10 +36,6 @@ public class DetailApplicantPagerActivity extends BaseActivity {
 
     public static final String INTENT_KEY_APPLICANT_INFO = "INTENT_KEY_APPLICANT_INFO";
 
-    private static final long LEGEND_YEAR_ID_2015 = 2015;
-    private static final long LEGEND_YEAR_ID_2016 = 2016;
-    private static final long LEGEND_YEAR_ID_2017 = 2017;
-
     private static final int ITEM_ID_APPLICANT_INFO = 112;
     private static final int MENU_ITEM_LEGEND = 113;
 
@@ -49,10 +45,10 @@ public class DetailApplicantPagerActivity extends BaseActivity {
     public static ApplicationsInfo mInfo;
 
     @Override
-    protected void iniActivity() {
+    protected void initActivity() {
         FragmentManager manager = getSupportFragmentManager();
 
-        //try add new fragment
+        // add new fragment
         Fragment fragment = new ImportantInfoApplicantFragment();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.add(R.id.fragmentImportantInfoApplicant, fragment);
@@ -71,7 +67,10 @@ public class DetailApplicantPagerActivity extends BaseActivity {
         mViewPager = (ViewPager) findViewById(R.id.activity_detail_applicant_view_pager);
         final ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
         mInfoList = applicationInfoEngine.getAllApplicantionsById(mInfo.getLongSpecialityId());
+        Log.d("My", "mInfo.getLongSpecialityId() ->" + mInfo.getStrApplicantName());
         Log.d("My", "mInfo.getLongSpecialityId() ->" + mInfo.getLongSpecialityId());
+        Log.d("My", "mInfo.applicationInfoEngine.getAllApplicantionsById(mInfo.getId())() ->" + applicationInfoEngine.getAllApplicantionsById(mInfo.getId()).size());
+        Log.d("My", "mInfo.applicationInfoEngine.getAllApplicantionsById(mInfo.getLongSpecialityId())() ->" + applicationInfoEngine.getAllApplicantionsById(mInfo.getLongSpecialityId()).size());
 
 
         mViewPager.setAdapter(new FragmentStatePagerAdapter(manager) {
@@ -82,7 +81,7 @@ public class DetailApplicantPagerActivity extends BaseActivity {
 
             @Override
             public int getCount() {
-//                Log.d("My", "mInfoList.size() ->" + mInfoList.size());
+                Log.d("My", "mInfoList.size() ->" + mInfoList.size());
                 return mInfoList.size();
             }
         });
@@ -123,14 +122,13 @@ public class DetailApplicantPagerActivity extends BaseActivity {
 
         // настройка максимальной высоты
 //        bottomSheetBehavior.setPeekHeight(340);
-//        bottomSheetBehavior.
 
         // настройка возможности скрыть элемент при свайпе вниз
         bottomSheetBehavior.setHideable(true);
 
         LegendEngine legendEngine = new LegendEngine(getApplication());
 //        mLongSpecialityId = mSpecialtiesInfo.getId();
-        ArrayList<LegendInfo> legendInfos = legendEngine.getLegendsById(LEGEND_YEAR_ID_2016);
+        ArrayList<LegendInfo> legendInfos = legendEngine.getLegendsById(mInfo.getLongSpecialityId());
         Log.d("My", "setLegendList start legendInfos size- >" + legendInfos.size());
         LegendAdapter legendAdapter = new LegendAdapter(legendInfos);
         legendRecyclerView.setAdapter(legendAdapter);

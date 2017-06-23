@@ -122,7 +122,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         sqLiteDatabase.execSQL("CREATE TABLE " + LegendInfoTable.TABLE_NAME
                 + " (" + LegendInfoTable.Cols.LEGEND_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + LegendInfoTable.Cols.LEGEND_INFO_FIELD_YEAR_ID + " INTEGER NOT NULL, "
+                + LegendInfoTable.Cols.LEGEND_INFO_FIELD_SPECIALITY_ID + " INTEGER NOT NULL, "
                 + LegendInfoTable.Cols.LEGEND_INFO_FIELD_NAME + " TEXT, "
                 + LegendInfoTable.Cols.LEGEND_INFO_FIELD_DETAIL + " TEXT, "
                 + LegendInfoTable.Cols.LEGEND_INFO_FIELD_BACKGROUND + " TEXT);");

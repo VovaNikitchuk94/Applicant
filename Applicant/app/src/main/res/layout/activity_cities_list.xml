@@ -8,15 +8,24 @@
     android:orientation="vertical"
     tools:context=".activities.CitiesListActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:minHeight="?attr/actionBarSize"
-        android:transitionName="actionBar"
-        app:titleTextColor="@color/md_white_1000"/>
+    <!--<android.support.v7.widget.Toolbar-->
+        <!--android:id="@+id/toolbar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="?attr/colorPrimary"-->
+        <!--android:elevation="4dp"-->
+        <!--android:minHeight="?attr/actionBarSize"-->
+        <!--app:titleTextColor="@color/md_white_1000"-->
+        <!--android:transitionName="actionBar"/>-->
+    <include layout="@layout/toolbar"/>
+
+
+    <!--<EditText-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/editTextFindCityCitiesActivity"-->
+        <!--tools:text="search"-->
+        <!--android:hint="Пошук міста"/>-->
 
     <RelativeLayout
         android:layout_width="wrap_content"

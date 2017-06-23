@@ -44,7 +44,7 @@ public class AboutUniversityActivity extends BaseActivity implements
     private ProgressBar mProgressBar;
 
     @Override
-    protected void iniActivity() {
+    protected void initActivity() {
 
         Log.d("My", "AboutUniversityActivity -> OnCreate");
 

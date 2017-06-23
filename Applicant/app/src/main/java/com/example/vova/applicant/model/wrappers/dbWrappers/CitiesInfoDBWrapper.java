@@ -83,7 +83,6 @@ public class CitiesInfoDBWrapper extends BaseDBWrapper {
         try{
             if (cursor!=null && cursor.moveToFirst()){
                 citiesInfo = new CitiesInfo(cursor);
-
             }
         } finally {
             if (cursor!=null){
@@ -92,5 +91,30 @@ public class CitiesInfoDBWrapper extends BaseDBWrapper {
             database.close();
         }
         return citiesInfo;
+    }
+
+    public ArrayList<CitiesInfo> getAllCitiesBySearchString(long nId, String strSearch){
+        strSearch = "%" + strSearch + "%";
+        ArrayList<CitiesInfo> arrResult = new ArrayList<>();
+        SQLiteDatabase db = getReadable();
+        String strRequest = CitiesTable.Cols.CITIES_INFO_FIELD_YEAR_ID + "=?" + " AND "
+                + CitiesTable.Cols.CITIES_INFO_FIELD_NAME + " LIKE ? ";
+        String arrArgs[] = new String[]{Long.toString(nId), strSearch};
+        Cursor cursor = db.query(getTableName(),null,strRequest,arrArgs,null,null,null);
+        try{
+            if (cursor!=null && cursor.moveToFirst()){
+                do{
+                    CitiesInfo citiesInfo = new CitiesInfo(cursor);
+                    arrResult.add(citiesInfo);
+
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            if (cursor!=null){
+                cursor.close();
+            }
+            db.close();
+        }
+        return arrResult;
     }
 }

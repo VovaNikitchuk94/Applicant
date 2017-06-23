@@ -17,10 +17,12 @@ import com.example.vova.applicant.model.engines.ImportantApplicantInfoEngine;
 
 import java.util.ArrayList;
 
+import static com.example.vova.applicant.activities.DetailApplicantPagerActivity.mInfo;
+
 public class DetailApplicantFragment extends Fragment {
 
     public static final String ARG_APPLICANT_ID = "ARG_APPLICANT_ID";
-
+    private long mDetailApplicantId;
     private ApplicationsInfo mApplicationsInfo;
 
     public static DetailApplicantFragment newInstance(long id) {
@@ -37,12 +39,17 @@ public class DetailApplicantFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        long detailApplicantId = (long) getArguments().getSerializable(ARG_APPLICANT_ID);
-        ApplicationInfoEngine engine = new ApplicationInfoEngine(getContext());
-        mApplicationsInfo = engine.getApplicationById(detailApplicantId);
+        mDetailApplicantId = (long) getArguments().getSerializable(ARG_APPLICANT_ID);
+        ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getContext());
+        mApplicationsInfo = applicationInfoEngine.getApplicationById(mDetailApplicantId);
 
-        Log.d("My", "DetailApplicantFragment onCreate detailApplicantId -> " + detailApplicantId);
-        Log.d("My", "DetailApplicantFragment onCreate mApplicationsInfo -> " + mApplicationsInfo.toString());
+//        Log.d("My", "DetailApplicantFragment onCreate detailApplicantId -> " + mDetailApplicantId);
+//        Log.d("My", "DetailApplicantFragment onCreate getApplicationById(detailApplicantId) -> " + applicationInfoEngine.getApplicationById(mDetailApplicantId));
+//        if (mInfo != null) {
+//            Log.d("My", "DetailApplicantFragment onCreate mApplicationsInfo mInfo -> " + mInfo.toString());
+//        } else {
+//            Log.d("My", "DetailApplicantFragment onCreate mApplicationsInfo mInfo == null-> " );
+//        }
     }
 
     @Nullable
@@ -58,10 +65,10 @@ public class DetailApplicantFragment extends Fragment {
 //        TextView textViewDateOfLastUpdate = (TextView) view.findViewById(R.id.textDateOfLastUpdateFragmentDetailApplicant);
 //        TextView textViewDetailAboutApplicant = (TextView) view.findViewById(R.id.textDetailAboutApplicantFragmentDetailApplicant);
 
-        //set legend textViews
-        ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getContext());
-        ImportantInfo importantInfos = importantApplicantInfoEngine.getImportantInfoById(mApplicationsInfo.getLongSpecialityId());
-        Log.d("My", "importantInfos.getId() -> " + importantInfos.getId());
+//        Log.d("My", "DetailApplicantFragment mApplicationsInfo.getId() -> " + mApplicationsInfo.getId());
+//        Log.d("My", "DetailApplicantFragment mApplicationsInfo.getStrApplicantName()) -> " + mApplicationsInfo.getStrApplicantName());
+//        Log.d("My", "DetailApplicantFragment mApplicationsInfo.getLongSpecialityId() -> " + mApplicationsInfo.getLongSpecialityId());
+
 
         TextView textViewNumber = (TextView) view.findViewById(R.id.textNumberApplicantFragmentImportantInfoApplicant);
         TextView textViewFullName = (TextView) view.findViewById(R.id.textFullNameApplicantFragmentImportantInfoApplicant);
@@ -84,43 +91,52 @@ public class DetailApplicantFragment extends Fragment {
         TextView extraPointsTextView = (TextView) view.findViewById(R.id.textExtraPointsApplicantFragmentDetailApplicant);
         TextView originalDocumentTextView = (TextView) view.findViewById(R.id.textOriginalDocumentApplicantFragmentDetailApplicant);
 
-
-
-
         if (mApplicationsInfo != null){
+            //set legend textViews
+            ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getActivity());
+            ImportantInfo importantInfos = importantApplicantInfoEngine.getImportantInfoById(mInfo.getLongSpecialityId());
+
+//            Log.d("My", "DetailApplicantFragment mInfo.getId() -> " + mInfo.getId());
+//            Log.d("My", "DetailApplicantFragment mInfo.getStrApplicantName() -> " + mInfo.getStrApplicantName());
+//            Log.d("My", "DetailApplicantFragment mInfo.getLongSpecialityId() -> " + mInfo.getLongSpecialityId());
+
+//            Log.d("My", "DetailApplicantFragment importantInfos.getId() -> " + importantInfos.getId());
+//            Log.d("My", "DetailApplicantFragment importantInfos.getStrName() -> " + importantInfos.getStrName());
+//            Log.d("My", "DetailApplicantFragment importantInfos.getLongSpecialityId() -> " + importantInfos.getLongSpecialityId());
 //            textViewNameOfUniversity.setText(mApplicationsInfo.getStrUniversity());
 //            textViewNameSpeciality.setText(mApplicationsInfo.getStrSpeciality());
 //            textViewDetailAboutApplicant.setText(mApplicationsInfo.getStrApplicantInfo());
 
-            //set text in textView
-            numberTextView.setText(mApplicationsInfo.getStrApplicantNumber());
-            nameTextView.setText(mApplicationsInfo.getStrApplicantName());
-            priorityTextView.setText(mApplicationsInfo.getStrApplicantPriority());
-            totalScoreTextView.setText(mApplicationsInfo.getStrApplicantTotalScores());
-            markDocumentTextView.setText(mApplicationsInfo.getStrApplicantMarkDocument());
-            markTestTextView.setText(mApplicationsInfo.getStrApplicantMarkTest());
-            markExamTextView.setText(mApplicationsInfo.getStrApplicantMarkExam());
-            extraPointsTextView.setText(mApplicationsInfo.getStrApplicantExtraPoints());
-            originalDocumentTextView.setText(mApplicationsInfo.getStrApplicantOriginalDocument());
+                //set text in textView
+                numberTextView.setText(mApplicationsInfo.getStrApplicantNumber());
+                nameTextView.setText(mApplicationsInfo.getStrApplicantName());
+                priorityTextView.setText(mApplicationsInfo.getStrApplicantPriority());
+                totalScoreTextView.setText(mApplicationsInfo.getStrApplicantTotalScores());
+                markDocumentTextView.setText(mApplicationsInfo.getStrApplicantMarkDocument());
+                markTestTextView.setText(mApplicationsInfo.getStrApplicantMarkTest());
+                markExamTextView.setText(mApplicationsInfo.getStrApplicantMarkExam());
+                extraPointsTextView.setText(mApplicationsInfo.getStrApplicantExtraPoints());
+                originalDocumentTextView.setText(mApplicationsInfo.getStrApplicantOriginalDocument());
 
-            //set legend text in textView
-            textViewNumber.setText(importantInfos.getStrNumber());
-            textViewFullName.setText(importantInfos.getStrName());
-            textViewPriority.setText(importantInfos.getStrPriority());
-            textViewTotalScore.setText(importantInfos.getStrTotalScores());
-            textViewMarkDocument.setText(importantInfos.getStrMarkDocument());
-            textViewMarkTest.setText(importantInfos.getStrMarkTest());
-            textViewMarkExam.setText(importantInfos.getStrMarkExam());
-            textViewExtraPoint.setText(importantInfos.getStrExtraPoints());
-            textViewOriginalDocument.setText(importantInfos.getStrOriginalDocument());
+                //set legend text in textView
+                textViewNumber.setText(importantInfos.getStrNumber());
+                textViewFullName.setText(importantInfos.getStrName());
+                textViewPriority.setText(importantInfos.getStrPriority());
+                textViewTotalScore.setText(importantInfos.getStrTotalScores());
+                textViewMarkDocument.setText(importantInfos.getStrMarkDocument());
+                textViewMarkTest.setText(importantInfos.getStrMarkTest());
+                textViewMarkExam.setText(importantInfos.getStrMarkExam());
+                textViewExtraPoint.setText(importantInfos.getStrExtraPoints());
+                textViewOriginalDocument.setText(importantInfos.getStrOriginalDocument());
+            }
 //            textViewOriginalDocument.setText(importantInfos.get(8).getStrName());
 
 //            Log.d("My", "DetailApplicantFragment onCreateView" + mApplicationsInfo.getStrUniversity());
 //            Log.d("My", "DetailApplicantFragment mApplicationsInfo.getStrSpeciality()" + mApplicationsInfo.getStrSpeciality());
 //            Log.d("My", "DetailApplicantFragment mApplicationsInfo.getStrApplicantInfo()" +mApplicationsInfo.getStrApplicantInfo());
-        }
 
-        Log.d("My", "DetailApplicantFragment onCreateView");
+
+//        Log.d("My", "DetailApplicantFragment onCreateView");
         return view;
     }
 }

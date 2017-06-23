@@ -41,9 +41,8 @@ public class SpecialityDBWrapper extends BaseDBWrapper {
     public ArrayList<SpecialtiesInfo> getAllSpecialitiesByIdAndDegree(long nId, long degree) {
         ArrayList<SpecialtiesInfo> arrResult = new ArrayList<>();
         SQLiteDatabase database = getReadable();
-        String strRequestFirst = SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_TIME_FORM_ID + "=?";
-        String strRequestSecond = SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_DEGREE + "=?";
-        String strRequest = strRequestFirst + " AND " + strRequestSecond;
+        String strRequest = SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_TIME_FORM_ID + "=?" + " AND "
+                + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_DEGREE + "=?";
         String arrArgs[] = new String[]{Long.toString(nId), Long.toString(degree)};
         Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null);
         try {
@@ -95,5 +94,32 @@ public class SpecialityDBWrapper extends BaseDBWrapper {
             database.close();
         }
         return specialtiesInfo;
+    }
+
+    public ArrayList<SpecialtiesInfo> getAllSpecialitiesBySearchString(long nId, long degree, String strSearch){
+        strSearch = "%" + strSearch + "%";
+        ArrayList<SpecialtiesInfo> arrResult = new ArrayList<>();
+        SQLiteDatabase db = getReadable();
+        String strRequest = SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_TIME_FORM_ID + "=?" + " AND "
+                + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_DEGREE + "=?" + " AND "
+                + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_SPECIALITY + " LIKE ? ";
+
+        String arrArgs[] = new String[]{Long.toString(nId), Long.toString(degree), strSearch};
+        Cursor cursor = db.query(getTableName(),null,strRequest,arrArgs,null,null,null);
+        try{
+            if (cursor!=null && cursor.moveToFirst()){
+                do{
+                    SpecialtiesInfo specialtiesInfo = new SpecialtiesInfo(cursor);
+                    arrResult.add(specialtiesInfo);
+
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            if (cursor!=null){
+                cursor.close();
+            }
+            db.close();
+        }
+        return arrResult;
     }
 }

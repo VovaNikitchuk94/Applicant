@@ -31,6 +31,8 @@
     <string name="drawer_item_help">Help</string>
     <string name="drawer_item_open_source">Open Source</string>
     <string name="drawer_item_contact">Contact</string>
+
+              <!--My Text-->
     <string name="share">Share</string>
     <string name="writeToUs">Write to us</string>
     <string name="estimate">Estimate</string>
@@ -50,6 +52,7 @@
     <string name="textEmptyData">Data is empty</string>
     <string name="textNOInternetConnection">No internet connection</string>
     <string name="textBadInternetConnection">Bad internet connection!</string>
+    <string name="textHintSearchCity">Enter the city</string>
 </resources>
 
 
