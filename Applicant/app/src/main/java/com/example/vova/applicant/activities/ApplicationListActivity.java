@@ -3,11 +3,13 @@ package com.example.vova.applicant.activities;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +17,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -55,7 +59,6 @@ public class ApplicationListActivity extends BaseActivity implements Application
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ProgressBar mProgressBar;
     private BottomSheetBehavior bottomSheetBehavior;
-    private SearchView searchView;
     private TextView numberTextView, nameTextView, competitionScoreTextView, BDOScoreTextView, ZNOScoreTextView;
 
     private SpecialtiesInfo mSpecialtiesInfo;
@@ -182,6 +185,36 @@ public class ApplicationListActivity extends BaseActivity implements Application
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_activity_main, menu);
 
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        //customized searchView from stackOverflow help
+        SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete)
+                searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.material_drawer_hint_text));
+        searchAutoComplete.setTextColor(Color.WHITE);
+        searchView.setQueryHint("Test");
+
+//        View searchplate = (View)searchView.findViewById(android.support.v7.appcompat.R.id.search_plate);
+//        searchplate.setBackgroundResource(R.drawable.texfield_searchview_holo_light);
+
+        //clear button
+        ImageView searchCloseIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
+        searchCloseIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
+        searchCloseIcon.setImageResource(R.drawable.ic_clear_search);
+
+//        ImageView voiceIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search);
+//        voiceIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
+//        voiceIcon.setImageResource(R.drawable.ic_search);
+
+        //top button search icon
+        ImageView searchIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
+        searchIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
+        searchIcon.setImageResource(R.drawable.ic_search);
+
         //зачем он нужен?
 //        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
 //        searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
@@ -213,9 +246,9 @@ public class ApplicationListActivity extends BaseActivity implements Application
 //        });
 
         // Associate searchable configuration with the SearchView
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+//        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+//        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+//        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -252,6 +285,27 @@ public class ApplicationListActivity extends BaseActivity implements Application
         });
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onBackPressed() {
+        ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
+        int sizeArrNow = mApplicationsInfos.size();
+        int sizeMustBe = applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId).size();
+
+//        Log.d("My", "onBackPressed mCitiesInfos.size(); -> " + mCitiesInfos.size());
+//        Log.d("My", "onBackPressed citiesInfoEngine.getAllCitiesById(mLongYearId).size() -> " + citiesInfoEngine.getAllCitiesById(mLongYearId).size());
+        if ((sizeArrNow != sizeMustBe) && isDrawerClosed()) {
+            updateInfo();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        updateInfo();
     }
 
     private void updateInfo() {

@@ -149,6 +149,7 @@ public class DetailUniversListActivity extends BaseActivity implements
             startActivity(intent);
         } else {
             if (detailUniverInfo.getStrDetailText().contains("(0)")) {
+
                 Toast.makeText(this, R.string.textEmptyData, Toast.LENGTH_SHORT).show();
             } else {
                 intent = new Intent(this, TimeFormListActivity.class);

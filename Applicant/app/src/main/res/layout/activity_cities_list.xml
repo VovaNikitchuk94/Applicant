@@ -19,20 +19,12 @@
         <!--android:transitionName="actionBar"/>-->
     <include layout="@layout/toolbar"/>
 
-
-    <!--<EditText-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/editTextFindCityCitiesActivity"-->
-        <!--tools:text="search"-->
-        <!--android:hint="Пошук міста"/>-->
-
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/textViewСhooseCityCitiesActivity"
+            android:id="@+id/textViewСhoiceCityCitiesActivity"
             style="@style/headTextViewStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -51,7 +43,7 @@
             android:id="@+id/activity_cities_swipe_refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/textViewСhooseCityCitiesActivity">
+            android:layout_below="@id/textViewСhoiceCityCitiesActivity">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerViewCitiesListActivity"

@@ -46,7 +46,6 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
-    private SearchView searchView;
 
     private ArrayList<CitiesInfo> mCitiesInfos = new ArrayList<>();
     private CitiesInfoAdapter mCitiesInfoAdapter;
@@ -94,7 +93,7 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
             }
         });
 
-        TextView textView = (TextView) findViewById(R.id.textViewСhooseCityCitiesActivity);
+        TextView textView = (TextView) findViewById(R.id.textViewСhoiceCityCitiesActivity);
         textView.setText(getText(R.string.chooseCityMainActivity));
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewCitiesListActivity);
@@ -112,41 +111,6 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_activity_main, menu);
 
-    /*
-   If you're using appcompat library, then the solution is a bit different from Jerome's answer. Here's my solution
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        restoreActionBar();
-
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-
-        SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete)searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        searchAutoComplete.setHintTextColor(Color.WHITE);
-        searchAutoComplete.setTextColor(Color.WHITE);
-
-        View searchplate = (View)searchView.findViewById(android.support.v7.appcompat.R.id.search_plate);
-        searchplate.setBackgroundResource(R.drawable.texfield_searchview_holo_light);
-
-        ImageView searchCloseIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
-        searchCloseIcon.setImageResource(R.drawable.clear_search);
-
-        ImageView voiceIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_voice_btn);
-        voiceIcon.setImageResource(R.drawable.abc_ic_voice_search);
-
-        ImageView searchIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_mag_icon);
-        searchIcon.setImageResource(R.drawable.abc_ic_search);
-
-
-        return super.onCreateOptionsMenu(menu);
-    }
-    */
-
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
@@ -154,27 +118,28 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
         //customized searchView from stackOverflow help
-        SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete)searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        searchAutoComplete.setHintTextColor(Color.WHITE);
+        SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete)
+                searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.material_drawer_hint_text));
         searchAutoComplete.setTextColor(Color.WHITE);
         searchView.setQueryHint("Test");
 
-        View searchplate = (View)searchView.findViewById(android.support.v7.appcompat.R.id.search_plate);
+//        View searchplate = (View)searchView.findViewById(android.support.v7.appcompat.R.id.search_plate);
 //        searchplate.setBackgroundResource(R.drawable.texfield_searchview_holo_light);
 
         //clear button
         ImageView searchCloseIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
         searchCloseIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
-        searchCloseIcon.setImageResource(R.drawable.clear_search);
+        searchCloseIcon.setImageResource(R.drawable.ic_clear_search);
 
-//        ImageView voiceIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_voice_btn);
+//        ImageView voiceIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search);
 //        voiceIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
-//        voiceIcon.setImageResource(R.drawable.ic_search_black_24dp);
+//        voiceIcon.setImageResource(R.drawable.ic_search);
 
-        ImageView searchIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_mag_icon);
+        //top button search icon
+        ImageView searchIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
         searchIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
-        searchIcon.setImageResource(R.drawable.ic_search_black_24dp);
-
+        searchIcon.setImageResource(R.drawable.ic_search);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -210,6 +175,14 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
             }
         });
 
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                Log.d("My", "SearchView.OnCloseListener() onClose -> ");
+                return false;
+            }
+        });
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -219,24 +192,27 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
         return super.onOptionsItemSelected(item);
     }
 
+    //TODO обработать все варианты нажатий
     @Override
-    protected void onPostResume() {
-        super.onPostResume();
-//        updateInfo();
+    public void onBackPressed() {
+        CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
+        int sizeArrNow = mCitiesInfos.size();
+        int sizeMustBe = citiesInfoEngine.getAllCitiesById(mLongYearId).size();
+
+//        Log.d("My", "onBackPressed mCitiesInfos.size(); -> " + mCitiesInfos.size());
+//        Log.d("My", "onBackPressed citiesInfoEngine.getAllCitiesById(mLongYearId).size() -> " + citiesInfoEngine.getAllCitiesById(mLongYearId).size());
+        if ((sizeArrNow != sizeMustBe) && isDrawerClosed()) {
+            updateInfo();
+        } else {
+            super.onBackPressed();
+        }
     }
 
-    //TODO обработать все варианты нажатий
-//    @Override
-//    public void onBackPressed() {
-//        if (!searchView.isIconified()) {
-//            Log.d("My", "onBackPressed  if-> ");
-//            updateInfo("");
-//            searchView.setIconified(true);
-//        } else {
-//            super.onBackPressed();
-//            Log.d("My", "onBackPressed  else-> ");
-//        }
-//    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        updateInfo();
+    }
 
     @Override
     protected int getLayoutId() {

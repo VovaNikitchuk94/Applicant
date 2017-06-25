@@ -1,6 +1,9 @@
 package com.example.vova.applicant.adapters;
 
+import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +18,7 @@ public class SpecialitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private ArrayList<SpecialtiesInfo> mSpecialtiesInfos = new ArrayList<>();
     private OnClickSpecialityItem mOnClickSpecialityItem = null;
+    private Context mContext;
 
     public SpecialitiesAdapter(ArrayList<SpecialtiesInfo> arrDetailUnivers) {
         mSpecialtiesInfos = arrDetailUnivers;
@@ -27,6 +31,8 @@ public class SpecialitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder viewHolder = null;
+
+        mContext = parent.getContext();
 
         View viewSpecialityInfo = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_specialties_info, parent, false);
@@ -44,6 +50,18 @@ public class SpecialitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         specialitiesInfoViewHolder.recommendedTextView.setText(specialtiesInfo.getStrRecommended());
         specialitiesInfoViewHolder.licenseOrderTextView.setText(specialtiesInfo.getStrLicensedOrder());
         specialitiesInfoViewHolder.volumeOrderTextView.setText(specialtiesInfo.getStrVolumeOrder());
+        //TODO обработать ошибку когда не пустые items определяються как пустые
+        //TODO обработать ошибку когда в пустые списки дублируються записи из предыдущего item
+        Log.d("My", "SpecialitiesAdapter Link ~ applications -> " + specialtiesInfo.getStrLink() + " ~ " + specialtiesInfo.getStrApplications());
+        if (specialtiesInfo.getStrLink().isEmpty() && specialtiesInfo.getStrApplications().equals("заяв: 0") && mContext != null) {
+            specialitiesInfoViewHolder.specialtyTextView.setTextColor(ContextCompat.getColor(mContext, R.color.md_grey_400));
+            specialitiesInfoViewHolder.applicationsTextView.setTextColor(ContextCompat.getColor(mContext, R.color.md_grey_400));
+            specialitiesInfoViewHolder.acceptedTextView.setTextColor(ContextCompat.getColor(mContext, R.color.md_grey_400));
+            specialitiesInfoViewHolder.recommendedTextView.setTextColor(ContextCompat.getColor(mContext, R.color.md_grey_400));
+            specialitiesInfoViewHolder.licenseOrderTextView.setTextColor(ContextCompat.getColor(mContext, R.color.md_grey_400));
+            specialitiesInfoViewHolder.volumeOrderTextView.setTextColor(ContextCompat.getColor(mContext, R.color.md_grey_400));
+
+        }
         specialitiesInfoViewHolder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

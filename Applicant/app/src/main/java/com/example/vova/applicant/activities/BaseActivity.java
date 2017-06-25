@@ -23,10 +23,13 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 public abstract class BaseActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
+    private Drawer mDrawer;
+
+    private boolean isDrawerClosed = false;
 
     public void setDrawer() {
 
-        Drawer result = new DrawerBuilder()
+        mDrawer = new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(getToolbar())
                 .withActionBarDrawerToggle(true)
@@ -63,15 +66,34 @@ public abstract class BaseActivity extends AppCompatActivity {
                                 startActivity(intent);
                                 break;
                         }
-                        Log.d("My", "int position, IDrawerItem view.getId() ->" + view.getId());
-                        Log.d("My", "int position, IDrawerItem position ->" + position);
-                        Log.d("My", "int position, IDrawerItem drawerItem ->" + drawerItem);
+                        Log.d("My", "setDrawer  view.getId() ->" + view.getId());
+                        Log.d("My", "setDrawer  position ->" + position);
+                        Log.d("My", "setDrawer  drawerItem ->" + drawerItem);
                         return false;
+                    }
+                })
+                .withCloseOnClick(true)
+                .withOnDrawerListener(new Drawer.OnDrawerListener() {
+                    @Override
+                    public void onDrawerOpened(View drawerView) {
+                        Log.d("My", " onDrawerOpened isDrawerClosed ->" +false);
+                        isDrawerClosed = false;
+                    }
+
+                    @Override
+                    public void onDrawerClosed(View drawerView) {
+                        isDrawerClosed = true;
+                        Log.d("My", " onDrawerOpened isDrawerClosed ->" +true);
+                    }
+
+                    @Override
+                    public void onDrawerSlide(View drawerView, float slideOffset) {
+
                     }
                 })
                 .build();
 
-        result.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
+        mDrawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
     }
 
     public Toolbar setToolbar() {
@@ -101,6 +123,19 @@ public abstract class BaseActivity extends AppCompatActivity {
         setToolbar();
         setDrawer();
         initActivity();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawer.isDrawerOpen()) {
+            mDrawer.closeDrawer();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    public boolean isDrawerClosed() {
+        return isDrawerClosed;
     }
 
     protected abstract void initActivity();

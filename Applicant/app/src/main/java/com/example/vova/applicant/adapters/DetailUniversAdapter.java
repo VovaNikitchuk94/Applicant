@@ -1,5 +1,7 @@
 package com.example.vova.applicant.adapters;
 
+import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,7 @@ public class DetailUniversAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     private ArrayList<DetailUniverInfo> mDetailUniverInfos = new ArrayList<>();
     private OnClickDetailUniversItem mOnClickDetailUniversItem = null;
+    private Context mContext;
 
     public DetailUniversAdapter(ArrayList<DetailUniverInfo> arrDetailUnivers) {
         mDetailUniverInfos = arrDetailUnivers;
@@ -28,6 +31,7 @@ public class DetailUniversAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder viewHolder = null;
+        mContext = parent.getContext();
 
         View viewDetailUniversityInfo = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_detail_univers_info, parent, false);
@@ -40,6 +44,9 @@ public class DetailUniversAdapter extends RecyclerView.Adapter<RecyclerView.View
         DetailUniversInfoViewHolder detailUniversInfoViewHolder = (DetailUniversInfoViewHolder) holder;
         final DetailUniverInfo detailUniverInfo = mDetailUniverInfos.get(position);
         detailUniversInfoViewHolder.nameTextView.setText(detailUniverInfo.getStrDetailText());
+        if (detailUniverInfo.getStrDetailText().contains("(0)") && mContext != null) {
+            detailUniversInfoViewHolder.nameTextView.setTextColor(ContextCompat.getColor(mContext, R.color.md_grey_400));
+        }
 //        citiesInfoViewHolder.linkTextView.setText(citiesInfo.getStrTimeFormLink());
         detailUniversInfoViewHolder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override

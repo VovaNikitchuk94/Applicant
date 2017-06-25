@@ -3,7 +3,11 @@ package com.example.vova.applicant.activities;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.vova.applicant.R;
@@ -36,7 +41,6 @@ public class UniversitiesListActivity extends BaseActivity implements
 
     private long nLongCityId = 0;
     private String mStringCategory;
-    private String mStrCitySearch = "";
 
     @Override
     protected void initActivity() {
@@ -77,49 +81,45 @@ public class UniversitiesListActivity extends BaseActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_activity_main, menu);
 
-//        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-//        searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
-//            @Override
-//            public boolean onMenuItemActionExpand(MenuItem item) {
-//
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean onMenuItemActionCollapse(MenuItem item) {
-//
-//                return true;
-//            }
-//        });
-//        searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
-//            @Override
-//            public boolean onMenuItemActionExpand(MenuItem item) {
-//                Log.d("My", "onMenuItemActionExpand");
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean onMenuItemActionCollapse(MenuItem item) {
-//                Log.d("My", "onMenuItemActionCollapse");
-//                updateInfo("");
-//                return true;
-//            }
-//        });
-
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        //customized searchView from stackOverflow help
+        SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete)
+                searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.material_drawer_hint_text));
+        searchAutoComplete.setTextColor(Color.WHITE);
+        searchView.setQueryHint("Test");
+
+//        View searchplate = (View)searchView.findViewById(android.support.v7.appcompat.R.id.search_plate);
+//        searchplate.setBackgroundResource(R.drawable.texfield_searchview_holo_light);
+
+        //clear button
+        ImageView searchCloseIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
+        searchCloseIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
+        searchCloseIcon.setImageResource(R.drawable.ic_clear_search);
+
+//        ImageView voiceIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search);
+//        voiceIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
+//        voiceIcon.setImageResource(R.drawable.ic_search);
+
+        //top button search icon
+        ImageView searchIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
+        searchIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
+        searchIcon.setImageResource(R.drawable.ic_search);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
 
                 updateInfo(query);
-//                if(!searchView.isIconified()) {
-//                    searchView.setIconified(true);
-//                }
-                searchView.setIconified(false);
+                if(!searchView.isIconified()) {
+                    searchView.setIconified(true);
+                }
+//                searchView.setIconified(false);
                 searchView.clearFocus();
 
                 return false;
@@ -158,12 +158,10 @@ public class UniversitiesListActivity extends BaseActivity implements
     private void updateInfo(){
         mUniversityInfos.clear();
         UniversitiesInfoEngine universityInfoEngine = new UniversitiesInfoEngine(getApplication());
-        if(mStrCitySearch.isEmpty()){
-            mUniversityInfos.addAll(universityInfoEngine.getAllUniversitiesByDegree(nLongCityId, mStringCategory));
-        } else {
-            mUniversityInfos.addAll(universityInfoEngine.getAllUniversitiesBySearchString(nLongCityId, mStringCategory, mStrCitySearch));
+        mUniversityInfos.addAll(universityInfoEngine.getAllUniversitiesByDegree(nLongCityId, mStringCategory));
+        if (mUniversitiesAdapter != null) {
+            mUniversitiesAdapter.notifyDataSetChanged();
         }
-        mUniversitiesAdapter.notifyDataSetChanged();
     }
 
     private void updateInfo(String search){
@@ -174,10 +172,28 @@ public class UniversitiesListActivity extends BaseActivity implements
         } else {
             mUniversityInfos.addAll(universityInfoEngine.getAllUniversitiesBySearchString(nLongCityId, mStringCategory, search));
         }
-
         if (mUniversitiesAdapter != null) {
             mUniversitiesAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        UniversitiesInfoEngine universityInfoEngine = new UniversitiesInfoEngine(getApplication());
+        int sizeArrNow = mUniversityInfos.size();
+        int sizeMustBe = universityInfoEngine.getAllUniversitiesByDegree(nLongCityId, mStringCategory).size();
+
+        if ((sizeArrNow != sizeMustBe) && isDrawerClosed()) {
+            updateInfo();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        updateInfo();
     }
 
     private void getData() {
