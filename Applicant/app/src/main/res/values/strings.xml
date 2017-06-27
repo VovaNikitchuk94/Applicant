@@ -53,6 +53,7 @@
     <string name="textNOInternetConnection">No internet connection</string>
     <string name="textBadInternetConnection">Bad internet connection!</string>
     <string name="textHintSearchCity">Enter the city</string>
+    <string name="textAddToFavorite">Add to favorite</string>
 </resources>
 
 

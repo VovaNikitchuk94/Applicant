@@ -33,6 +33,7 @@
         <activity android:name=".activities.DetailApplicantPagerActivity"/>
         <activity android:name=".activities.UniversitiesListActivity"/>
         <activity android:name=".activities.Applicant2017Activity"/>
+        <activity android:name=".activities.FavoriteItemsActivity"/>
     </application>
 
 </manifest>

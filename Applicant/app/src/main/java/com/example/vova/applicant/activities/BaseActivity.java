@@ -61,6 +61,10 @@ public abstract class BaseActivity extends AppCompatActivity {
                                 intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + "voviknik1994@gmail.com"));
                                 startActivity(intent);
                                 break;
+                            case 9:
+                                intent = new Intent(view.getContext(), FavoriteItemsActivity.class);
+                                startActivity(intent);
+                                break;
                             default:
                                 intent = new Intent(view.getContext(), TopLevelActivity.class);
                                 startActivity(intent);

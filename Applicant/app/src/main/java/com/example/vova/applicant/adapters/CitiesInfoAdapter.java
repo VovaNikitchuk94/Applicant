@@ -79,7 +79,6 @@ public class CitiesInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     public interface OnClickCityItem{
-//        void onClickCityItem(long nIdCity);
         void onClickCityItem(CitiesInfo citiesInfo);
     }
 }

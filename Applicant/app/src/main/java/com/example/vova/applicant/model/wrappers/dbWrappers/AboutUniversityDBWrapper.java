@@ -9,7 +9,7 @@ import com.example.vova.applicant.toolsAndConstans.DBConstants.AboutUniversityTa
 
 import java.util.ArrayList;
 
-public class AboutUniversityDBWrapper extends BaseDBWrapper {
+public class AboutUniversityDBWrapper extends BaseDBWrapper<AboutUniversityInfo> {
 
     public AboutUniversityDBWrapper(Context context) {
         super(context, AboutUniversityTable.TABLE_NAME);
@@ -88,5 +88,10 @@ public class AboutUniversityDBWrapper extends BaseDBWrapper {
             database.close();
         }
         return aboutUniversityInfo;
+    }
+
+    @Override
+    public void addAllItems(ArrayList<AboutUniversityInfo> aboutUniversityInfos) {
+        super.addAllItems(aboutUniversityInfos);
     }
 }

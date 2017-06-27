@@ -1,10 +1,8 @@
 package com.example.vova.applicant.model;
 
 import android.content.ContentValues;
-import android.os.Parcelable;
 
-
-public abstract class BaseEntity {
+public abstract class BaseEntity{
 
     private long mId = -1;
 
@@ -17,4 +15,9 @@ public abstract class BaseEntity {
     }
 
     public abstract ContentValues getContentValues();
+
+//    public abstract void setDataOnHolder(RecyclerView.ViewHolder)
+
+//    public abstract int getGetItemResource()
+
 }

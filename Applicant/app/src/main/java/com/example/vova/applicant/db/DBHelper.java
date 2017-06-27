@@ -30,7 +30,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 + CitiesTable.Cols.CITIES_INFO_FIELD_YEAR_ID + " INTEGER NOT NULL, "
                 + CitiesTable.Cols.CITIES_INFO_FIELD_NAME + " TEXT NOT NULL, "
                 + CitiesTable.Cols.CITIES_INFO_FIELD_LINK + " TEXT NOT NULL, "
-                + CitiesTable.Cols.CITIES_INFO_FIELD_DATE_UPDATE + " TEXT NOT NULL); ");
+                + CitiesTable.Cols.CITIES_INFO_FIELD_DATE_UPDATE + " TEXT NOT NULL, "
+                + CitiesTable.Cols.CITIES_INFO_FIELD_FAVORITE + " TEXT NOT NULL); ");
 
         sqLiteDatabase.execSQL("CREATE TABLE " + CategoryUniversTable.TABLE_NAME
                 + " (" + CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "

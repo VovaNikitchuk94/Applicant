@@ -5,12 +5,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.example.vova.applicant.model.BaseEntity;
 import com.example.vova.applicant.model.CitiesInfo;
 import com.example.vova.applicant.toolsAndConstans.DBConstants.CitiesTable;
 
 import java.util.ArrayList;
 
-public class CitiesInfoDBWrapper extends BaseDBWrapper {
+public class CitiesInfoDBWrapper<T extends BaseEntity> extends BaseDBWrapper<CitiesInfo> {
 
     public CitiesInfoDBWrapper(Context context) {
         super(context, CitiesTable.TABLE_NAME);
@@ -46,8 +47,8 @@ public class CitiesInfoDBWrapper extends BaseDBWrapper {
         try {
             if (cursor != null && cursor.moveToFirst()) {
                 do {
-                    CitiesInfo citiesInfo = new CitiesInfo(cursor);
-                    arrResult.add(citiesInfo);
+//                    CitiesInfo citiesInfo = new CitiesInfo(cursor);
+                    arrResult.add(new CitiesInfo(cursor));
 
                 } while (cursor.moveToNext());
             }
@@ -68,13 +69,23 @@ public class CitiesInfoDBWrapper extends BaseDBWrapper {
         database.close();
     }
 
-    public void addCity(CitiesInfo citiesInfo) {
-        SQLiteDatabase database = getWritable();
-        database.insert(getTableName(), null, citiesInfo.getContentValues());
-        database.close();
-    }
+//    public void addAllCities(ArrayList<CitiesInfo> citiesInfos) {
+//        SQLiteDatabase database = getWritable();
+////        boolean wasSuccess = true;
+////        maybe i must return boolean result
+//        try {
+//            database.beginTransaction();
+//            for (CitiesInfo citiesInfo : citiesInfos) {
+//                database.insert(getTableName(), null, citiesInfo.getContentValues());
+//            }
+//            database.setTransactionSuccessful();
+//        } finally {
+//            database.endTransaction();
+//            database.close();
+//        }
+//    }
 
-    public CitiesInfo getCityById(long nId) {
+        public CitiesInfo getCityById(long nId) {
         CitiesInfo citiesInfo = null;
         SQLiteDatabase database = getReadable();
         String strRequest = CitiesTable.Cols.CITIES_INFO_FIELD_YEAR_ID + "=?";
@@ -116,5 +127,48 @@ public class CitiesInfoDBWrapper extends BaseDBWrapper {
             db.close();
         }
         return arrResult;
+    }
+    public ArrayList<CitiesInfo> getAllFavoriteCities(int nFavorite) {
+        ArrayList<CitiesInfo> arrResult = new ArrayList<>();
+        SQLiteDatabase database = getReadable();
+        String strRequest = CitiesTable.Cols.CITIES_INFO_FIELD_FAVORITE + "=?";
+        String arrArgs[] = new String[]{Long.toString(nFavorite)};
+        Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    CitiesInfo citiesInfo = new CitiesInfo(cursor);
+                    arrResult.add(citiesInfo);
+
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            database.close();
+        }
+        return arrResult;
+    }
+
+    @Override
+    public void addAllItems(ArrayList<CitiesInfo> citiesItems) {
+        super.addAllItems(citiesItems);
+    }
+
+    @Override
+    public void updateAllItems(ArrayList<CitiesInfo> citiesItems) {
+
+        String strRequest = CitiesTable.Cols.CITIES_INFO_FIELD_YEAR_ID + "=?" + " AND "
+                + CitiesTable.Cols.CITIES_INFO_FIELD_NAME + "=?";
+        for (CitiesInfo citiesInfo: citiesItems) {
+            String arrArgs[] = new String[]{Long.toString(citiesInfo.getLongYearId()), citiesInfo.getStrCityName()};
+            setStrArrArgs(arrArgs);
+        }
+        setStrRequest(strRequest);
+        Log.d("My", "getStrRequest -> " + getStrRequest());
+        Log.d("My", "getStrArrArgs -> " + getStrArrArgs().length);
+
+        super.updateAllItems(citiesItems);
     }
 }

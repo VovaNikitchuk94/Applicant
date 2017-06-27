@@ -14,6 +14,7 @@ public class DBConstants {
             public static final String CITIES_INFO_FIELD_NAME = "_name";
             public static final String CITIES_INFO_FIELD_LINK = "_link";
             public static final String CITIES_INFO_FIELD_DATE_UPDATE = "_date_update";
+            public static final String CITIES_INFO_FIELD_FAVORITE = "_favorite";
         }
     }
 

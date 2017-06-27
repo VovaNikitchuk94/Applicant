@@ -30,18 +30,34 @@ public class CitiesInfoEngine extends BaseEngine {
         citiesInfoDBWrapper.updateCity(citiesInfo);
     }
 
-    public void addCity(CitiesInfo citiesInfo) {
-        CitiesInfoDBWrapper citiesInfoDBWrapper = new CitiesInfoDBWrapper(getContext());
-        citiesInfoDBWrapper.addCity(citiesInfo);
-    }
+//    public void addItem(CitiesInfo ItemInfo) {
+//        CitiesInfoDBWrapper citiesInfoDBWrapper = new CitiesInfoDBWrapper(getContext());
+//        citiesInfoDBWrapper.addItem(ItemInfo);
+//    }
 
-    public CitiesInfo getCityById(long nId){
+    public CitiesInfo getCityById(long nId) {
         CitiesInfoDBWrapper citiesInfoDBWrapper = new CitiesInfoDBWrapper(getContext());
         return citiesInfoDBWrapper.getCityById(nId);
     }
 
-    public ArrayList<CitiesInfo> getAllCitiesBySearchString(long nId, String strSearch){
+    public ArrayList<CitiesInfo> getAllCitiesBySearchString(long nId, String strSearch) {
         CitiesInfoDBWrapper citiesInfoDBWrapper = new CitiesInfoDBWrapper(getContext());
         return citiesInfoDBWrapper.getAllCitiesBySearchString(nId, strSearch);
     }
+
+    public ArrayList<CitiesInfo> getAllFavoriteCities(int nFavorite) {
+        CitiesInfoDBWrapper citiesInfoDBWrapper = new CitiesInfoDBWrapper(getContext());
+        return citiesInfoDBWrapper.getAllFavoriteCities(nFavorite);
+    }
+
+    public void addAllCities(ArrayList<CitiesInfo> citiesInfos) {
+        CitiesInfoDBWrapper citiesInfoDBWrapper = new CitiesInfoDBWrapper(getContext());
+        citiesInfoDBWrapper.addAllItems(citiesInfos);
+    }
+
+    public void updateAllCitiies(ArrayList<CitiesInfo> citiesInfos) {
+        CitiesInfoDBWrapper citiesInfoDBWrapper = new CitiesInfoDBWrapper(getContext());
+        citiesInfoDBWrapper.updateAllItems(citiesInfos);
+    }
+
 }

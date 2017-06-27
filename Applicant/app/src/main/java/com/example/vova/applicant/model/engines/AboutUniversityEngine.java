@@ -37,4 +37,11 @@ public class AboutUniversityEngine extends BaseEngine {
         AboutUniversityDBWrapper aboutUniversityDBWrapper = new AboutUniversityDBWrapper(getContext());
         return aboutUniversityDBWrapper.getAboutUniversityById(nId);
     }
+
+    public void addAllAboutUniversities(ArrayList<AboutUniversityInfo> aboutUniversityInfos){
+        AboutUniversityDBWrapper aboutUniversityDBWrapper = new AboutUniversityDBWrapper(getContext());
+        aboutUniversityDBWrapper.addAllItems(aboutUniversityInfos);
+    }
+
+
 }

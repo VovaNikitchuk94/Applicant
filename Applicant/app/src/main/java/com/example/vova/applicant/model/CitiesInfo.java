@@ -13,12 +13,14 @@ public class CitiesInfo extends BaseEntity implements Parcelable{
     private String mStrCityName;
     private String mStrCityLink;
     private String mStrDateLastUpdate;
+    private int mIsFavorite;
 
-    public CitiesInfo(long longYearId, String strCityName, String strCityLink, String strDateLastUpdate) {
+    public CitiesInfo(long longYearId, String strCityName, String strCityLink, String strDateLastUpdate, int isFavorite) {
         mLongYearId = longYearId;
         mStrCityName = strCityName;
         mStrCityLink = strCityLink;
         mStrDateLastUpdate = strDateLastUpdate;
+        mIsFavorite = isFavorite;
     }
 
     public CitiesInfo(Cursor cursor) {
@@ -27,6 +29,7 @@ public class CitiesInfo extends BaseEntity implements Parcelable{
         mStrCityName = cursor.getString(cursor.getColumnIndex(CitiesTable.Cols.CITIES_INFO_FIELD_NAME));
         mStrCityLink = cursor.getString(cursor.getColumnIndex(CitiesTable.Cols.CITIES_INFO_FIELD_LINK));
         mStrDateLastUpdate = cursor.getString(cursor.getColumnIndex(CitiesTable.Cols.CITIES_INFO_FIELD_DATE_UPDATE));
+        mIsFavorite = cursor.getInt(cursor.getColumnIndex(CitiesTable.Cols.CITIES_INFO_FIELD_FAVORITE));
     }
 
     private CitiesInfo(Parcel parcel) {
@@ -35,6 +38,7 @@ public class CitiesInfo extends BaseEntity implements Parcelable{
         mStrCityName = parcel.readString();
         mStrCityLink = parcel.readString();
         mStrDateLastUpdate = parcel.readString();
+        mIsFavorite = parcel.readInt();
     }
 
     public String getStrCityName() {
@@ -53,6 +57,13 @@ public class CitiesInfo extends BaseEntity implements Parcelable{
         return mStrDateLastUpdate;
     }
 
+    public int getFavorite() {
+        return mIsFavorite;
+    }
+
+    public void setFavorite(int isFavorite) {
+        this.mIsFavorite = isFavorite;
+    }
 
     @Override
     public ContentValues getContentValues() {
@@ -61,6 +72,7 @@ public class CitiesInfo extends BaseEntity implements Parcelable{
         values.put(CitiesTable.Cols.CITIES_INFO_FIELD_NAME, getStrCityName());
         values.put(CitiesTable.Cols.CITIES_INFO_FIELD_LINK, getStrCityLink());
         values.put(CitiesTable.Cols.CITIES_INFO_FIELD_DATE_UPDATE, getStrDateLastUpdate());
+        values.put(CitiesTable.Cols.CITIES_INFO_FIELD_FAVORITE, getFavorite());
         return values;
     }
 
@@ -76,6 +88,7 @@ public class CitiesInfo extends BaseEntity implements Parcelable{
         dest.writeString(mStrCityName);
         dest.writeString(mStrCityLink);
         dest.writeString(mStrDateLastUpdate);
+        dest.writeInt(mIsFavorite);
     }
 
     public static final Parcelable.Creator<CitiesInfo> CREATOR

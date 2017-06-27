@@ -232,6 +232,7 @@ public class AboutUniversityActivity extends BaseActivity implements
                 String wrongDog = " [ at ] ";
                 String correctDog = "@";
                 Document document;
+                ArrayList<AboutUniversityInfo> aboutUniversityInfos = new ArrayList<>();
                 try {
                     document = Jsoup.connect(html).get();
 
@@ -246,11 +247,90 @@ public class AboutUniversityActivity extends BaseActivity implements
 
                             if (!data.isEmpty()) {
                                 data = data.replace(wrongDog, correctDog);
-                                aboutUniversityEngine.addAboutUniversity(new AboutUniversityInfo(longDetailUNVId, type, data));
+                                aboutUniversityInfos.add(new AboutUniversityInfo(longDetailUNVId, type, data));
+//                                aboutUniversityEngine.addAboutUniversity(new AboutUniversityInfo(longDetailUNVId, type, data));
                                 Log.d("My", "doInBackground   link.select(\"td\").first().text() ->" + link.select("td").first().text());
                                 Log.d("My", "doInBackground    link.select(\"td\").last().text()) ->" + link.select("td").last().text());
                             }
                         }
+                        Log.d("My", "doInBackground aboutUniversityInfos.size() ->" + aboutUniversityInfos.size());
+
+
+                        aboutUniversityEngine.addAllAboutUniversities(aboutUniversityInfos);
+                    } else {
+                        for (Element link : elements) {
+                            String type = link.select("td").first().text();
+                            String data = link.select("td").last().text();
+
+                            if (!data.isEmpty()) {
+                                data = data.replace(wrongDog, correctDog);
+                                aboutUniversityEngine.updateAboutUniversity(new AboutUniversityInfo(longDetailUNVId, type, data));
+                                Log.d("My", "doInBackground   link.select(\"td\").first().text() ->" + link.select("td").first().text());
+                                Log.d("My", "doInBackground    link.select(\"td\").last().text()) ->" + link.select("td").last().text());
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    private void updateData() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                final AboutUniversityEngine aboutUniversityEngine = new AboutUniversityEngine(getApplication());
+
+                if (Utils.connectToData(mDetailUniverInfo.getStrDetailLink()) && mLongDetailUNVId != 0) {
+                    update(mLongDetailUNVId, aboutUniversityEngine);
+                }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mProgressBar.setVisibility(View.VISIBLE);
+                        final AboutUniversityEngine aboutUniversityEngine = new AboutUniversityEngine(getApplication());
+                        getData(aboutUniversityEngine);
+                    }
+                });
+            }
+
+            private void update(long longDetailUNVId, AboutUniversityEngine aboutUniversityEngine) {
+                String html;
+                html = mDetailUniverInfo.getStrDetailLink();
+                Log.d("My", "ParseAboutUniversityList doInBackground  mHtml ->" + html);
+                String wrongDog = " [ at ] ";
+                String correctDog = "@";
+                Document document;
+                ArrayList<AboutUniversityInfo> aboutUniversityInfos = new ArrayList<>();
+                try {
+                    document = Jsoup.connect(html).get();
+
+                    Element elementAboutUniversities = document.getElementById("about");
+                    Elements elements = elementAboutUniversities.getElementsByTag("tr");
+
+                    //add new element to array only when text with data isn't empty
+                    if (aboutUniversityEngine.getAboutAllUnivesitiesById(mLongDetailUNVId).isEmpty()) {
+                        for (Element link : elements) {
+                            String type = link.select("td").first().text();
+                            String data = link.select("td").last().text();
+
+                            if (!data.isEmpty()) {
+                                data = data.replace(wrongDog, correctDog);
+                                aboutUniversityInfos.add(new AboutUniversityInfo(longDetailUNVId, type, data));
+//                                aboutUniversityEngine.addAboutUniversity(new AboutUniversityInfo(longDetailUNVId, type, data));
+                                Log.d("My", "doInBackground   link.select(\"td\").first().text() ->" + link.select("td").first().text());
+                                Log.d("My", "doInBackground    link.select(\"td\").last().text()) ->" + link.select("td").last().text());
+                            }
+                        }
+                        Log.d("My", "doInBackground aboutUniversityInfos.size() ->" + aboutUniversityInfos.size());
+
+
+                        aboutUniversityEngine.addAllAboutUniversities(aboutUniversityInfos);
                     } else {
                         for (Element link : elements) {
                             String type = link.select("td").first().text();
