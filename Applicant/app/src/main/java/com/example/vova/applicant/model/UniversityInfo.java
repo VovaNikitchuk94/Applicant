@@ -14,14 +14,16 @@ public class UniversityInfo extends BaseEntity implements Parcelable {
     private String mStrCategoryUniversLink;
     private String mStrUniversityName;
     private String mStrUniversityLink;
+    private int mIsFavorite;
 
     public UniversityInfo(long longCityId, String strCategoryUniversName, String strCategoryUniversLink,
-                          String strUniversityName, String strUniversityLink) {
+                          String strUniversityName, String strUniversityLink, int isFavorite) {
         mLongCityId = longCityId;
         mStrCategoryUniversName = strCategoryUniversName;
         mStrCategoryUniversLink = strCategoryUniversLink;
         mStrUniversityName = strUniversityName;
         mStrUniversityLink = strUniversityLink;
+        mIsFavorite = isFavorite;
     }
 
     public UniversityInfo(Cursor cursor) {
@@ -31,6 +33,7 @@ public class UniversityInfo extends BaseEntity implements Parcelable {
         mStrCategoryUniversLink = cursor.getString(cursor.getColumnIndex(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_CATEGORY_LINK));
         mStrUniversityName = cursor.getString(cursor.getColumnIndex(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_NAME));
         mStrUniversityLink = cursor.getString(cursor.getColumnIndex(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_LINK));
+        mIsFavorite = cursor.getInt(cursor.getColumnIndex(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_FAVORITE));
     }
 
     private UniversityInfo(Parcel parcel) {
@@ -40,6 +43,7 @@ public class UniversityInfo extends BaseEntity implements Parcelable {
         mStrCategoryUniversLink = parcel.readString();
         mStrUniversityName = parcel.readString();
         mStrUniversityLink = parcel.readString();
+        mIsFavorite = parcel.readInt();
     }
 
     public String getStrUniversityName() {
@@ -58,9 +62,16 @@ public class UniversityInfo extends BaseEntity implements Parcelable {
         return mStrCategoryUniversName;
     }
 
-
     public String getStrCategoryUniversLink() {
         return mStrCategoryUniversLink;
+    }
+
+    public int getIsFavorite() {
+        return mIsFavorite;
+    }
+
+    public void setIsFavorite(int isFavorite) {
+        mIsFavorite = isFavorite;
     }
 
     @Override
@@ -71,6 +82,7 @@ public class UniversityInfo extends BaseEntity implements Parcelable {
         values.put(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_CATEGORY_LINK, getStrCategoryUniversLink());
         values.put(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_NAME, getStrUniversityName());
         values.put(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_LINK, getStrUniversityLink());
+        values.put(UniversityTable.Cols.UNIVERSITY_INFO_FIELD_FAVORITE, getIsFavorite());
         return values;
     }
 
@@ -87,6 +99,7 @@ public class UniversityInfo extends BaseEntity implements Parcelable {
         dest.writeString(mStrCategoryUniversLink);
         dest.writeString(mStrUniversityName);
         dest.writeString(mStrUniversityLink);
+        dest.writeInt(mIsFavorite);
     }
 
     public static final Parcelable.Creator<UniversityInfo> CREATOR

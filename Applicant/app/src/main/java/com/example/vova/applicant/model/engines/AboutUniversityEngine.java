@@ -43,5 +43,10 @@ public class AboutUniversityEngine extends BaseEngine {
         aboutUniversityDBWrapper.addAllItems(aboutUniversityInfos);
     }
 
+    public void updateAllAboutUniversities(ArrayList<AboutUniversityInfo> aboutUniversityInfos) {
+        AboutUniversityDBWrapper aboutUniversityDBWrapper = new AboutUniversityDBWrapper(getContext());
+        aboutUniversityDBWrapper.updateAllItems(aboutUniversityInfos);
 
-}
+    }
+
+    }

@@ -9,7 +9,7 @@ import com.example.vova.applicant.toolsAndConstans.DBConstants.CategoryUniversTa
 
 import java.util.ArrayList;
 
-public class CategoryUniversInfoDBWrapper extends BaseDBWrapper {
+public class CategoryUniversInfoDBWrapper extends BaseDBWrapper<CategoryUniversInfo> {
 
     public CategoryUniversInfoDBWrapper(Context context) {
         super(context, CategoryUniversTable.TABLE_NAME);
@@ -70,5 +70,25 @@ public class CategoryUniversInfoDBWrapper extends BaseDBWrapper {
             database.close();
         }
         return categoryUniversInfo;
+    }
+
+    @Override
+    public void addAllItems(ArrayList<CategoryUniversInfo> categoryUniversItems) {
+        super.addAllItems(categoryUniversItems);
+    }
+
+    @Override
+    public void updateAllItems(ArrayList<CategoryUniversInfo> categoryUniversItems) {
+
+        String strRequest = CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_CITIES_ID + "=?" + " AND "
+                + CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_NAME + "=?";
+        for (CategoryUniversInfo categoryUniversInfo: categoryUniversItems) {
+            String arrArgs[] = new String[]{Long.toString(categoryUniversInfo.getLongCityId()),
+                    categoryUniversInfo.getStrCategoryName()};
+            setStrArrArgs(arrArgs);
+        }
+        setStrRequest(strRequest);
+
+        super.updateAllItems(categoryUniversItems);
     }
 }

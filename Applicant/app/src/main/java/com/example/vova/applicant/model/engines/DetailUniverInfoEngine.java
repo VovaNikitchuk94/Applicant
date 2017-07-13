@@ -1,12 +1,9 @@
 package com.example.vova.applicant.model.engines;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.example.vova.applicant.model.DetailUniverInfo;
-import com.example.vova.applicant.model.UniversityInfo;
 import com.example.vova.applicant.model.wrappers.dbWrappers.DetailUniverDBWrapper;
-import com.example.vova.applicant.model.wrappers.dbWrappers.UniversitiesInfoDBWrapper;
 
 import java.util.ArrayList;
 
@@ -36,9 +33,18 @@ public class DetailUniverInfoEngine extends BaseEngine {
         detailUniverDBWrapper.addDetailUniver(detailUniverInfo);
     }
 
-    public DetailUniverInfo getDetailUniverById(long nId){
+    public DetailUniverInfo getDetailUniverById(long nId) {
         DetailUniverDBWrapper detailUniverDBWrapper = new DetailUniverDBWrapper(getContext());
         return detailUniverDBWrapper.getDetailUniverById(nId);
     }
 
+    public void addAllDetailInfo(ArrayList<DetailUniverInfo> detailUniverItems) {
+        DetailUniverDBWrapper detailUniverDBWrapper = new DetailUniverDBWrapper(getContext());
+        detailUniverDBWrapper.addAllItems(detailUniverItems);
+    }
+
+    public void updateAllDetailInfo(ArrayList<DetailUniverInfo> detailUniverItems) {
+        DetailUniverDBWrapper detailUniverDBWrapper = new DetailUniverDBWrapper(getContext());
+        detailUniverDBWrapper.updateAllItems(detailUniverItems);
+    }
 }

@@ -12,15 +12,24 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.Calendar;
 
 import javax.net.ssl.HttpsURLConnection;
 
 public final class Utils {
 
-    public static final String My = Utils.class.getSimpleName();
+    private static boolean mIsNeedToEqualsTime = false;
+
+    public static boolean isNeedToEqualsTime() {
+        return mIsNeedToEqualsTime;
+    }
+
+    public static void setNeedToEqualsTime(boolean needToEqualsTime) {
+        mIsNeedToEqualsTime = needToEqualsTime;
+    }
 
     public static boolean connectToData(String requestUrl) {
-        Log.d("My", "String My -> " + My);
+        Log.d("My", "String My -> " );
         // Create URL object
         URL url = createUrl(requestUrl);
 
@@ -29,7 +38,7 @@ public final class Utils {
         try {
             linkResponse = makeHttpRequest(url);
         } catch (IOException e) {
-            Log.e(My, "Error closing input stream", e);
+            Log.e("My", "Error closing input stream", e);
         }
 
         return !TextUtils.isEmpty(linkResponse);
@@ -40,11 +49,10 @@ public final class Utils {
         try {
             url = new URL(stringUrl);
         } catch (MalformedURLException e) {
-            Log.e(My, "Error with creating URL ", e);
+            Log.e("My", "Error with creating URL ", e);
         }
         return url;
     }
-
 
     private static String makeHttpRequest(URL url) throws IOException {
         String linkResponse = "";
@@ -70,10 +78,10 @@ public final class Utils {
                 inputStream = urlConnection.getInputStream();
                 linkResponse = readFromStream(inputStream);
             } else {
-                Log.e(My, "Error response code: " + urlConnection.getResponseCode());
+                Log.e("My", "Error response code: " + urlConnection.getResponseCode());
             }
         } catch (IOException e) {
-            Log.e(My, "IOException -> results.", e);
+            Log.e("My", "IOException -> results.", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -98,5 +106,11 @@ public final class Utils {
             }
         }
         return output.toString();
+    }
+
+    public static Calendar getModDeviceTime() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MINUTE, 45);
+        return calendar;
     }
 }

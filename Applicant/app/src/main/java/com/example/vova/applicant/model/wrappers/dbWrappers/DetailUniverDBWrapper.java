@@ -3,6 +3,7 @@ package com.example.vova.applicant.model.wrappers.dbWrappers;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.vova.applicant.model.DetailUniverInfo;
 import com.example.vova.applicant.toolsAndConstans.DBConstants;
@@ -10,7 +11,7 @@ import com.example.vova.applicant.toolsAndConstans.DBConstants.UniversityDetailT
 
 import java.util.ArrayList;
 
-public class DetailUniverDBWrapper extends BaseDBWrapper {
+public class DetailUniverDBWrapper extends BaseDBWrapper<DetailUniverInfo> {
 
     public DetailUniverDBWrapper(Context context) {
         super(context, UniversityDetailTable.TABLE_NAME);
@@ -91,5 +92,27 @@ public class DetailUniverDBWrapper extends BaseDBWrapper {
             database.close();
         }
         return detailUniverInfo;
+    }
+
+    @Override
+    public void addAllItems(ArrayList<DetailUniverInfo> detailUniverItems) {
+        super.addAllItems(detailUniverItems);
+    }
+
+    @Override
+    public void updateAllItems(ArrayList<DetailUniverInfo> detailUniverItems) {
+
+        String strRequest = UniversityDetailTable.Cols.UNIVERSITY_DETAIL_INFO_FIELD_UNV_ID + "=?" + " AND "
+                + UniversityDetailTable.Cols.UNIVERSITY_DETAIL_INFO_FIELD_NAME + "=?";
+        for (DetailUniverInfo detailUniverInfo: detailUniverItems) {
+            String arrArgs[] = new String[]{Long.toString(detailUniverInfo.getLongUniversityId()),
+                    detailUniverInfo.getStrDetailText()};
+            setStrArrArgs(arrArgs);
+        }
+        setStrRequest(strRequest);
+        Log.d("My", "getStrRequest -> " + getStrRequest());
+        Log.d("My", "getStrArrArgs -> " + getStrArrArgs().length);
+
+        super.updateAllItems(detailUniverItems);
     }
 }

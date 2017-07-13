@@ -1,35 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".activities.CitiesListActivity">
 
-    <!--<android.support.v7.widget.Toolbar-->
-        <!--android:id="@+id/toolbar"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:background="?attr/colorPrimary"-->
-        <!--android:elevation="4dp"-->
-        <!--android:minHeight="?attr/actionBarSize"-->
-        <!--app:titleTextColor="@color/md_white_1000"-->
-        <!--android:transitionName="actionBar"/>-->
     <include layout="@layout/toolbar"/>
 
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
 
-        <TextView
-            android:id="@+id/textViewСhoiceCityCitiesActivity"
-            style="@style/headTextViewStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            tools:text="TExtView HEad"/>
+        <!--<TextView-->
+            <!--android:id="@+id/textViewСhoiceCityCitiesActivity"-->
+            <!--style="@style/headTextViewStyle"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--tools:text="TExtView HEad"/>-->
 
         <ProgressBar
             android:id="@+id/progress_bar"
@@ -42,8 +34,8 @@
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/activity_cities_swipe_refresh_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/textViewСhoiceCityCitiesActivity">
+            android:layout_height="wrap_content">
+            <!--android:layout_below="@id/textViewСhoiceCityCitiesActivity">-->
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerViewCitiesListActivity"

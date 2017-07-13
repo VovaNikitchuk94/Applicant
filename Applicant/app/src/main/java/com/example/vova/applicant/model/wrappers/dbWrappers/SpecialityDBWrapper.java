@@ -6,11 +6,12 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.vova.applicant.model.SpecialtiesInfo;
 
+import com.example.vova.applicant.toolsAndConstans.DBConstants;
 import com.example.vova.applicant.toolsAndConstans.DBConstants.SpecialitiesTable;
 
 import java.util.ArrayList;
 
-public class SpecialityDBWrapper extends BaseDBWrapper {
+public class SpecialityDBWrapper extends BaseDBWrapper<SpecialtiesInfo> {
 
     public SpecialityDBWrapper(Context context) {
         super(context, SpecialitiesTable.TABLE_NAME);
@@ -119,6 +120,47 @@ public class SpecialityDBWrapper extends BaseDBWrapper {
                 cursor.close();
             }
             db.close();
+        }
+        return arrResult;
+    }
+
+    @Override
+    public void addAllItems(ArrayList<SpecialtiesInfo> specialityItems) {
+        super.addAllItems(specialityItems);
+    }
+
+    @Override
+    public void updateAllItems(ArrayList<SpecialtiesInfo> specialityItems) {
+
+        String strRequest = SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_TIME_FORM_ID + "=?" + " AND "
+                + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_SPECIALITY + "=?";
+        for (SpecialtiesInfo specialtiesInfo: specialityItems) {
+            String arrArgs[] = new String[]{Long.toString(specialtiesInfo.getLongTimeFormId()), specialtiesInfo.getStrSpecialty()};
+            setStrArrArgs(arrArgs);
+        }
+        setStrRequest(strRequest);
+        super.updateAllItems(specialityItems);
+    }
+
+    public ArrayList<SpecialtiesInfo> getAllFavoriteSpecialities() {
+        ArrayList<SpecialtiesInfo> arrResult = new ArrayList<>();
+        SQLiteDatabase database = getReadable();
+        String strRequest = SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_FAVORITE + "=?";
+        String arrArgs[] = new String[]{Integer.toString(DBConstants.Favorite.FAVORITE)};
+        Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    SpecialtiesInfo specialtiesInfo = new SpecialtiesInfo(cursor);
+                    arrResult.add(specialtiesInfo);
+
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            database.close();
         }
         return arrResult;
     }

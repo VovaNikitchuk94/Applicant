@@ -20,10 +20,11 @@ public class SpecialtiesInfo extends BaseEntity implements Parcelable {
     private String mStrExam;
     private String mStrLink;
     private String mStrDateLastUpdate;
+    private int mIsFavorite;
 
     public SpecialtiesInfo(long longTimeFormId, long longDegree, String strSpecialty, String strApplications,
-                           String strAccepted, String strRecommended, String strLicensedOrder,
-                           String strVolumeOrder, String strExam, String strLink, String strDateLastUpdate) {
+                           String strAccepted, String strRecommended, String strLicensedOrder, String strVolumeOrder,
+                           String strExam, String strLink, String strDateLastUpdate, int isFavorite) {
         mLongTimeFormId = longTimeFormId;
         mLongDegree = longDegree;
         mStrSpecialty = strSpecialty;
@@ -35,6 +36,7 @@ public class SpecialtiesInfo extends BaseEntity implements Parcelable {
         mStrExam = strExam;
         mStrLink = strLink;
         mStrDateLastUpdate = strDateLastUpdate;
+        mIsFavorite = isFavorite;
     }
 
     public SpecialtiesInfo(Cursor cursor) {
@@ -50,6 +52,7 @@ public class SpecialtiesInfo extends BaseEntity implements Parcelable {
         mStrExam = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_EXAMS));
         mStrLink = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_LINK));
         mStrDateLastUpdate = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_DATE_UPDATE));
+        mIsFavorite = cursor.getInt(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_FAVORITE));
     }
 
     private SpecialtiesInfo(Parcel parcel) {
@@ -65,6 +68,7 @@ public class SpecialtiesInfo extends BaseEntity implements Parcelable {
         mStrExam = parcel.readString();
         mStrLink = parcel.readString();
         mStrDateLastUpdate = parcel.readString();
+        mIsFavorite = parcel.readInt();
     }
 
     public String getStrSpecialty() {
@@ -111,6 +115,14 @@ public class SpecialtiesInfo extends BaseEntity implements Parcelable {
         return mStrDateLastUpdate;
     }
 
+    public int getIsFavorite() {
+        return mIsFavorite;
+    }
+
+    public void setIsFavorite(int isFavorite) {
+        mIsFavorite = isFavorite;
+    }
+
     @Override
     public ContentValues getContentValues() {
         ContentValues values = new ContentValues();
@@ -125,6 +137,7 @@ public class SpecialtiesInfo extends BaseEntity implements Parcelable {
         values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_EXAMS, getStrExam());
         values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_LINK, getStrLink());
         values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_DATE_UPDATE, getStrDateLastUpdate());
+        values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_FAVORITE, getIsFavorite());
         return values;
     }
 
@@ -147,6 +160,7 @@ public class SpecialtiesInfo extends BaseEntity implements Parcelable {
         dest.writeString(mStrExam);
         dest.writeString(mStrLink);
         dest.writeString(mStrDateLastUpdate);
+        dest.writeInt(mIsFavorite);
     }
 
     public static final Parcelable.Creator<SpecialtiesInfo> CREATOR

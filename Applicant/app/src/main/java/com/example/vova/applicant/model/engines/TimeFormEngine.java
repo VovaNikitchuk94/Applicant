@@ -20,7 +20,6 @@ public class TimeFormEngine extends BaseEngine {
     }
 
     public ArrayList<TimeFormInfo> getAllTimeFormsById(long nId) {
-        Log.d("My", "TimeFormEngine ----------> getAllTimeFormsById");
         TimeFormDBWrapper timeFormDBWrapper = new TimeFormDBWrapper(getContext());
         return timeFormDBWrapper.getAllTimeFormsById(nId);
     }
@@ -35,8 +34,18 @@ public class TimeFormEngine extends BaseEngine {
         timeFormDBWrapper.addTimeForm(timeFormInfo);
     }
 
-    public TimeFormInfo getTimeFormById(long nId){
+    public TimeFormInfo getTimeFormById(long nId) {
         TimeFormDBWrapper timeFormDBWrapper = new TimeFormDBWrapper(getContext());
         return timeFormDBWrapper.getTimeFormById(nId);
+    }
+
+    public void addAllTimeForms(ArrayList<TimeFormInfo> timeFormsItems) {
+        TimeFormDBWrapper timeFormDBWrapper = new TimeFormDBWrapper(getContext());
+        timeFormDBWrapper.addAllItems(timeFormsItems);
+    }
+
+    public void updateAllTimeForms(ArrayList<TimeFormInfo> timeFormsItems) {
+        TimeFormDBWrapper timeFormDBWrapper = new TimeFormDBWrapper(getContext());
+        timeFormDBWrapper.updateAllItems(timeFormsItems);
     }
 }

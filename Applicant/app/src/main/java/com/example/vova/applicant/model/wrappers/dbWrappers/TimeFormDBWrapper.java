@@ -9,7 +9,7 @@ import com.example.vova.applicant.toolsAndConstans.DBConstants.TimeFormTable;
 
 import java.util.ArrayList;
 
-public class TimeFormDBWrapper extends BaseDBWrapper {
+public class TimeFormDBWrapper extends BaseDBWrapper<TimeFormInfo> {
 
     public TimeFormDBWrapper(Context context) {
         super(context, TimeFormTable.TABLE_NAME);
@@ -88,5 +88,25 @@ public class TimeFormDBWrapper extends BaseDBWrapper {
             database.close();
         }
         return timeFormInfo;
+    }
+
+    @Override
+    public void addAllItems(ArrayList<TimeFormInfo> timeFormsItems) {
+        super.addAllItems(timeFormsItems);
+    }
+
+    @Override
+    public void updateAllItems(ArrayList<TimeFormInfo> timeFormsItems) {
+
+        String strRequest = TimeFormTable.Cols.TIME_FORM_INFO_FIELD_DETAIL_UNV_ID + "=?" + " AND "
+                + TimeFormTable.Cols.TIME_FORM_INFO_FIELD_NAME + "=?";
+
+        for (TimeFormInfo timeFormInfo : timeFormsItems) {
+            String arrArgs[] = new String[]{Long.toString(timeFormInfo.getLongDetailUNVId()),
+                    timeFormInfo.getStrTimeFormName()};
+            setStrArrArgs(arrArgs);
+        }
+        setStrRequest(strRequest);
+        super.updateAllItems(timeFormsItems);
     }
 }

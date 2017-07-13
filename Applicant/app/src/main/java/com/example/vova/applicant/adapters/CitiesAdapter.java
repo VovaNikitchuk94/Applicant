@@ -15,12 +15,12 @@ import com.example.vova.applicant.model.CitiesInfo;
 
 import java.util.ArrayList;
 
-public class CitiesInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class CitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<CitiesInfo> mCitiesInfos = new ArrayList<>();
     private OnClickCityItem mOnClickCityItem = null;
 
-    public CitiesInfoAdapter(ArrayList<CitiesInfo> arrCities) {
+    public CitiesAdapter(ArrayList<CitiesInfo> arrCities) {
         mCitiesInfos = arrCities;
     }
 
@@ -43,10 +43,6 @@ public class CitiesInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         CitiesInfoViewHolder citiesInfoViewHolder = (CitiesInfoViewHolder) holder;
         final CitiesInfo citiesInfo = mCitiesInfos.get(position);
         citiesInfoViewHolder.nameTextView.setText(citiesInfo.getStrCityName());
-
-//        citiesInfoViewHolder.mImageButton.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-        citiesInfoViewHolder.mImageButton.setBackgroundColor(Color.parseColor("#F9F9F9"));
-//        citiesInfoViewHolder.linkTextView.setText(citiesInfo.getStrTimeFormLink());
         citiesInfoViewHolder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,15 +62,11 @@ public class CitiesInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         View rootView;
         TextView nameTextView;
-        ImageButton mImageButton;
-//        TextView linkTextView;
 
         CitiesInfoViewHolder(View itemView) {
             super(itemView);
             rootView = itemView;
             nameTextView = (TextView) itemView.findViewById(R.id.textViewCitiesInfoNameCitiesInfoItem);
-            mImageButton = (ImageButton)itemView.findViewById(R.id.imageButtonFavoriteCityCitiesInfoItem);
-//            linkTextView = (TextView) itemView.findViewById(R.id.textViewCitiesInfoLinkCitiesInfoItem);
         }
     }
 

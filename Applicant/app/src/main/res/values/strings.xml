@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Applicant</string>
+    <string name="app_name">Enrollee</string>
 
     <string name="textViewChooseUniversityUniversityActivity">Please, choose university</string>
     <string name="headTextAboutUniversityActivity">Information about University</string>
@@ -54,6 +54,16 @@
     <string name="textBadInternetConnection">Bad internet connection!</string>
     <string name="textHintSearchCity">Enter the city</string>
     <string name="textAddToFavorite">Add to favorite</string>
+    <string name="textProblemsWithgettingData">Problems with getting data</string>
+    <string name="title_text_add_to_favorite">Add to favorite</string>
+    <string name="textTitleCities">Cities</string>
+    <string name="textCities">Cities</string>
+    <string name="textUniversities">Universities</string>
+    <string name="textSpecialities">Specialities</string>
+    <string name="textArchive">Archive</string>
+    <string name="textHintSearchCities">Search City</string>
+    <string name="textHintSearchUniversity">Search University</string>
+    <string name="textHintSearchEnrollee">Search enrollee</string>
 </resources>
 
 

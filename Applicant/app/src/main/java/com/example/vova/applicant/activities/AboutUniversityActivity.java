@@ -13,13 +13,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.vova.applicant.R;
-import com.example.vova.applicant.utils.Utils;
 import com.example.vova.applicant.adapters.AboutUniversityAdapter;
 import com.example.vova.applicant.model.AboutUniversityInfo;
 import com.example.vova.applicant.model.DetailUniverInfo;
 import com.example.vova.applicant.model.engines.AboutUniversityEngine;
+import com.example.vova.applicant.toolsAndConstans.DBConstants;
+import com.example.vova.applicant.utils.Utils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,25 +30,29 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class AboutUniversityActivity extends BaseActivity implements
         AboutUniversityAdapter.OnClickAboutUniversityItem {
 
-    public static final String KEY_ABOUT_UNIVERSITY_ACTIVITY =
-            "KEY_ABOUT_UNIVERSITY_ACTIVITY";
+    public static final String KEY_ABOUT_UNIVERSITY_ACTIVITY = "KEY_ABOUT_UNIVERSITY_ACTIVITY";
 
     private DetailUniverInfo mDetailUniverInfo;
-
-    private long mLongDetailUNVId;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
+    private Calendar mCalendar;
+
+    private long mLongDetailUNVId;
+    private String mDetailCodeLink = "";
 
     @Override
     protected void initActivity() {
-
         Log.d("My", "AboutUniversityActivity -> OnCreate");
+
+        Utils.setNeedToEqualsTime(true);
+        mCalendar = Utils.getModDeviceTime();
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -54,6 +60,10 @@ public class AboutUniversityActivity extends BaseActivity implements
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
                 mDetailUniverInfo = (DetailUniverInfo) bundle.get(KEY_ABOUT_UNIVERSITY_ACTIVITY);
+                if (mDetailUniverInfo != null) {
+                    mLongDetailUNVId = mDetailUniverInfo.getId();
+                    mDetailCodeLink = mDetailUniverInfo.getStrDetailLink();
+                }
             }
         }
 
@@ -66,10 +76,11 @@ public class AboutUniversityActivity extends BaseActivity implements
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(true);
                 mRecyclerView.setVisibility(View.GONE);
-                parseData();
-                Log.d("My", "SwipeRefreshLayout -> parseData -> is start");
-                mRecyclerView.setVisibility(View.VISIBLE);
-                mSwipeRefreshLayout.setRefreshing(false);
+                if (!isOnline(getApplicationContext())) {
+                    Toast.makeText(getApplicationContext(), R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
+                } else {
+                    parseData(DBConstants.Update.NEED_AN_UPDATE);
+                }
             }
         });
 
@@ -93,22 +104,49 @@ public class AboutUniversityActivity extends BaseActivity implements
     }
 
     private void setData() {
-        mLongDetailUNVId = mDetailUniverInfo.getId();
         AboutUniversityEngine aboutUniversityEngine = new AboutUniversityEngine(getApplication());
+
         if (aboutUniversityEngine.getAboutAllUnivesitiesById(mLongDetailUNVId).isEmpty()) {
-            parseData();
+            if (!isOnline(this)) {
+                Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                parseData(DBConstants.Update.NO_NEED_TO_UPDATE);
+            }
         } else {
-            getData(aboutUniversityEngine);
+            if (isDateComparison()) {
+                getData();
+            } else {
+                if (!isOnline(this)) {
+                    Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
+                } else {
+                    parseData(DBConstants.Update.NEED_AN_UPDATE);
+                }
+            }
         }
     }
 
-    private void getData(AboutUniversityEngine aboutUniversityEngine) {
+    private void getData() {
+        AboutUniversityEngine aboutUniversityEngine = new AboutUniversityEngine(getApplication());
         ArrayList<AboutUniversityInfo> aboutUniversityInfos = aboutUniversityEngine.getAboutAllUnivesitiesById(mLongDetailUNVId);
         AboutUniversityAdapter universityInfoAdapter = new AboutUniversityAdapter(aboutUniversityInfos);
         universityInfoAdapter.setOnClickListenerAdapter(AboutUniversityActivity.this);
         mRecyclerView.setAdapter(universityInfoAdapter);
         mRecyclerView.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.GONE);
+    }
+
+    private Boolean isDateComparison() {
+
+        Calendar calendarCurrentTime = Calendar.getInstance();
+        if (Utils.isNeedToEqualsTime()) {
+
+            mCalendar.after(calendarCurrentTime);
+            return true;
+        } else {
+            mCalendar = Utils.getModDeviceTime();
+            return false;
+        }
     }
 
     @Override
@@ -132,7 +170,7 @@ public class AboutUniversityActivity extends BaseActivity implements
                 intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                 startActivity(intent);
                 //open for google Maps
-//                        intent.setPackage("com.google.android.apps.maps");
+//              intent.setPackage("com.google.android.apps.maps");
                 break;
             case "Телефони:":
                 //TODO правильность написания номера и если у номера нет кода города
@@ -156,25 +194,6 @@ public class AboutUniversityActivity extends BaseActivity implements
                         for (int i = 1; i < phoneNumbers.length; i++) {
                             phoneNumbers[i] = phoneCode + phoneNumbers[i];
                         }
-//                        if (phoneNumbers[0].startsWith("+")) {
-//                            String countryCode = (phoneNumbers[0]).substring(0, 8);
-//                            for (int i = 1; i < phoneNumbers.length; i++) {
-//                                phoneNumbers[i] = countryCode + phoneNumbers[i];
-//                            }
-//                            Log.d("My", "case \"Телефони:\": cityCode->>>>>" + countryCode);
-//                        } else {
-//                            String cityCode;
-//                            if (phoneNumbers[0].startsWith("(")) {
-//                                cityCode = (phoneNumbers[0]).substring(0, 5);
-//                                Log.d("My", "case \"Телефони:\": cityCode->>>>>" + cityCode);
-//                            } else {
-//                                cityCode = (phoneNumbers[0]).substring(0, 3);
-//                            }
-//
-//                            for (int i = 1; i < phoneNumbers.length; i++) {
-//                                phoneNumbers[i] = cityCode + phoneNumbers[i];
-//                            }
-//                        }
                     }
                     final String[] finalPhoneNumber = phoneNumbers;
                     AlertDialog.Builder builder = new AlertDialog.Builder(AboutUniversityActivity.this);
@@ -192,9 +211,6 @@ public class AboutUniversityActivity extends BaseActivity implements
                     intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + dataLink));
                     startActivity(intent);
                 }
-
-                Log.d("My", "phoneNumbers " + phoneNumbers.length);
-//                intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + dataLink));
                 break;
             case "E-mail:":
                 intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + dataLink));
@@ -203,7 +219,7 @@ public class AboutUniversityActivity extends BaseActivity implements
         }
     }
 
-    private void parseData() {
+    private void parseData(final boolean isNeedUpdate) {
 
         new Thread(new Runnable() {
             @Override
@@ -211,138 +227,57 @@ public class AboutUniversityActivity extends BaseActivity implements
 
                 final AboutUniversityEngine aboutUniversityEngine = new AboutUniversityEngine(getApplication());
 
-                if (Utils.connectToData(mDetailUniverInfo.getStrDetailLink()) && mLongDetailUNVId != 0) {
-                    parse(mLongDetailUNVId, aboutUniversityEngine);
-                }
+                if (Utils.connectToData(mDetailUniverInfo.getStrDetailLink()) && mLongDetailUNVId > -1) {
+                    parse(mLongDetailUNVId, aboutUniversityEngine, isNeedUpdate);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mSwipeRefreshLayout.isRefreshing()) {
+                                getData();
+                                mSwipeRefreshLayout.setRefreshing(false);
+                            } else {
+                                mProgressBar.setVisibility(View.VISIBLE);
+                                getData();
+                            }
+                        }
+                    });
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mProgressBar.setVisibility(View.VISIBLE);
-                        final AboutUniversityEngine aboutUniversityEngine = new AboutUniversityEngine(getApplication());
-                        getData(aboutUniversityEngine);
-                    }
-                });
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), R.string.textBadInternetConnection, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
 
-            private void parse(long longDetailUNVId, AboutUniversityEngine aboutUniversityEngine) {
-                String html;
-                html = mDetailUniverInfo.getStrDetailLink();
-                Log.d("My", "ParseAboutUniversityList doInBackground  mHtml ->" + html);
+            private void parse(long longDetailUNVId, AboutUniversityEngine aboutUniversityEngine, boolean isNeedUpdate) {
+
                 String wrongDog = " [ at ] ";
                 String correctDog = "@";
                 Document document;
                 ArrayList<AboutUniversityInfo> aboutUniversityInfos = new ArrayList<>();
                 try {
-                    document = Jsoup.connect(html).get();
+                    document = Jsoup.connect(mDetailCodeLink).get();
 
                     Element elementAboutUniversities = document.getElementById("about");
                     Elements elements = elementAboutUniversities.getElementsByTag("tr");
 
-                    //add new element to array only when text with data isn't empty
-                    if (aboutUniversityEngine.getAboutAllUnivesitiesById(mLongDetailUNVId).isEmpty()) {
-                        for (Element link : elements) {
-                            String type = link.select("td").first().text();
-                            String data = link.select("td").last().text();
+                    for (Element link : elements) {
+                        String type = link.select("td").first().text();
+                        String data = link.select("td").last().text();
 
-                            if (!data.isEmpty()) {
-                                data = data.replace(wrongDog, correctDog);
-                                aboutUniversityInfos.add(new AboutUniversityInfo(longDetailUNVId, type, data));
-//                                aboutUniversityEngine.addAboutUniversity(new AboutUniversityInfo(longDetailUNVId, type, data));
-                                Log.d("My", "doInBackground   link.select(\"td\").first().text() ->" + link.select("td").first().text());
-                                Log.d("My", "doInBackground    link.select(\"td\").last().text()) ->" + link.select("td").last().text());
-                            }
-                        }
-                        Log.d("My", "doInBackground aboutUniversityInfos.size() ->" + aboutUniversityInfos.size());
-
-
-                        aboutUniversityEngine.addAllAboutUniversities(aboutUniversityInfos);
-                    } else {
-                        for (Element link : elements) {
-                            String type = link.select("td").first().text();
-                            String data = link.select("td").last().text();
-
-                            if (!data.isEmpty()) {
-                                data = data.replace(wrongDog, correctDog);
-                                aboutUniversityEngine.updateAboutUniversity(new AboutUniversityInfo(longDetailUNVId, type, data));
-                                Log.d("My", "doInBackground   link.select(\"td\").first().text() ->" + link.select("td").first().text());
-                                Log.d("My", "doInBackground    link.select(\"td\").last().text()) ->" + link.select("td").last().text());
-                            }
+                        if (!data.isEmpty()) {
+                            data = data.replace(wrongDog, correctDog);
+                            aboutUniversityInfos.add(new AboutUniversityInfo(longDetailUNVId, type, data));
                         }
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
 
-    private void updateData() {
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                final AboutUniversityEngine aboutUniversityEngine = new AboutUniversityEngine(getApplication());
-
-                if (Utils.connectToData(mDetailUniverInfo.getStrDetailLink()) && mLongDetailUNVId != 0) {
-                    update(mLongDetailUNVId, aboutUniversityEngine);
-                }
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mProgressBar.setVisibility(View.VISIBLE);
-                        final AboutUniversityEngine aboutUniversityEngine = new AboutUniversityEngine(getApplication());
-                        getData(aboutUniversityEngine);
-                    }
-                });
-            }
-
-            private void update(long longDetailUNVId, AboutUniversityEngine aboutUniversityEngine) {
-                String html;
-                html = mDetailUniverInfo.getStrDetailLink();
-                Log.d("My", "ParseAboutUniversityList doInBackground  mHtml ->" + html);
-                String wrongDog = " [ at ] ";
-                String correctDog = "@";
-                Document document;
-                ArrayList<AboutUniversityInfo> aboutUniversityInfos = new ArrayList<>();
-                try {
-                    document = Jsoup.connect(html).get();
-
-                    Element elementAboutUniversities = document.getElementById("about");
-                    Elements elements = elementAboutUniversities.getElementsByTag("tr");
-
-                    //add new element to array only when text with data isn't empty
-                    if (aboutUniversityEngine.getAboutAllUnivesitiesById(mLongDetailUNVId).isEmpty()) {
-                        for (Element link : elements) {
-                            String type = link.select("td").first().text();
-                            String data = link.select("td").last().text();
-
-                            if (!data.isEmpty()) {
-                                data = data.replace(wrongDog, correctDog);
-                                aboutUniversityInfos.add(new AboutUniversityInfo(longDetailUNVId, type, data));
-//                                aboutUniversityEngine.addAboutUniversity(new AboutUniversityInfo(longDetailUNVId, type, data));
-                                Log.d("My", "doInBackground   link.select(\"td\").first().text() ->" + link.select("td").first().text());
-                                Log.d("My", "doInBackground    link.select(\"td\").last().text()) ->" + link.select("td").last().text());
-                            }
-                        }
-                        Log.d("My", "doInBackground aboutUniversityInfos.size() ->" + aboutUniversityInfos.size());
-
-
-                        aboutUniversityEngine.addAllAboutUniversities(aboutUniversityInfos);
+                    if (isNeedUpdate) {
+                        aboutUniversityEngine.updateAllAboutUniversities(aboutUniversityInfos);
                     } else {
-                        for (Element link : elements) {
-                            String type = link.select("td").first().text();
-                            String data = link.select("td").last().text();
-
-                            if (!data.isEmpty()) {
-                                data = data.replace(wrongDog, correctDog);
-                                aboutUniversityEngine.updateAboutUniversity(new AboutUniversityInfo(longDetailUNVId, type, data));
-                                Log.d("My", "doInBackground   link.select(\"td\").first().text() ->" + link.select("td").first().text());
-                                Log.d("My", "doInBackground    link.select(\"td\").last().text()) ->" + link.select("td").last().text());
-                            }
-                        }
+                        aboutUniversityEngine.addAllAboutUniversities(aboutUniversityInfos);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

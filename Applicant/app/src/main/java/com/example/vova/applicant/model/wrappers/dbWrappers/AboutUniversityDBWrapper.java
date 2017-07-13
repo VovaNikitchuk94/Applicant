@@ -3,6 +3,7 @@ package com.example.vova.applicant.model.wrappers.dbWrappers;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.vova.applicant.model.AboutUniversityInfo;
 import com.example.vova.applicant.toolsAndConstans.DBConstants.AboutUniversityTable;
@@ -93,5 +94,17 @@ public class AboutUniversityDBWrapper extends BaseDBWrapper<AboutUniversityInfo>
     @Override
     public void addAllItems(ArrayList<AboutUniversityInfo> aboutUniversityInfos) {
         super.addAllItems(aboutUniversityInfos);
+    }
+
+    @Override
+    public void updateAllItems(ArrayList<AboutUniversityInfo> aboutUniversityInfos) {
+
+        String strRequest = AboutUniversityTable.Cols.ABOUT_UNIVERSITY_INFO_FIELD_DETAIL_UNV_ID + "=?";
+        for (AboutUniversityInfo aboutUniversityInfo: aboutUniversityInfos) {
+            String arrArgs[] = new String[]{Long.toString(aboutUniversityInfo.getId())};
+            setStrArrArgs(arrArgs);
+        }
+        setStrRequest(strRequest);
+        super.updateAllItems(aboutUniversityInfos);
     }
 }

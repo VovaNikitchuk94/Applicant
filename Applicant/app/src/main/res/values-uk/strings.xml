@@ -36,4 +36,18 @@
         \tМи повідомимо вас, як тільки перша інформація з’явиться на сайті vstupInfo.com.
         \tЗараз ви можете ознайомитись з умовами прийому до вищих навчальних закладів 2017 року.</string>
     <string name="textInfoForApplicant">Інформація для абітурієнта</string>
+    <string name="textCities">Міста</string>
+    <string name="textEmptyData">Дані відсутні</string>
+    <string name="textHintSearchCity">Введіть місто</string>
+    <string name="textNOInternetConnection">Відсутнє підключення до інтернету</string>
+    <string name="textSpecialities">Спеціальності</string>
+    <string name="textTitleCities">Міста</string>
+    <string name="textUniversities">ВНЗ</string>
+    <string name="text_choose_category">Виберіть категорію</string>
+    <string name="title_text_add_to_favorite">Додати до улюблених</string>
+    <string name="textArchive">Архів</string>
+    <string name="textBadInternetConnection">Погане з\'єднання з інтернетом</string>
+    <string name="textAddToFavorite">Додати до улюблених</string>
+    <string name="drawer_item_help">Допомога</string>
+    <string name="drawer_item_settings">Налаштування</string>
 </resources>

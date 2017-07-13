@@ -8,38 +8,44 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
+import com.bignerdranch.android.multiselector.MultiSelector;
+import com.bignerdranch.android.multiselector.SwappingHolder;
 import com.example.vova.applicant.R;
-import com.example.vova.applicant.adapters.UniversitiesAdapter;
 import com.example.vova.applicant.model.CategoryUniversInfo;
 import com.example.vova.applicant.model.UniversityInfo;
 import com.example.vova.applicant.model.engines.UniversitiesInfoEngine;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.Favorite;
 
 import java.util.ArrayList;
 
-public class UniversitiesListActivity extends BaseActivity implements
-        UniversitiesAdapter.OnClickUniversityItem {
+public class UniversitiesListActivity extends BaseActivity {
 
     public static final String KEY_CATEGORY_UNIVERSITY_LINK = "KEY_CATEGORY_UNIVERSITY_LINK";
 
     private RecyclerView mRecyclerView;
-    private SearchView searchView;
+    private MultiSelector mMultiSelector = new MultiSelector();
 
     private CategoryUniversInfo mCategoryUniversInfo;
     private ArrayList<UniversityInfo> mUniversityInfos = new ArrayList<>();
-    private UniversitiesAdapter mUniversitiesAdapter;
+    private UniversitiesInfoAdapter mUniversitiesInfoAdapter;
+    private SearchView mSearchView = null;
 
-    private long nLongCityId = 0;
+    private long nLongCityId = -1;
     private String mStringCategory;
 
     @Override
@@ -80,48 +86,43 @@ public class UniversitiesListActivity extends BaseActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_activity_main, menu);
+        setToolbarSearchView(menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
+    private void setToolbarSearchView(Menu menu) {
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        mSearchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
-        //customized searchView from stackOverflow help
+        //customized mSearchView from stackOverflow help
         SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete)
-                searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.material_drawer_hint_text));
-        searchAutoComplete.setTextColor(Color.WHITE);
-        searchView.setQueryHint("Test");
-
-//        View searchplate = (View)searchView.findViewById(android.support.v7.appcompat.R.id.search_plate);
-//        searchplate.setBackgroundResource(R.drawable.texfield_searchview_holo_light);
+                mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.primary_light));
+        searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.primary_light));
+        mSearchView.setQueryHint(getString(R.string.textHintSearchUniversity));
 
         //clear button
-        ImageView searchCloseIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
+        ImageView searchCloseIcon = (ImageView) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
         searchCloseIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
         searchCloseIcon.setImageResource(R.drawable.ic_clear_search);
 
-//        ImageView voiceIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search);
-//        voiceIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
-//        voiceIcon.setImageResource(R.drawable.ic_search);
-
         //top button search icon
-        ImageView searchIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
+        ImageView searchIcon = (ImageView) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_button);
         searchIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
         searchIcon.setImageResource(R.drawable.ic_search);
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
 
                 updateInfo(query);
-                if(!searchView.isIconified()) {
-                    searchView.setIconified(true);
+                if (!mSearchView.isIconified()) {
+                    mSearchView.setIconified(true);
                 }
-//                searchView.setIconified(false);
-                searchView.clearFocus();
-
+                mSearchView.clearFocus();
                 return false;
             }
 
@@ -134,33 +135,28 @@ public class UniversitiesListActivity extends BaseActivity implements
             }
         });
 
-        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+        mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                Log.d("My", "setOnQueryTextFocusChangeListener onFocusChange");
-                Log.d("My", "setOnQueryTextFocusChangeListener hasFocus -> "  + hasFocus);
                 if (!hasFocus) {
-                    searchView.onActionViewCollapsed();
+                    mSearchView.onActionViewCollapsed();
                 }
             }
         });
-
-        return super.onCreateOptionsMenu(menu);
     }
 
+    //TODO сравнить с ситилист активити
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.d("My", "onOptionsItemSelected item -> " + item);
         return super.onOptionsItemSelected(item);
     }
-
 
     private void updateInfo(){
         mUniversityInfos.clear();
         UniversitiesInfoEngine universityInfoEngine = new UniversitiesInfoEngine(getApplication());
         mUniversityInfos.addAll(universityInfoEngine.getAllUniversitiesByDegree(nLongCityId, mStringCategory));
-        if (mUniversitiesAdapter != null) {
-            mUniversitiesAdapter.notifyDataSetChanged();
+        if (mUniversitiesInfoAdapter != null) {
+            mUniversitiesInfoAdapter.notifyDataSetChanged();
         }
     }
 
@@ -172,8 +168,8 @@ public class UniversitiesListActivity extends BaseActivity implements
         } else {
             mUniversityInfos.addAll(universityInfoEngine.getAllUniversitiesBySearchString(nLongCityId, mStringCategory, search));
         }
-        if (mUniversitiesAdapter != null) {
-            mUniversitiesAdapter.notifyDataSetChanged();
+        if (mUniversitiesInfoAdapter != null) {
+            mUniversitiesInfoAdapter.notifyDataSetChanged();
         }
     }
 
@@ -192,24 +188,140 @@ public class UniversitiesListActivity extends BaseActivity implements
 
     @Override
     protected void onStop() {
-        super.onStop();
         updateInfo();
+        super.onStop();
     }
 
     private void getData() {
         UniversitiesInfoEngine universityInfoEngine = new UniversitiesInfoEngine(getApplication());
         mUniversityInfos.addAll(universityInfoEngine.getAllUniversitiesByDegree(nLongCityId, mStringCategory));
-        mUniversitiesAdapter = new UniversitiesAdapter(mUniversityInfos);
-        mUniversitiesAdapter.notifyDataSetChanged();
-        mUniversitiesAdapter.setOnClickUniversityItem(UniversitiesListActivity.this);
-        mRecyclerView.setAdapter(mUniversitiesAdapter);
+        mUniversitiesInfoAdapter = new UniversitiesInfoAdapter(mUniversityInfos);
+        mUniversitiesInfoAdapter.notifyDataSetChanged();
+        mRecyclerView.setAdapter(mUniversitiesInfoAdapter);
     }
 
-    @Override
-    public void onClickCategoryUniversItem(UniversityInfo universityInfo) {
+    private class UniversitiesInfoAdapter extends RecyclerView.Adapter<UniversitiesInfoAdapter.UniversityInfoHolder> {
+
+        public UniversitiesInfoAdapter(ArrayList<UniversityInfo> universityInfos) {
+            mUniversityInfos = universityInfos;
+        }
+
+        @Override
+        public UniversityInfoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.list_item_university_info, parent, false);
+            return new UniversityInfoHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(UniversityInfoHolder holder, int position) {
+            UniversityInfo universityInfo = mUniversityInfos.get(position);
+            holder.bindCity(universityInfo);
+        }
+
+        @Override
+        public int getItemCount() {
+            return mUniversityInfos.size();
+        }
+
+        public class UniversityInfoHolder extends SwappingHolder
+                implements View.OnLongClickListener, View.OnClickListener {
+
+            private TextView nameTextView;
+            private UniversityInfo mUniversityInfo;
+
+
+            public UniversityInfoHolder(View itemView) {
+                super(itemView, mMultiSelector);
+
+                nameTextView = (TextView) itemView.findViewById(R.id.textViewTypeUniversityInfo);
+
+                itemView.setOnClickListener(this);
+                itemView.setOnLongClickListener(this);
+                itemView.setLongClickable(true);
+            }
+
+            public void bindCity(UniversityInfo universityInfo) {
+                mUniversityInfo = universityInfo;
+                nameTextView.setText(universityInfo.getStrUniversityName());
+
+                setSelectable(mMultiSelector.isSelectable());
+                setActivated(mMultiSelector.isSelected(getAdapterPosition(), getItemId()));
+            }
+
+            @Override
+            public void onClick(View v) {
+                Log.d("My", "onClick work getId -> " + v.getId());
+                if (mUniversityInfo == null) {
+                    return;
+                }
+                if (!mMultiSelector.tapSelection(UniversityInfoHolder.this)) {
+                    selectUniversity(mUniversityInfo);
+                }
+            }
+
+            @Override
+            public boolean onLongClick(View v) {
+                Log.d("My", "onLongClick work -> ");
+                Log.d("My", "onLongClick v.getId() -> " + v.getId());
+
+                if (!mMultiSelector.isSelectable()) {
+                    startSupportActionMode(mActionModeCallBack);
+                    Log.d("My", "onLongClick mMultiSelector.tapSelection(this) -> " + true);
+                    mMultiSelector.setSelectable(true);
+                    mMultiSelector.setSelected(UniversityInfoHolder.this, true);
+                    return true;
+                } else {
+                    Log.d("My", "onLongClick else -> ");
+                }
+                return false;
+
+            }
+        }
+    }
+
+    private void selectUniversity(UniversityInfo universityInfo) {
+        if (mSearchView != null) {
+            mSearchView.onActionViewCollapsed();
+        }
         Intent intent = new Intent(UniversitiesListActivity.this, DetailUniversListActivity.class);
         intent.putExtra(DetailUniversListActivity.KEY_DETAIL_UNIVERSITY_LINK, universityInfo);
         startActivity(intent);
-
     }
+
+    private ModalMultiSelectorCallback mActionModeCallBack = new ModalMultiSelectorCallback(mMultiSelector) {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            Log.d("My", "onCreateActionMode start ->");
+            getMenuInflater().inflate(R.menu.menu_add_to_favorite, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            Log.d("My", "onActionItemClicked start ->");
+
+            switch (item.getItemId()) {
+                case R.id.menu_item_add_to_favorite:
+
+                    mode.finish();
+                    UniversitiesInfoEngine engine = new UniversitiesInfoEngine(getApplicationContext());
+
+                    for (int i = mUniversityInfos.size()-1; i >= 0; i--) {
+                        if (mMultiSelector.isSelected(i, 0)) {
+                            UniversityInfo universityInfo = mUniversityInfos.get(i);
+
+                            universityInfo.setIsFavorite(Favorite.FAVORITE);
+                            engine.updateUniversity(universityInfo);
+                        }
+                    }
+                    return true;
+
+                default:
+                    break;
+            }
+            return false;
+        }
+    };
 }

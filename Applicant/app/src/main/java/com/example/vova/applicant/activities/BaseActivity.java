@@ -35,8 +35,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .withActionBarDrawerToggle(true)
                 .withHeader(R.layout.drawer_header)
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withName(R.string.favorite).withIcon(R.drawable.favorite_icon_24dp),
-                        new PrimaryDrawerItem().withName(R.string.recommendations).withIcon(R.drawable.ic_priority_high_black_24dp),
+                        new PrimaryDrawerItem().withName(R.string.favorite).withIcon(R.drawable.ic_star_border),
+                        new PrimaryDrawerItem().withName(R.string.textArchive).withIcon(R.drawable.ic_archive),
 
                         new SectionDrawerItem().withName(R.string.settings),
                         new SecondaryDrawerItem().withName(R.string.settings).withIcon(R.drawable.ic_settings_black_24dp),
@@ -55,18 +55,22 @@ public abstract class BaseActivity extends AppCompatActivity {
                         Intent intent;
                         switch (position) {
                             case 1:
-
-                                break;
-                            case 8:
-                                intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + "voviknik1994@gmail.com"));
-                                startActivity(intent);
-                                break;
-                            case 9:
                                 intent = new Intent(view.getContext(), FavoriteItemsActivity.class);
                                 startActivity(intent);
                                 break;
+                            case 2:
+                                intent = new Intent(view.getContext(), ArchiveActivity.class);
+                                startActivity(intent);
+                                break;
+                            case 8:
+                                intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + "vova.nikitchuk.94@gmail.com"));
+                                startActivity(intent);
+                                break;
+                            case 9:
+
+                                break;
                             default:
-                                intent = new Intent(view.getContext(), TopLevelActivity.class);
+                                intent = new Intent(view.getContext(), ArchiveActivity.class);
                                 startActivity(intent);
                                 break;
                         }
@@ -101,10 +105,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public Toolbar setToolbar() {
-        // Handle Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        }
         return toolbar;
     }
 

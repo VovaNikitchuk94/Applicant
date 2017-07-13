@@ -45,9 +45,9 @@ public class CitiesInfoEngine extends BaseEngine {
         return citiesInfoDBWrapper.getAllCitiesBySearchString(nId, strSearch);
     }
 
-    public ArrayList<CitiesInfo> getAllFavoriteCities(int nFavorite) {
+    public ArrayList<CitiesInfo> getAllFavoriteCities() {
         CitiesInfoDBWrapper citiesInfoDBWrapper = new CitiesInfoDBWrapper(getContext());
-        return citiesInfoDBWrapper.getAllFavoriteCities(nFavorite);
+        return citiesInfoDBWrapper.getAllFavoriteCities();
     }
 
     public void addAllCities(ArrayList<CitiesInfo> citiesInfos) {

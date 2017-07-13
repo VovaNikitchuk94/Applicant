@@ -73,15 +73,9 @@ public abstract class BaseDBWrapper<T extends BaseEntity>  {
 
     public void updateAllItems(ArrayList<T> items) {
         SQLiteDatabase database = getWritable();
-
-//        database.update(getTableName(), ItemInfo.getContentValues(), getStrRequest(), getStrArrArgs());
-//        database.close();
-
         try {
             database.beginTransaction();
             for (T item : items) {
-                Log.d("My", "updateAllItems getStrRequest() -> " + getStrRequest());
-                Log.d("My", "updateAllItems getStrArrArgs() -> " + getStrArrArgs().toString());
                 database.update(getTableName(), item.getContentValues(), getStrRequest(), getStrArrArgs());
             }
             database.setTransactionSuccessful();

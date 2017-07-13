@@ -37,4 +37,16 @@ public class CategoryUniversEngine extends BaseEngine {
         CategoryUniversInfoDBWrapper categoryUniversInfoDBWrapper = new CategoryUniversInfoDBWrapper(getContext());
         return categoryUniversInfoDBWrapper.getCategoryById(nId);
     }
-}
+
+    public void addAllCategory(ArrayList<CategoryUniversInfo> categoryUniversItems) {
+        CategoryUniversInfoDBWrapper categoryUniversInfoDBWrapper = new CategoryUniversInfoDBWrapper(getContext());
+        categoryUniversInfoDBWrapper.addAllItems(categoryUniversItems);
+    }
+
+    public void updateAllCategory(ArrayList<CategoryUniversInfo> categoryUniversItems) {
+        CategoryUniversInfoDBWrapper categoryUniversInfoDBWrapper = new CategoryUniversInfoDBWrapper(getContext());
+        categoryUniversInfoDBWrapper.updateAllItems(categoryUniversItems);
+    }
+
+
+    }

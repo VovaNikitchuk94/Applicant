@@ -45,7 +45,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 + UniversityTable.Cols.UNIVERSITY_INFO_FIELD_CATEGORY_NAME + " TEXT NOT NULL, "
                 + UniversityTable.Cols.UNIVERSITY_INFO_FIELD_CATEGORY_LINK + " TEXT NOT NULL, "
                 + UniversityTable.Cols.UNIVERSITY_INFO_FIELD_NAME + " TEXT NOT NULL, "
-                + UniversityTable.Cols.UNIVERSITY_INFO_FIELD_LINK + " TEXT NOT NULL);");
+                + UniversityTable.Cols.UNIVERSITY_INFO_FIELD_LINK + " TEXT NOT NULL, "
+                + UniversityTable.Cols.UNIVERSITY_INFO_FIELD_FAVORITE + " TEXT NOT NULL);");
 
         sqLiteDatabase.execSQL("CREATE TABLE " + UniversityDetailTable.TABLE_NAME
                 + " (" + UniversityDetailTable.Cols.UNIVERSITY_DETAIL_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -79,7 +80,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_VOLUME_ORDERS + " TEXT, "
                 + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_EXAMS + " TEXT, "
                 + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_LINK + " TEXT NOT NULL, "
-                + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_DATE_UPDATE + " TEXT NOT NULL);");
+                + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_DATE_UPDATE + " TEXT NOT NULL, "
+                + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_FAVORITE + " TEXT NOT NULL);");
 
         sqLiteDatabase.execSQL("CREATE TABLE " + ApplicationTable.TABLE_NAME
                 + " (" + ApplicationTable.Cols.APPLICATION_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "

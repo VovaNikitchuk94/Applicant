@@ -120,9 +120,6 @@ public class DetailApplicantPagerActivity extends BaseActivity {
         bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-        // настройка максимальной высоты
-//        bottomSheetBehavior.setPeekHeight(340);
-
         // настройка возможности скрыть элемент при свайпе вниз
         bottomSheetBehavior.setHideable(true);
 

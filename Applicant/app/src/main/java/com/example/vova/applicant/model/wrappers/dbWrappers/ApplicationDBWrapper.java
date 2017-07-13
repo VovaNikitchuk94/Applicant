@@ -76,7 +76,6 @@ public class ApplicationDBWrapper extends BaseDBWrapper<ApplicationsInfo> {
     public ApplicationsInfo getApplicationById(long nId) {
         ApplicationsInfo applicationsInfo = null;
         SQLiteDatabase database = getReadable();
-//        String strRequest = ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY_ID + "=?";
         String strRequest = ApplicationTable.Cols.APPLICATION_INFO_FIELD_ID + "=?";
         String arrArgs[] = new String[]{Long.toString(nId)};
         Cursor cursor = database.query(getTableName(), null, strRequest, arrArgs, null, null, null );
@@ -119,5 +118,24 @@ public class ApplicationDBWrapper extends BaseDBWrapper<ApplicationsInfo> {
             db.close();
         }
         return arrResult;
+    }
+
+    @Override
+    public void addAllItems(ArrayList<ApplicationsInfo> applicationsItems) {
+        super.addAllItems(applicationsItems);
+    }
+
+    @Override
+    public void updateAllItems(ArrayList<ApplicationsInfo> applicationsItems) {
+
+        String strRequest = ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY_ID + "=? AND "
+                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_NAME + "=?";
+        for (ApplicationsInfo applicationsInfo : applicationsItems) {
+            String arrArgs[] = new String[]{Long.toString(applicationsInfo.getLongSpecialityId()),
+                    applicationsInfo.getStrApplicantName()};
+            setStrArrArgs(arrArgs);
+        }
+        setStrRequest(strRequest);
+        super.updateAllItems(applicationsItems);
     }
 }

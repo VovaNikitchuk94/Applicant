@@ -1,61 +1,58 @@
 package com.example.vova.applicant.activities;
 
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.TextView;
+import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MenuItem;
 
 import com.example.vova.applicant.R;
-import com.example.vova.applicant.adapters.CitiesInfoAdapter;
-import com.example.vova.applicant.model.CitiesInfo;
-import com.example.vova.applicant.model.engines.CitiesInfoEngine;
+import com.example.vova.applicant.adapters.FavoritePagerAdapter;
+import com.example.vova.applicant.fragments.FavoriteCitiesFragment;
+import com.example.vova.applicant.fragments.FavoriteSpecialitiesFragment;
+import com.example.vova.applicant.fragments.FavoriteUniversityFragment;
 
-import java.util.ArrayList;
+public class FavoriteItemsActivity extends AppCompatActivity {
 
-public class FavoriteItemsActivity extends BaseActivity {
-
-    private RecyclerView mRecyclerView;
-    private TextView mTextView;
-
-    private ArrayList<CitiesInfo> mCitiesInfos = new ArrayList<>();
-    private CitiesInfoAdapter mCitiesInfoAdapter;
-
-    private static final int FAVORITE = 1;
+    private Toolbar toolbar;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
 
     @Override
-    protected void initActivity() {
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_favorite_items);
+        Log.d("My", "FavoriteItemsActivity onCreate ->");
 
-        mTextView = (TextView) findViewById(R.id.textViewFavoriteItemsList);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+//        actionBar.di
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewFavoriteItemsListActivity);
-        LinearLayoutManager layoutManager
-                = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(layoutManager);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
-                layoutManager.getOrientation());
-        mRecyclerView.addItemDecoration(dividerItemDecoration);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        setupViewPager(viewPager);
 
-        getData();
+        tabLayout = (TabLayout) findViewById(R.id.tablayout);
+        tabLayout.setupWithViewPager(viewPager);
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        FavoritePagerAdapter adapter = new FavoritePagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new FavoriteCitiesFragment(), getString(R.string.textCities));
+        adapter.addFragment(new FavoriteUniversityFragment(), getString(R.string.textUniversities));
+        adapter.addFragment(new FavoriteSpecialitiesFragment(), getString(R.string.textSpecialities));
+        viewPager.setAdapter(adapter);
     }
 
     @Override
-    protected int getLayoutId() {
-        return R.layout.activity_favorite_items_list;
-    }
-
-    private void getData() {
-        CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
-        mCitiesInfos.clear();
-        if (!citiesInfoEngine.getAllFavoriteCities(FAVORITE).isEmpty()) {
-            mCitiesInfos.addAll(citiesInfoEngine.getAllFavoriteCities(FAVORITE));
-            mCitiesInfoAdapter = new CitiesInfoAdapter(mCitiesInfos);
-            mCitiesInfoAdapter.notifyDataSetChanged();
-//        mCitiesInfoAdapter.setOnClickCityInfoItem(FavoriteItemsActivity.this);
-            mRecyclerView.setAdapter(mCitiesInfoAdapter);
-        } else {
-            mTextView.setText("Favorite cities is empty");
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
         }
-
+        return super.onOptionsItemSelected(item);
     }
 }

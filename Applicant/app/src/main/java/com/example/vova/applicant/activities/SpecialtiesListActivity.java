@@ -9,24 +9,31 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
+import com.bignerdranch.android.multiselector.MultiSelector;
+import com.bignerdranch.android.multiselector.SwappingHolder;
 import com.example.vova.applicant.R;
-import com.example.vova.applicant.adapters.SpecialitiesAdapter;
 import com.example.vova.applicant.model.SpecialtiesInfo;
 import com.example.vova.applicant.model.TimeFormInfo;
 import com.example.vova.applicant.model.engines.SpecialityInfoEngine;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.Favorite;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.Update;
 import com.example.vova.applicant.utils.Utils;
 
 import org.jsoup.Jsoup;
@@ -36,12 +43,9 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
+import java.util.Calendar;
 
-public class SpecialtiesListActivity extends BaseActivity implements
-        SpecialitiesAdapter.OnClickSpecialityItem {
+public class SpecialtiesListActivity extends BaseActivity {
 
     // TODO rename all fields
 
@@ -51,14 +55,16 @@ public class SpecialtiesListActivity extends BaseActivity implements
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
-    private SearchView searchView;
+    private SearchView mSearchView = null;
 
     private TimeFormInfo mTimeFormInfo;
-    private SpecialitiesAdapter mSpecialitiesAdapter;
     private ArrayList<SpecialtiesInfo> mSpecialtiesInfos = new ArrayList<>();
+    private SpecialitiesInfoAdapter mSpecialitiesInfoAdapter;
+    private MultiSelector mMultiSelector = new MultiSelector();
+    private Calendar mCalendar;
 
-    private long mLongTimeFormId = 0;
-    private long mLongDegree = 0;
+    private long mLongTimeFormId = -1;
+    private long mLongDegree = -1;
     private String mTimeFormCodeLink = "";
 
     @Override
@@ -91,18 +97,11 @@ public class SpecialtiesListActivity extends BaseActivity implements
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(true);
                 mRecyclerView.setVisibility(View.GONE);
-//                Log.d("My", "SwipeRefreshLayout -> updateData -> is start");
                 if (!isOnline(getApplicationContext())) {
                     Toast.makeText(getApplicationContext(), R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
                 } else {
-//                    Log.d("My", "SpecialtiesListActivity -> (isDateComparison()) updateData() is started;");
-                    updateData();
-//                    Log.d("My", "SpecialtiesListActivity -> (isDateComparison()) updateData(); is finished");
+                    parseData(Update.NEED_AN_UPDATE);
                 }
-//                Log.d("My", "SwipeRefreshLayout -> updateData -> is finish");
-
-                mRecyclerView.setVisibility(View.VISIBLE);
-                mSwipeRefreshLayout.setRefreshing(false);
             }
         });
 
@@ -133,83 +132,43 @@ public class SpecialtiesListActivity extends BaseActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_activity_main, menu);
+        setToolbarSearchView(menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
+    private void setToolbarSearchView(Menu menu) {
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        mSearchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
-        //customized searchView from stackOverflow help
+        //customized mSearchView from stackOverflow help
         SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete)
-                searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.material_drawer_hint_text));
+                mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.primary_light));
         searchAutoComplete.setTextColor(Color.WHITE);
-        searchView.setQueryHint("find speciality");
-
-//        View searchplate = (View)searchView.findViewById(android.support.v7.appcompat.R.id.search_plate);
-//        searchplate.setBackgroundResource(R.drawable.texfield_searchview_holo_light);
+        mSearchView.setQueryHint("Test");
 
         //clear button
-        ImageView searchCloseIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
+        ImageView searchCloseIcon = (ImageView) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
         searchCloseIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
         searchCloseIcon.setImageResource(R.drawable.ic_clear_search);
 
-//        ImageView voiceIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search);
-//        voiceIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
-//        voiceIcon.setImageResource(R.drawable.ic_search);
-
         //top button search icon
-        ImageView searchIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
+        ImageView searchIcon = (ImageView) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_button);
         searchIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
         searchIcon.setImageResource(R.drawable.ic_search);
 
-        //зачем он нужен?
-//        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-//        searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
-//            @Override
-//            public boolean onMenuItemActionExpand(MenuItem item) {
-//
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean onMenuItemActionCollapse(MenuItem item) {
-//
-//                return true;
-//            }
-//        });
-//        searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
-//            @Override
-//            public boolean onMenuItemActionExpand(MenuItem item) {
-//                Log.d("My", "onMenuItemActionExpand");
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean onMenuItemActionCollapse(MenuItem item) {
-//                Log.d("My", "onMenuItemActionCollapse");
-//                updateInfo("");
-//                return true;
-//            }
-//        });
-
-        // Associate searchable configuration with the SearchView
-//        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-//        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-//        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
 
                 updateInfo(query);
-//                if(!searchView.isIconified()) {
-//                    searchView.setIconified(true);
-//                }
-                searchView.setIconified(false);
-                searchView.clearFocus();
-
+                if (!mSearchView.isIconified()) {
+                    mSearchView.setIconified(true);
+                }
+                mSearchView.clearFocus();
                 return false;
             }
 
@@ -222,19 +181,16 @@ public class SpecialtiesListActivity extends BaseActivity implements
             }
         });
 
-        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+        mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-//                Log.d("My", "setOnQueryTextFocusChangeListener onFocusChange");
-//                Log.d("My", "setOnQueryTextFocusChangeListener hasFocus -> "  + hasFocus);
                 if (!hasFocus) {
-                    searchView.onActionViewCollapsed();
+                    mSearchView.onActionViewCollapsed();
                 }
             }
         });
-
-        return super.onCreateOptionsMenu(menu);
     }
+
 
     @Override
     public void onBackPressed() {
@@ -242,8 +198,6 @@ public class SpecialtiesListActivity extends BaseActivity implements
         int sizeArrNow = mSpecialtiesInfos.size();
         int sizeMustBe = specialityInfoEngine.getAllSpecialitiesByIdAndDegree(mLongTimeFormId, mLongDegree).size();
 
-//        Log.d("My", "onBackPressed mCitiesInfos.size(); -> " + mCitiesInfos.size());
-//        Log.d("My", "onBackPressed citiesInfoEngine.getAllCitiesById(mLongYearId).size() -> " + citiesInfoEngine.getAllCitiesById(mLongYearId).size());
         if ((sizeArrNow != sizeMustBe) && isDrawerClosed()) {
             updateInfo();
         } else {
@@ -253,8 +207,8 @@ public class SpecialtiesListActivity extends BaseActivity implements
 
     @Override
     protected void onStop() {
-        super.onStop();
         updateInfo();
+        super.onStop();
     }
 
     private void setData() {
@@ -264,68 +218,318 @@ public class SpecialtiesListActivity extends BaseActivity implements
             if (!isOnline(this)) {
                 Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
                 finish();
+            } else {
+                parseData(Update.NO_NEED_TO_UPDATE);
             }
-//            Log.d("My", "SpecialtiesListActivity -> parseData");
-            parseData();
-
         } else {
             if (isDateComparison()) {
-//                Log.d("My", "SpecialtiesListActivity -> isDateComparison  getData(citiesInfoEngine); ");
-                getData(specialityInfoEngine);
+                getData();
             } else {
                 if (!isOnline(this)) {
                     Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
                 } else {
-//                    Log.d("My", "SpecialtiesListActivity -> (isDateComparison()) updateData() is started;");
-                    updateData();
-//                    Log.d("My", "SpecialtiesListActivity -> (isDateComparison()) updateData(); is finished");
-
+                    parseData(Update.NEED_AN_UPDATE);
                 }
             }
         }
     }
 
-    private void updateInfo(){
+    private void updateInfo() {
         mSpecialtiesInfos.clear();
         SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplication());
         mSpecialtiesInfos.addAll(specialityInfoEngine.getAllSpecialitiesByIdAndDegree(mLongTimeFormId, mLongDegree));
-        if (mSpecialitiesAdapter != null) {
-            mSpecialitiesAdapter.notifyDataSetChanged();
+        if (mSpecialitiesInfoAdapter != null) {
+            mSpecialitiesInfoAdapter.notifyDataSetChanged();
         }
     }
 
-    private void updateInfo(String search){
+    private void updateInfo(String search) {
         mSpecialtiesInfos.clear();
         SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplication());
-        if(search.isEmpty()){
+        if (search.isEmpty()) {
             mSpecialtiesInfos.addAll(specialityInfoEngine.getAllSpecialitiesByIdAndDegree(mLongTimeFormId, mLongDegree));
         } else {
             mSpecialtiesInfos.addAll(specialityInfoEngine.getAllSpecialitiesBySearchString(mLongTimeFormId, mLongDegree, search));
         }
-        if (mSpecialitiesAdapter != null) {
-            mSpecialitiesAdapter.notifyDataSetChanged();
+        if (mSpecialitiesInfoAdapter != null) {
+            mSpecialitiesInfoAdapter.notifyDataSetChanged();
         }
     }
 
-    private void getData(SpecialityInfoEngine specialityInfoEngine) {
+    private void getData() {
+        SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplication());
         mSpecialtiesInfos.clear();
         mSpecialtiesInfos.addAll(specialityInfoEngine.getAllSpecialitiesByIdAndDegree(mLongTimeFormId, mLongDegree));
-        mSpecialitiesAdapter = new SpecialitiesAdapter(mSpecialtiesInfos);
-//        Log.d("My", "specialityInfoEngine.getAllSpecialitiesByIdAndDegree(mLongTimeFormId, mLongDegree) size - > " + specialityInfoEngine.getAllSpecialitiesByIdAndDegree(mLongTimeFormId, mLongDegree).size());
-//        Log.d("My", "specialityInfoEngine.getAllSpecialitiesById(mLongTimeFormId) size - > " + specialityInfoEngine.getAllSpecialitiesById(mLongTimeFormId).size());
-//        for (SpecialtiesInfo info : specialityInfoEngine.getAllSpecialitiesByIdAndDegree(mLongTimeFormId, mLongDegree))  {
-//            Log.d("My", "info.getStrSpecialty() + info.getStrDateLastUpdate() - > " + info.getStrSpecialty() + " ~ " + info.getStrDateLastUpdate());
-//        }
-        mSpecialitiesAdapter.setOnClickSpecialityItem(SpecialtiesListActivity.this);
-        mRecyclerView.setAdapter(mSpecialitiesAdapter);
+        mSpecialitiesInfoAdapter = new SpecialitiesInfoAdapter(mSpecialtiesInfos);
+        mRecyclerView.setAdapter(mSpecialitiesInfoAdapter);
         mRecyclerView.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.GONE);
     }
 
-    @Override
-    public void onClickSpecialityItem(SpecialtiesInfo specialtiesInfo) {
-//        Log.d("My", "specialtiesInfo.getStrLink().isEmpty()" + specialtiesInfo.getStrLink().isEmpty());
+    private Boolean isDateComparison() {
+
+        Calendar calendarCurrentTime = Calendar.getInstance();
+        if (Utils.isNeedToEqualsTime()) {
+
+            mCalendar.after(calendarCurrentTime);
+            return true;
+        } else {
+            mCalendar = Utils.getModDeviceTime();
+            return false;
+        }
+    }
+
+//    private String parseDateAndTime() {
+//        Document document;
+//        String dateUpdateAndTime = null;
+//        try {
+//            document = Jsoup.connect(mTimeFormCodeLink).get();
+//
+//            //get timeUpdate and dateUpdate update page
+//            String strLastUpdatePage = document.select("div.title-page > small").text();
+//            String[] arrayTimeDate = strLastUpdatePage.split(" ");
+//            dateUpdateAndTime = arrayTimeDate[3] + "@" + arrayTimeDate[5];
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return dateUpdateAndTime;
+//    }
+
+    private void parseData(final boolean isNeedUpdate) {
+
+        new Thread(new Runnable() {
+
+            final SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplication());
+
+            @Override
+            public void run() {
+                if (Utils.connectToData(mTimeFormInfo.getStrTimeFormLink()) && mLongTimeFormId != 0) {
+                    parse(mLongTimeFormId, specialityInfoEngine, isNeedUpdate);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mSwipeRefreshLayout.isRefreshing()) {
+                                getData();
+                                mSwipeRefreshLayout.setRefreshing(false);
+                            } else {
+                                mProgressBar.setVisibility(View.VISIBLE);
+                                getData();
+                            }
+                        }
+                    });
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), R.string.textBadInternetConnection, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+
+            private void parse(long timeFormId, SpecialityInfoEngine specialityInfoEngine, boolean isNeedUpdate) {
+                Document document;
+
+                ArrayList<SpecialtiesInfo> specialtiesInfos = new ArrayList<>();
+                String strCategory = mTimeFormCodeLink.substring(mTimeFormCodeLink.length() - 5, mTimeFormCodeLink.length());
+
+                try {
+                    String specialty;
+                    String applications;
+                    String accepted = "";
+                    String recommended = "";
+                    String licenseOrder = "";
+                    String volumeOrder = "";
+                    String exam = "";
+                    String newLink = "";
+                    String dateUpdate = "";
+
+                    document = Jsoup.connect(mTimeFormCodeLink).get();
+
+                    String strLastUpdatePage = document.select("div.title-page > small").text();
+                    String[] arrayTimeDate = strLastUpdatePage.split(" ");
+                    dateUpdate = arrayTimeDate[3] + "@" + arrayTimeDate[5];
+
+                    Element form = document.getElementById(strCategory);
+                    Elements links = form.select("tbody > tr");
+                    //TODO правильно обработать всю инфу для 2017
+                    //TODO правильно обработать загрузку данных
+//                    //TODO загружает данные всех бакалавров, например Гетьмана веч форма -> бакалавр показало всех бакалавров, нужно открывать не только по специальности а еще и по timeForm
+//                    //TODO пустые данные о (рекомендовано, зараховано) получают  поля с прошлых не пустых данных
+                    for (Element link : links) {
+                        Elements elements = link.getElementsByClass("button button-mini");
+                        Elements tdElements = link.select("td");
+
+                        specialty = (tdElements.get(0).toString()).replaceAll("(?i)<td[^>]*>", "")
+                                .replaceAll("(?i)<[/]td[^>]*>", "").replaceAll("(?i)<br[^>]*>", "\n");
+
+                        // get more data applications
+                        applications = tdElements.get(1).select("span").text();
+                        if (tdElements.get(1).select("nobr").size() == 2) {
+                            accepted = tdElements.get(1).select("nobr").get(0).text();
+                            recommended = tdElements.get(1).select("nobr").get(1).text();
+                        } else if (tdElements.get(1).select("nobr").size() == 1) {
+                            recommended = tdElements.get(1).select("nobr").get(0).text();
+                        } else {
+                            recommended = null;
+                        }
+
+                        // get more data amount
+                        if (tdElements.get(2).select("nobr").size() == 2) {
+                            licenseOrder = tdElements.get(2).select("nobr").get(0).text();
+                            volumeOrder = tdElements.get(2).select("nobr").get(1).text();
+                        } else if (tdElements.get(2).select("nobr").size() == 1) {
+                            volumeOrder = tdElements.get(2).select("nobr").get(0).text();
+                        } else {
+                            volumeOrder = null;
+                        }
+
+                        //attempt to get more data from exams
+                        exam = (tdElements.get(3).toString()).replaceAll("(?i)<td[^>]*>", "")
+                                .replaceAll("(?i)<[/]td[^>]*>", "").replaceAll("(?i)<br[^>]*>", "\n");
+
+                        newLink = elements.attr("abs:href");
+
+//                        dateUpdate = parseDateAndTime();
+//                            Log.d("My", "SpecialtiesListActivity get more data dateUpdate -> " + dateUpdate);
+
+                        specialtiesInfos.add(new SpecialtiesInfo(timeFormId, mLongDegree,
+                                specialty, applications, accepted, recommended, licenseOrder, volumeOrder,
+                                exam, newLink, dateUpdate, Favorite.NOT_A_FAVORITE));
+                    }
+
+                    if (isNeedUpdate) {
+                        specialityInfoEngine.updateAllSpecialities(specialtiesInfos);
+                    } else {
+                        specialityInfoEngine.addAllSpecialities(specialtiesInfos);
+                    }
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    private class SpecialitiesInfoAdapter extends RecyclerView.Adapter<SpecialitiesInfoAdapter.SpecialitiesInfoHolder> {
+
+        private Context mContext = getApplicationContext();
+
+        public SpecialitiesInfoAdapter(ArrayList<SpecialtiesInfo> specialtiesInfos) {
+            mSpecialtiesInfos = specialtiesInfos;
+        }
+
+        @Override
+        public SpecialitiesInfoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.list_item_specialties_info, parent, false);
+            return new SpecialitiesInfoHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(SpecialitiesInfoHolder holder, int position) {
+            SpecialtiesInfo specialtiesInfo = mSpecialtiesInfos.get(position);
+            holder.bindCity(specialtiesInfo);
+        }
+
+        @Override
+        public int getItemCount() {
+            return mSpecialtiesInfos.size();
+        }
+
+        public class SpecialitiesInfoHolder extends SwappingHolder
+                implements View.OnLongClickListener, View.OnClickListener {
+
+            private TextView specialtyTextView;
+            private TextView applicationsTextView;
+            private TextView acceptedTextView;
+            private TextView recommendedTextView;
+            private TextView licenseOrderTextView;
+            private TextView volumeOrderTextView;
+            private SpecialtiesInfo mSpecialtiesInfo;
+
+
+            public SpecialitiesInfoHolder(View itemView) {
+                super(itemView, mMultiSelector);
+
+                specialtyTextView = (TextView) itemView.findViewById(R.id.textViewSpecialtySpecialtiesInfo);
+                applicationsTextView = (TextView) itemView.findViewById(R.id.textViewApplicationsSpecialtiesInfo);
+                acceptedTextView = (TextView) itemView.findViewById(R.id.textViewmStrAcceptedSpecialtiesInfo);
+                recommendedTextView = (TextView) itemView.findViewById(R.id.textViewmStrRecommendedSpecialtiesInfo);
+                licenseOrderTextView = (TextView) itemView.findViewById(R.id.textViewmmStrLicensedOrderSpecialtiesInfo);
+                volumeOrderTextView = (TextView) itemView.findViewById(R.id.textViewmmStrVolumeOrderSpecialtiesInfo);
+
+                itemView.setOnClickListener(this);
+                itemView.setOnLongClickListener(this);
+                itemView.setLongClickable(true);
+            }
+
+            public void bindCity(SpecialtiesInfo specialtiesInfo) {
+                mSpecialtiesInfo = specialtiesInfo;
+                specialtyTextView.setText(specialtiesInfo.getStrSpecialty());
+                applicationsTextView.setText(specialtiesInfo.getStrApplications());
+                acceptedTextView.setText(specialtiesInfo.getStrAccepted());
+                recommendedTextView.setText(specialtiesInfo.getStrRecommended());
+                licenseOrderTextView.setText(specialtiesInfo.getStrLicensedOrder());
+                volumeOrderTextView.setText(specialtiesInfo.getStrVolumeOrder());
+                //TODO обработать ошибку когда не пустые items определяються как пустые
+                //TODO обработать ошибку когда в пустые списки дублируються записи из предыдущего item
+                Log.d("My", "SpecialitiesAdapter Link ~ applications -> " + specialtiesInfo.getStrLink() + " ~ " +
+                        specialtiesInfo.getStrApplications().startsWith("заяв: 0") + " ~ " + specialtiesInfo.getStrApplications());
+//                if (specialtiesInfo.getStrLink().equals("") & specialtiesInfo.getStrApplications().startsWith("заяв: 0")) {
+                if (specialtiesInfo.getStrLink().isEmpty()) {
+                    Log.d("My", "SpecialitiesAdapter Link ~ applications -> " + specialtiesInfo.getStrLink());
+                    int emptyColor = ContextCompat.getColor(mContext, R.color.md_grey_500);
+                    specialtyTextView.setTextColor(emptyColor);
+                    applicationsTextView.setTextColor(emptyColor);
+                    acceptedTextView.setTextColor(emptyColor);
+                    recommendedTextView.setTextColor(emptyColor);
+                    licenseOrderTextView.setTextColor(emptyColor);
+                    volumeOrderTextView.setTextColor(emptyColor);
+                }
+
+                setSelectable(mMultiSelector.isSelectable());
+                setActivated(mMultiSelector.isSelected(getAdapterPosition(), getItemId()));
+            }
+
+            @Override
+            public void onClick(View v) {
+                Log.d("My", "onClick work getId -> " + v.getId());
+                if (mSpecialtiesInfo == null) {
+                    return;
+                }
+                if (!mMultiSelector.tapSelection(SpecialitiesInfoHolder.this)) {
+                    selectSpeciality(mSpecialtiesInfo);
+                }
+            }
+
+            @Override
+            public boolean onLongClick(View v) {
+                Log.d("My", "onLongClick work -> ");
+                Log.d("My", "onLongClick v.getId() -> " + v.getId());
+
+                if (!mMultiSelector.isSelectable()) {
+                    startSupportActionMode(mActionModeCallBack);
+                    Log.d("My", "onLongClick mMultiSelector.tapSelection(this) -> " + true);
+                    mMultiSelector.setSelectable(true);
+                    mMultiSelector.setSelected(SpecialitiesInfoHolder.this, true);
+                    return true;
+                } else {
+                    Log.d("My", "onLongClick else -> ");
+                }
+                return false;
+            }
+        }
+    }
+
+    private void selectSpeciality(SpecialtiesInfo specialtiesInfo) {
         if (!specialtiesInfo.getStrLink().isEmpty()) {
+            if (mSearchView != null) {
+                mSearchView.onActionViewCollapsed();
+            }
             Intent intent = new Intent(SpecialtiesListActivity.this, ApplicationListActivity.class);
             intent.putExtra(ApplicationListActivity.INTENT_KEY_APPLICANT_ACTIVITY, specialtiesInfo);
             startActivity(intent);
@@ -334,291 +538,42 @@ public class SpecialtiesListActivity extends BaseActivity implements
         }
     }
 
-    private Boolean isDateComparison() {
+    private ModalMultiSelectorCallback mActionModeCallBack = new ModalMultiSelectorCallback(mMultiSelector) {
 
-        Callable<Boolean> callable = new Callable<Boolean>() {
-
-            @Override
-            public Boolean call() throws Exception {
-                SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplication());
-
-                String parseDate = "";
-                parseDate = parseDateAndTime();
-
-                String dateAndTime = specialityInfoEngine.getSpecialityById(mLongTimeFormId).getStrDateLastUpdate();
-                String dateAndTime2 = specialityInfoEngine.getAllSpecialitiesByIdAndDegree(mLongTimeFormId, mLongDegree).get(0).getStrDateLastUpdate();
-                String dateAndTime3 = parseDateAndTime();
-
-//                Log.d("My", "isDateComparison dateAndTimeCities -> " + dateAndTime);
-//                Log.d("My", "isDateComparison parseDate -> " + parseDate);
-//                Log.d("My", "isDateComparison dateAndTime2 -> " + dateAndTime2);
-//                Log.d("My", "isDateComparison dateAndTime3 -> " + dateAndTime3);
-
-                //                    Log.d("My", " isDateComparison parseDate.equals(dateAndTime) -> " + true);
-//                    Log.d("My", " isDateComparison parseDate.equals(dateAndTime) -> " + false);
-                return parseDate.equals(dateAndTime);
-
-            }
-        };
-
-        FutureTask<Boolean> task = new FutureTask<>(callable);
-        Thread t = new Thread(task);
-        t.start();
-
-        try {
-//            Log.d("My", " isDateComparison task.get() -> " + task.get());
-            return task.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    private String parseDateAndTime() {
-        Document document;
-        String dateUpdateAndTime = null;
-        try {
-            document = Jsoup.connect(mTimeFormCodeLink).get();
-
-            //TODO при обновлении нужно затирать всю цепочку связаных данных в БД
-
-            //get timeUpdate and dateUpdate update page
-            String strLastUpdatePage = document.select("div.title-page > small").text();
-//            Log.d("My", "strLastUpdatePage -> " + strLastUpdatePage);
-            String[] arrayTimeDate = strLastUpdatePage.split(" ");
-
-            dateUpdateAndTime = arrayTimeDate[3] + "@" + arrayTimeDate[5];
-//            Log.d("My", "dateUpdateAndTime -> " + dateUpdateAndTime);
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            Log.d("My", "onCreateActionMode start ->");
+            getMenuInflater().inflate(R.menu.menu_add_to_favorite, menu);
+            return true;
         }
 
-        return dateUpdateAndTime;
-    }
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            Log.d("My", "onActionItemClicked start ->");
 
-    private void parseData() {
+            switch (item.getItemId()) {
+                case R.id.menu_item_add_to_favorite:
 
-        new Thread(new Runnable() {
+                    mode.finish();
+                    SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplicationContext());
 
-            SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplication());
+                    for (int i = mSpecialtiesInfos.size()-1; i >= 0; i--) {
+                        if (mMultiSelector.isSelected(i, 0)) {
+                            SpecialtiesInfo specialtiesInfo = mSpecialtiesInfos.get(i);
 
-            @Override
-            public void run() {
-                if (Utils.connectToData(mTimeFormInfo.getStrTimeFormLink()) && mLongTimeFormId != 0) {
-                    parse();
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mProgressBar.setVisibility(View.VISIBLE);
-                            getData(specialityInfoEngine);
+                            Log.d("My", "onActionItemClicked for start -> " + specialtiesInfo.getStrSpecialty());
+                            Log.d("My", "onActionItemClicked  before getFavorite -> " + specialtiesInfo.getIsFavorite());
+                            specialtiesInfo.setIsFavorite(Favorite.FAVORITE);
+                            specialityInfoEngine.updateSpeciality(specialtiesInfo);
+                            Log.d("My", "onClick else after getFavorite -> " + specialtiesInfo.getIsFavorite());
                         }
-                    });
+                    }
+                    return true;
 
-                } else {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(), R.string.textBadInternetConnection, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
+                default:
+                    break;
             }
-
-            private void parse() {
-                Document document;
-
-                String specialty;
-                String applications;
-                String accepted = null;
-                String recommended = null;
-                String licenseOrder = null;
-                String volumeOrder = null;
-                String exam = null;
-                String newLink = null;
-                String dateUpdate = null;
-
-                String strCategory = mTimeFormCodeLink.substring(mTimeFormCodeLink.length() - 5, mTimeFormCodeLink.length());
-
-                try {
-                    document = Jsoup.connect(mTimeFormCodeLink).get();
-
-//                    Log.d("My", "SpecialtiesListActivity -> ParseSpecialistList - > documentLink" + document.text());
-//                    Log.d("My", "SpecialtiesListActivity -> ParseSpecialistList - > mHtml -> " + mTimeFormCodeLink);
-
-                    Element form = document.getElementById(strCategory);
-                    Elements links = form.select("tbody > tr");
-                    //TODO правильно обработать загрузку данных
-                    //TODO пустые данные о (рекомендовано, зараховано) получают  поля с прошлых не пустых данных
-//                    if (specialityInfoEngine.getAllSpecialitiesById(mLongTimeFormId).isEmpty()) {
-                        for (Element link : links) {
-                            Elements elements = link.getElementsByClass("button button-mini");
-                            Elements tdElements = link.select("td");
-
-//                            if (isContains2015()) {
-////                                specialty = tdElements.get(0).text();
-////                                applications = tdElements.get(1).text();
-////                                amount = "ліцензований обсяг: " + tdElements.get(2).text();
-////                                newLink = elements.attr("abs:href");
-////
-////                                specialityInfoEngine.addSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
-////                                        specialty, applications, amount, newLink));
-//
-////                                Log.d("My", "newLink -> " + newLink);
-//                            } else {
-                            //try to get data from speciality
-                            specialty = (tdElements.get(0).toString()).replaceAll("(?i)<td[^>]*>", "")
-                                    .replaceAll("(?i)<[/]td[^>]*>", "").replaceAll("(?i)<br[^>]*>", "\n");
-//                            Log.d("My", "specialty -> " + specialty);
-
-                            // get more data applications
-                            applications = tdElements.get(1).select("span").text();
-                            if (tdElements.get(1).select("nobr").size() == 2) {
-                                accepted = tdElements.get(1).select("nobr").get(0).text();
-                                recommended = tdElements.get(1).select("nobr").get(1).text();
-                            } else if (tdElements.get(1).select("nobr").size() == 1) {
-                                recommended = tdElements.get(1).select("nobr").get(0).text();
-                            } else {
-                                recommended = null;
-                            }
-
-                            // get more data amount
-                            if (tdElements.get(2).select("nobr").size() == 2) {
-                                licenseOrder = tdElements.get(2).select("nobr").get(0).text();
-                                volumeOrder = tdElements.get(2).select("nobr").get(1).text();
-                            } else if (tdElements.get(2).select("nobr").size() == 1) {
-                                volumeOrder = tdElements.get(2).select("nobr").get(0).text();
-                            } else {
-                                volumeOrder = null;
-                            }
-
-                            //attempt to get more data from exams
-                            exam = (tdElements.get(3).toString()).replaceAll("(?i)<td[^>]*>", "")
-                                    .replaceAll("(?i)<[/]td[^>]*>", "").replaceAll("(?i)<br[^>]*>", "\n");
-
-                            newLink = elements.attr("abs:href");
-
-                            dateUpdate = parseDateAndTime();
-//                            Log.d("My", "SpecialtiesListActivity get more data dateUpdate -> " + dateUpdate);
-
-                            specialityInfoEngine.addSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
-                                    specialty, applications, accepted, recommended, licenseOrder, volumeOrder, exam, newLink, dateUpdate));
-
-                        }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-//            private boolean isContains2015() {
-//                return mHtml.contains("2015");
-//            }
-
-        }).start();
-    }
-
-    private void updateData() {
-
-        new Thread(new Runnable() {
-
-            SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplication());
-
-            @Override
-            public void run() {
-                if (Utils.connectToData(mTimeFormInfo.getStrTimeFormLink()) && mLongTimeFormId != 0) {
-                    update();
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mProgressBar.setVisibility(View.VISIBLE);
-                            getData(specialityInfoEngine);
-                        }
-                    });
-                } else {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(), R.string.textBadInternetConnection, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-            }
-
-            private void update() {
-                Document document;
-
-                String specialty;
-                String applications;
-                String accepted = null;
-                String recommended = null;
-                String licenseOrder = null;
-                String volumeOrder = null;
-                String exam = null;
-                String newLink = null;
-                String dateUpdate = null;
-
-                String strCategory = mTimeFormCodeLink.substring(mTimeFormCodeLink.length() - 5, mTimeFormCodeLink.length());
-
-                try {
-                    document = Jsoup.connect(mTimeFormCodeLink).get();
-
-//                    Log.d("My", "SpecialtiesListActivity -> ParseSpecialistList - > documentLink" + document.text());
-//                    Log.d("My", "SpecialtiesListActivity -> ParseSpecialistList - > mHtml -> " + mTimeFormCodeLink);
-
-                    Element form = document.getElementById(strCategory);
-                    Elements links = form.select("tbody > tr");
-                    //TODO правильно обработать загрузку данных
-                    //TODO загружает данные всех бакалавров, например Гетьмана веч форма -> бакалавр показало всех бакалавров, нужно открывать не только по специальности а еще и по timeForm
-                    //TODO пустые данные о (рекомендовано, зараховано) получают  поля с прошлых не пустых данных
-                        for (Element link : links) {
-                            Elements elements = link.getElementsByClass("button button-mini");
-                            Elements tdElements = link.select("td");
-
-                            //try to get data from speciality
-                            specialty = (tdElements.get(0).toString()).replaceAll("(?i)<td[^>]*>", "")
-                                    .replaceAll("(?i)<[/]td[^>]*>", "").replaceAll("(?i)<br[^>]*>", "\n");
-//                            Log.d("My", "SpecialtiesListActivity specialty -> " + specialty);
-
-                            // get more data applications
-                            applications = tdElements.get(1).select("span").text();
-                            if (tdElements.get(1).select("nobr").size() == 2) {
-                                accepted = tdElements.get(1).select("nobr").get(0).text();
-                                recommended = tdElements.get(1).select("nobr").get(1).text();
-                            } else if (tdElements.get(1).select("nobr").size() == 1) {
-                                recommended = tdElements.get(1).select("nobr").get(0).text();
-                            } else {
-                                recommended = null;
-                            }
-
-                            // get more data amount
-                            if (tdElements.get(2).select("nobr").size() == 2) {
-                                licenseOrder = tdElements.get(2).select("nobr").get(0).text();
-                                volumeOrder = tdElements.get(2).select("nobr").get(1).text();
-                            } else if (tdElements.get(2).select("nobr").size() == 1) {
-                                volumeOrder = tdElements.get(2).select("nobr").get(0).text();
-                            } else {
-                                volumeOrder = null;
-                            }
-
-                            //attempt to get more data from exams
-                            exam = (tdElements.get(3).toString()).replaceAll("(?i)<td[^>]*>", "")
-                                    .replaceAll("(?i)<[/]td[^>]*>", "").replaceAll("(?i)<br[^>]*>", "\n");
-
-                            newLink = elements.attr("abs:href");
-
-                            dateUpdate = parseDateAndTime();
-//                            dateUpdate = "test";
-//                            Log.d("My", "SpecialtiesListActivity get more data dateUpdate -> " + dateUpdate);
-
-                            specialityInfoEngine.updateSpeciality(new SpecialtiesInfo(mLongTimeFormId, mLongDegree,
-                                    specialty, applications, accepted, recommended, licenseOrder, volumeOrder, exam, newLink, dateUpdate));
-                        }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
+            return false;
+        }
+    };
 }

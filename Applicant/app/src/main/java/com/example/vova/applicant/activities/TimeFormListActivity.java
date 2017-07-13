@@ -17,6 +17,7 @@ import com.example.vova.applicant.adapters.TimeFormAdapter;
 import com.example.vova.applicant.model.DetailUniverInfo;
 import com.example.vova.applicant.model.TimeFormInfo;
 import com.example.vova.applicant.model.engines.TimeFormEngine;
+import com.example.vova.applicant.toolsAndConstans.DBConstants;
 import com.example.vova.applicant.utils.Utils;
 
 import org.jsoup.Jsoup;
@@ -26,14 +27,13 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
 public class TimeFormListActivity extends BaseActivity implements
         TimeFormAdapter.OnClickTimeFormItem {
-
-    private DetailUniverInfo mDetailUniverInfo;
 
     public static final String KEY_TIME_FORM_LINK = "KEY_TIME_FORM_LINK";
 
@@ -46,12 +46,19 @@ public class TimeFormListActivity extends BaseActivity implements
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ProgressBar mProgressBar;
 
-    private long mLongDetailUNVId = 0;
+    private TimeFormAdapter mTimeFormAdapter;
+    private DetailUniverInfo mDetailUniverInfo;
+    private Calendar mCalendar;
+
+    private long mLongDetailUNVId = -1;
     private String mDetailCodeLink = "";
 
     @Override
     protected void initActivity() {
         Log.d("My", "TimeFormListActivity --------> initActivity");
+
+        Utils.setNeedToEqualsTime(true);
+        mCalendar = Utils.getModDeviceTime();
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -75,24 +82,16 @@ public class TimeFormListActivity extends BaseActivity implements
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(true);
                 mRecyclerView.setVisibility(View.GONE);
-                Log.d("My", "SwipeRefreshLayout -> updateData -> is start");
                 if (!isOnline(getApplicationContext())) {
                     Toast.makeText(getApplicationContext(), R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.d("My", "TimeFormListActivity -> (isDateComparison()) updateData() is started;");
-                    updateData();
-                    Log.d("My", "TimeFormListActivity -> (isDateComparison()) updateData(); is finished");
+                    parseData(DBConstants.Update.NEED_AN_UPDATE);
                 }
-                Log.d("My", "SwipeRefreshLayout -> updateData -> is finish");
-
-                mRecyclerView.setVisibility(View.VISIBLE);
-                mSwipeRefreshLayout.setRefreshing(false);
             }
         });
 
         TextView textViewHeadText = (TextView) findViewById(R.id.textViewСhooseTimeFormTimeFormActivity);
         textViewHeadText.setText(mDetailUniverInfo.getStrDetailText());
-        Log.d("My", "TimeFormListActivity onCreate   mStrFullTimeLink ->" + mDetailUniverInfo.getStrDetailText());
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewTimeFormListActivity);
         LinearLayoutManager layoutManager
@@ -116,37 +115,33 @@ public class TimeFormListActivity extends BaseActivity implements
             if (!isOnline(this)) {
                 Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
                 finish();
+            }else {
+                parseData(DBConstants.Update.NO_NEED_TO_UPDATE);
             }
-            Log.d("My", "TimeFormListActivity -> parseData");
-            parseData();
-
         } else {
-
             if (isDateComparison()) {
-                Log.d("My", "TimeFormListActivity -> isDateComparison  getData(citiesInfoEngine); ");
-                getData(timeFormEngine);
+                getData();
             } else {
                 if (!isOnline(this)) {
                     Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.d("My", "TimeFormListActivity -> (isDateComparison()) updateData() is started;");
-                    updateData();
-                    Log.d("My", "TimeFormListActivity -> (isDateComparison()) updateData(); is finished");
-
+                    parseData(DBConstants.Update.NEED_AN_UPDATE);
                 }
             }
         }
     }
 
-    private void getData(TimeFormEngine timeFormEngine) {
+    private void getData() {
+        TimeFormEngine timeFormEngine = new TimeFormEngine(getApplication());
         ArrayList<TimeFormInfo> timeFormInfos = timeFormEngine.getAllTimeFormsById(mLongDetailUNVId);
-        TimeFormAdapter formAdapter = new TimeFormAdapter(timeFormInfos);
-        formAdapter.setOnClickTimeFormItem(TimeFormListActivity.this);
-        mRecyclerView.setAdapter(formAdapter);
+        mTimeFormAdapter = new TimeFormAdapter(timeFormInfos);
+        mTimeFormAdapter.setOnClickTimeFormItem(TimeFormListActivity.this);
+        mRecyclerView.setAdapter(mTimeFormAdapter);
         mRecyclerView.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.GONE);
     }
 
+    //TODO почему и зачем? проверить!
     @Override
     public void onClickTimeFormItem(TimeFormInfo timeFormInfo) {
         Intent intent = new Intent(TimeFormListActivity.this, SpecialtiesListActivity.class);
@@ -157,68 +152,22 @@ public class TimeFormListActivity extends BaseActivity implements
 
     private Boolean isDateComparison() {
 
-        Callable<Boolean> callable = new Callable<Boolean>() {
+        Calendar calendarCurrentTime = Calendar.getInstance();
+        if (Utils.isNeedToEqualsTime()) {
 
-            @Override
-            public Boolean call() throws Exception {
-                TimeFormEngine timeFormEngine = new TimeFormEngine(getApplication());
-
-                String parseDate = "";
-                parseDate = parseDateAndTime();
-
-                String dateAndTime = timeFormEngine.getTimeFormById(mLongDetailUNVId).getStrDateLastUpdate();
-
-                Log.d("My", "isDateComparison dateAndTimeCities -> " + dateAndTime);
-
-                if (parseDate.equals(dateAndTime)) {
-                    Log.d("My", " isDateComparison parseDate.equals(dateAndTime) -> " + true);
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        };
-
-        FutureTask<Boolean> task = new FutureTask<>(callable);
-        Thread t = new Thread(task);
-        t.start();
-
-        try {
-            Log.d("My", " isDateComparison task.get() -> " + task.get());
-            return task.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            mCalendar.after(calendarCurrentTime);
+            return true;
+        } else {
+            mCalendar = Utils.getModDeviceTime();
+            return false;
         }
-        return false;
     }
 
-    private String parseDateAndTime() {
-        Document document;
-        String dateUpdateAndTime = null;
-        try {
-            document = Jsoup.connect(mDetailCodeLink).get();
-
-            //TODO при обновлении нужно затирать всю цепочку связаных данных в БД
-
-            //get timeUpdate and dateUpdate update page
-            String strLastUpdatePage = document.select("div.title-page > small").text();
-            Log.d("My", "strLastUpdatePage -> " + strLastUpdatePage);
-            String[] arrayTimeDate = strLastUpdatePage.split(" ");
-
-            dateUpdateAndTime = arrayTimeDate[3] + "@" + arrayTimeDate[5];
-            Log.d("My", "dateUpdateAndTime -> " + dateUpdateAndTime);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return dateUpdateAndTime;
-    }
-
-    private void parseData() {
+    private void parseData(final boolean isNeedUpdate) {
 
         new Thread(new Runnable() {
             TimeFormEngine timeFormEngine = new TimeFormEngine(getApplication());
+            int timeFormCode;
 
             @Override
             public void run() {
@@ -228,8 +177,13 @@ public class TimeFormListActivity extends BaseActivity implements
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mProgressBar.setVisibility(View.VISIBLE);
-                            getData(timeFormEngine);
+                            if (mSwipeRefreshLayout.isRefreshing()) {
+                                getData();
+                                mSwipeRefreshLayout.setRefreshing(false);
+                            } else {
+                                mProgressBar.setVisibility(View.VISIBLE);
+                                getData();
+                            }
                         }
                     });
                 } else {
@@ -248,36 +202,29 @@ public class TimeFormListActivity extends BaseActivity implements
                     document = Jsoup.connect(mDetailCodeLink).get();
                     Element elementById = document.getElementById("okrArea");
                     Elements elementsSelectId = elementById.select("ul#myTab");
-                    //TODO доделать этот кошмар правильно обработать формы обучения
-                    Elements elements;
+
                     String[] findConstant = mDetailUniverInfo.getStrDetailLink().split("#");
-                    String s = findConstant[1].substring(0, 3);
-                    Log.d("My", "s -_----------------- > " + s);
-                    switch (s) {
+                    String timeFormName = findConstant[1].substring(0, 3);
+                    switch (timeFormName) {
                         case INT_FULL_TIME_FORM:
-                            Log.d("My", "INT_FULL_TIME_FORM is pressed -> " + s);
-                            elements = elementsSelectId.get(0).select("li");
-                            loopElementsParse(elements);
+                            timeFormCode = 0;
+                            loopElementsParse(elementsSelectId, timeFormCode);
                             break;
                         case INT_EXTERNAL_FORM:
-                            Log.d("My", "INT_FULL_TIME_FORM is pressed -> " + s);
-                            elements = elementsSelectId.get(1).select("li");
-                            loopElementsParse(elements);
+                            timeFormCode = 1;
+                            loopElementsParse(elementsSelectId, timeFormCode);
                             break;
                         case INT_EVENING_FORM:
-                            Log.d("My", "INT_FULL_TIME_FORM is pressed -> " + s);
-                            elements = elementsSelectId.get(2).select("li");
-                            loopElementsParse(elements);
+                            timeFormCode = 2;
+                            loopElementsParse(elementsSelectId, timeFormCode);
                             break;
                         case INT_DISTANCE_FORM:
-                            //TODO падает приложение в 2016, универ гетьмана
-                            Log.d("My", "INT_FULL_TIME_FORM is pressed -> " + s);
                             if (elementsSelectId.size() > 3) {
-                                elements = elementsSelectId.get(3).select("li");
+                                timeFormCode = 3;
                             } else {
-                                elements = elementsSelectId.get(2).select("li");
+                                timeFormCode = 2;
                             }
-                            loopElementsParse(elements);
+                            loopElementsParse(elementsSelectId, timeFormCode);
                             break;
                     }
                 } catch (IOException e) {
@@ -285,93 +232,21 @@ public class TimeFormListActivity extends BaseActivity implements
                 }
             }
 
-            private void loopElementsParse(Elements elements) {
+            private void loopElementsParse(Elements elementsSelectId, int timeCode) {
+                ArrayList<TimeFormInfo> timeFormInfos = new ArrayList<>();
+
+                Elements elements  = elementsSelectId.get(timeCode).select("li");
                 for (Element element : elements) {
                     String textTimeForm = element.select("a").text();
                     String linkTimeForm = element.select("a").attr("abs:href");
                     String dateUpdate = mDetailUniverInfo.getStrDateLastUpdate();
-                    timeFormEngine.addTimeForm(new TimeFormInfo(mLongDetailUNVId, textTimeForm, linkTimeForm, dateUpdate));
+                    timeFormInfos.add(new TimeFormInfo(mLongDetailUNVId, textTimeForm, linkTimeForm, dateUpdate));
                 }
-            }
-        }).start();
-    }
 
-    private void updateData() {
-
-        new Thread(new Runnable() {
-            TimeFormEngine timeFormEngine = new TimeFormEngine(getApplication());
-
-            @Override
-            public void run() {
-                if (Utils.connectToData(mDetailUniverInfo.getStrDetailLink()) && mLongDetailUNVId != 0) {
-                    update();
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mProgressBar.setVisibility(View.VISIBLE);
-                            getData(timeFormEngine);
-                        }
-                    });
+                if (isNeedUpdate) {
+                    timeFormEngine.updateAllTimeForms(timeFormInfos);
                 } else {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(), R.string.textBadInternetConnection, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-            }
-
-            private void update() {
-                Document document;
-                try {
-                    document = Jsoup.connect(mDetailCodeLink).get();
-                    Element elementById = document.getElementById("okrArea");
-                    Elements elementsSelectId = elementById.select("ul#myTab");
-                    //TODO доделать этот кошмар правильно обработать формы обучения
-                    Elements elements;
-                    String[] findConstant = mDetailUniverInfo.getStrDetailLink().split("#");
-                    String s = findConstant[1].substring(0, 3);
-                    Log.d("My", "s -_----------------- > " + s);
-                    switch (s) {
-                        case INT_FULL_TIME_FORM:
-                            Log.d("My", "INT_FULL_TIME_FORM is pressed -> " + s);
-                            elements = elementsSelectId.get(0).select("li");
-                            loopElementsParse(elements);
-                            break;
-                        case INT_EXTERNAL_FORM:
-                            Log.d("My", "INT_FULL_TIME_FORM is pressed -> " + s);
-                            elements = elementsSelectId.get(1).select("li");
-                            loopElementsParse(elements);
-                            break;
-                        case INT_EVENING_FORM:
-                            Log.d("My", "INT_FULL_TIME_FORM is pressed -> " + s);
-                            elements = elementsSelectId.get(2).select("li");
-                            loopElementsParse(elements);
-                            break;
-                        case INT_DISTANCE_FORM:
-                            //TODO падает приложение в 2016, универ гетьмана
-                            Log.d("My", "INT_FULL_TIME_FORM is pressed -> " + s);
-                            if (elementsSelectId.size() > 3) {
-                                elements = elementsSelectId.get(3).select("li");
-                            } else {
-                                elements = elementsSelectId.get(2).select("li");
-                            }
-                            loopElementsParse(elements);
-                            break;
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            private void loopElementsParse(Elements elements) {
-                for (Element element : elements) {
-                    String textTimeForm = element.select("a").text();
-                    String linkTimeForm = element.select("a").attr("abs:href");
-                    String dateUpdate = mDetailUniverInfo.getStrDateLastUpdate();
-                    timeFormEngine.updateTimeForm(new TimeFormInfo(mLongDetailUNVId, textTimeForm, linkTimeForm, dateUpdate));
+                    timeFormEngine.addAllTimeForms(timeFormInfos);
                 }
             }
         }).start();

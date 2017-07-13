@@ -54,12 +54,13 @@ public class SpecialitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         //TODO обработать ошибку когда в пустые списки дублируються записи из предыдущего item
         Log.d("My", "SpecialitiesAdapter Link ~ applications -> " + specialtiesInfo.getStrLink() + " ~ " + specialtiesInfo.getStrApplications());
         if (specialtiesInfo.getStrLink().isEmpty() && specialtiesInfo.getStrApplications().equals("заяв: 0") && mContext != null) {
-            specialitiesInfoViewHolder.specialtyTextView.setTextColor(ContextCompat.getColor(mContext, R.color.md_grey_400));
-            specialitiesInfoViewHolder.applicationsTextView.setTextColor(ContextCompat.getColor(mContext, R.color.md_grey_400));
-            specialitiesInfoViewHolder.acceptedTextView.setTextColor(ContextCompat.getColor(mContext, R.color.md_grey_400));
-            specialitiesInfoViewHolder.recommendedTextView.setTextColor(ContextCompat.getColor(mContext, R.color.md_grey_400));
-            specialitiesInfoViewHolder.licenseOrderTextView.setTextColor(ContextCompat.getColor(mContext, R.color.md_grey_400));
-            specialitiesInfoViewHolder.volumeOrderTextView.setTextColor(ContextCompat.getColor(mContext, R.color.md_grey_400));
+            int emptyColor = ContextCompat.getColor(mContext, R.color.md_grey_400);
+            specialitiesInfoViewHolder.specialtyTextView.setTextColor(emptyColor);
+            specialitiesInfoViewHolder.applicationsTextView.setTextColor(emptyColor);
+            specialitiesInfoViewHolder.acceptedTextView.setTextColor(emptyColor);
+            specialitiesInfoViewHolder.recommendedTextView.setTextColor(emptyColor);
+            specialitiesInfoViewHolder.licenseOrderTextView.setTextColor(emptyColor);
+            specialitiesInfoViewHolder.volumeOrderTextView.setTextColor(emptyColor);
 
         }
         specialitiesInfoViewHolder.rootView.setOnClickListener(new View.OnClickListener() {

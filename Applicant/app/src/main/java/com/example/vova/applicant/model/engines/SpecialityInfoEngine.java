@@ -50,5 +50,22 @@ public class SpecialityInfoEngine extends BaseEngine {
         return specialityDBWrapper.getAllSpecialitiesBySearchString(nId, degree, strSearch);
     }
 
+    public void addAllSpecialities(ArrayList<SpecialtiesInfo> specialityItems) {
+        SpecialityDBWrapper specialityDBWrapper = new SpecialityDBWrapper(getContext());
+        specialityDBWrapper.addAllItems(specialityItems);
+
+    }
+
+    public void updateAllSpecialities(ArrayList<SpecialtiesInfo> specialityItems) {
+        SpecialityDBWrapper specialityDBWrapper = new SpecialityDBWrapper(getContext());
+        specialityDBWrapper.updateAllItems(specialityItems);
+    }
+
+    public ArrayList<SpecialtiesInfo> getAllFavoriteSpecialities() {
+        SpecialityDBWrapper specialityDBWrapper = new SpecialityDBWrapper(getContext());
+        return specialityDBWrapper.getAllFavoriteSpecialities();
+    }
+
+
 
     }

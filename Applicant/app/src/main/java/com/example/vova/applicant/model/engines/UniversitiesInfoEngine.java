@@ -40,11 +40,6 @@ public class UniversitiesInfoEngine extends BaseEngine {
         universitiesInfoDBWrapper.updateUniversity(universityInfo);
     }
 
-    public void addUniversity(UniversityInfo universityInfo) {
-        UniversitiesInfoDBWrapper universitiesInfoDBWrapper = new UniversitiesInfoDBWrapper(getContext());
-        universitiesInfoDBWrapper.addUniversity(universityInfo);
-    }
-
     public UniversityInfo getUniversityById(long nId) {
         UniversitiesInfoDBWrapper universitiesInfoDBWrapper = new UniversitiesInfoDBWrapper(getContext());
         return universitiesInfoDBWrapper.getUniversityById(nId);
@@ -54,4 +49,20 @@ public class UniversitiesInfoEngine extends BaseEngine {
         UniversitiesInfoDBWrapper universitiesInfoDBWrapper = new UniversitiesInfoDBWrapper(getContext());
         return universitiesInfoDBWrapper.getAllUniversitiesBySearchString(nId, category, strSearch);
     }
-}
+
+    public void updateAllUniversities(ArrayList<UniversityInfo> universitiesItems) {
+        UniversitiesInfoDBWrapper universitiesInfoDBWrapper = new UniversitiesInfoDBWrapper(getContext());
+        universitiesInfoDBWrapper.updateAllItems(universitiesItems);
+    }
+
+    public void addAllItems(ArrayList<UniversityInfo> universitiesItems) {
+        UniversitiesInfoDBWrapper universitiesInfoDBWrapper = new UniversitiesInfoDBWrapper(getContext());
+        universitiesInfoDBWrapper.addAllItems(universitiesItems);
+    }
+
+    public ArrayList<UniversityInfo> getAllFavoriteUniversities() {
+        UniversitiesInfoDBWrapper universitiesInfoDBWrapper = new UniversitiesInfoDBWrapper(getContext());
+        return universitiesInfoDBWrapper.getAllFavoriteUniversities();
+    }
+
+    }

@@ -35,15 +35,23 @@ public class ApplicationInfoEngine extends BaseEngine {
         applicationDBWrapper.addItem(applicationsInfo);
     }
 
-    public ApplicationsInfo getApplicationById(long nId){
+    public ApplicationsInfo getApplicationById(long nId) {
         ApplicationDBWrapper applicationDBWrapper = new ApplicationDBWrapper(getContext());
         return applicationDBWrapper.getApplicationById(nId);
     }
 
-    public ArrayList<ApplicationsInfo> getAllApplicationsBySearchString(long nId, String strSearch){
+    public ArrayList<ApplicationsInfo> getAllApplicationsBySearchString(long nId, String strSearch) {
         ApplicationDBWrapper applicationDBWrapper = new ApplicationDBWrapper(getContext());
         return applicationDBWrapper.getAllApplicationsBySearchString(nId, strSearch);
     }
 
-
+    public void addAllApplications(ArrayList<ApplicationsInfo> applicationsItems) {
+        ApplicationDBWrapper applicationDBWrapper = new ApplicationDBWrapper(getContext());
+        applicationDBWrapper.addAllItems(applicationsItems);
     }
+
+    public void updateAllApplications(ArrayList<ApplicationsInfo> applicationsItems) {
+        ApplicationDBWrapper applicationDBWrapper = new ApplicationDBWrapper(getContext());
+        applicationDBWrapper.updateAllItems(applicationsItems);
+    }
+}

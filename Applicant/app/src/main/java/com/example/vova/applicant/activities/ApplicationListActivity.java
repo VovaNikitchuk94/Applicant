@@ -35,6 +35,7 @@ import com.example.vova.applicant.model.SpecialtiesInfo;
 import com.example.vova.applicant.model.engines.ApplicationInfoEngine;
 import com.example.vova.applicant.model.engines.ImportantApplicantInfoEngine;
 import com.example.vova.applicant.model.engines.LegendEngine;
+import com.example.vova.applicant.toolsAndConstans.DBConstants;
 import com.example.vova.applicant.utils.Utils;
 
 import org.jsoup.Jsoup;
@@ -44,9 +45,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
+import java.util.Calendar;
 
 public class ApplicationListActivity extends BaseActivity implements ApplicationAdapter.OnClickApplicationItem {
 
@@ -60,16 +59,21 @@ public class ApplicationListActivity extends BaseActivity implements Application
     private ProgressBar mProgressBar;
     private BottomSheetBehavior bottomSheetBehavior;
     private TextView numberTextView, nameTextView, competitionScoreTextView, BDOScoreTextView, ZNOScoreTextView;
+    private SearchView mSearchView = null;
 
     private SpecialtiesInfo mSpecialtiesInfo;
     private ArrayList<ApplicationsInfo> mApplicationsInfos = new ArrayList<>();
     private ApplicationAdapter mApplicationAdapter;
+    private Calendar mCalendar;
 
-    private long mLongSpecialityId = 0;
+    private long mLongSpecialityId = -1;
     private String mStrApplicantCodeLink = "";
 
     @Override
     protected void initActivity() {
+
+        Utils.setNeedToEqualsTime(true);
+        mCalendar = Utils.getModDeviceTime();
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -83,8 +87,6 @@ public class ApplicationListActivity extends BaseActivity implements Application
             }
         }
 
-        Log.d("My", "initActivity -> mLongSpecialityId -> " + mLongSpecialityId);
-
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
         //TODO при обновлении и последующем открытии активи пропадает данные и ImportantInfo
@@ -95,18 +97,11 @@ public class ApplicationListActivity extends BaseActivity implements Application
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(true);
                 mRecyclerView.setVisibility(View.GONE);
-                Log.d("My", "SwipeRefreshLayout -> updateData -> is start");
                 if (!isOnline(getApplicationContext())) {
                     Toast.makeText(getApplicationContext(), R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.d("My", "CitiesListActivity -> (isDateComparison()) updateData() is started;");
-                    updateData();
-                    Log.d("My", "CitiesListActivity -> (isDateComparison()) updateData(); is finished");
+                    parseData(DBConstants.Update.NEED_AN_UPDATE);
                 }
-                Log.d("My", "SwipeRefreshLayout -> updateData -> is finish");
-
-                mRecyclerView.setVisibility(View.VISIBLE);
-                mSwipeRefreshLayout.setRefreshing(false);
             }
         });
 
@@ -135,12 +130,7 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
     private void setTextImportantTextView() {
         ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getApplicationContext());
-        Log.d("My", "setTextImportantTextView importantApplicantInfoEngine.getImportantInfoById(mLongSpecialityId) - > "
-                + importantApplicantInfoEngine.getImportantInfoById(mSpecialtiesInfo.getId()));
-        Log.d("My", "setTextImportantTextView start");
         ImportantInfo importantInfos = importantApplicantInfoEngine.getImportantInfoById(mSpecialtiesInfo.getId());
-        Log.d("My", "setTextImportantTextView start importantInfos - > " + importantInfos);
-
         numberTextView.setText(importantInfos.getStrNumber());
         nameTextView.setText(importantInfos.getStrName());
         competitionScoreTextView.setText(importantInfos.getStrTotalScores());
@@ -184,83 +174,47 @@ public class ApplicationListActivity extends BaseActivity implements Application
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_activity_main, menu);
+        setToolbarSearchView(menu);
 
+        MenuItem itemHelp = menu.add(3, MENU_ITEM_LEGEND,3, R.string.textLegend);
+        itemHelp.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    private void setToolbarSearchView(Menu menu) {
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        mSearchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
-        //customized searchView from stackOverflow help
+        //customized mSearchView from stackOverflow help
         SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete)
-                searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.material_drawer_hint_text));
+                mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.primary_light));
         searchAutoComplete.setTextColor(Color.WHITE);
-        searchView.setQueryHint("Test");
-
-//        View searchplate = (View)searchView.findViewById(android.support.v7.appcompat.R.id.search_plate);
-//        searchplate.setBackgroundResource(R.drawable.texfield_searchview_holo_light);
+        mSearchView.setQueryHint(getString(R.string.textHintSearchEnrollee));
 
         //clear button
-        ImageView searchCloseIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
+        ImageView searchCloseIcon = (ImageView) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
         searchCloseIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
         searchCloseIcon.setImageResource(R.drawable.ic_clear_search);
 
-//        ImageView voiceIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search);
-//        voiceIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
-//        voiceIcon.setImageResource(R.drawable.ic_search);
-
         //top button search icon
-        ImageView searchIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
+        ImageView searchIcon = (ImageView) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_button);
         searchIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
         searchIcon.setImageResource(R.drawable.ic_search);
 
-        //зачем он нужен?
-//        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-//        searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
-//            @Override
-//            public boolean onMenuItemActionExpand(MenuItem item) {
-//
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean onMenuItemActionCollapse(MenuItem item) {
-//
-//                return true;
-//            }
-//        });
-//        searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
-//            @Override
-//            public boolean onMenuItemActionExpand(MenuItem item) {
-//                Log.d("My", "onMenuItemActionExpand");
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean onMenuItemActionCollapse(MenuItem item) {
-//                Log.d("My", "onMenuItemActionCollapse");
-//                updateInfo("");
-//                return true;
-//            }
-//        });
-
-        // Associate searchable configuration with the SearchView
-//        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-//        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-//        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
 
                 updateInfo(query);
-//                if(!searchView.isIconified()) {
-//                    searchView.setIconified(true);
-//                }
-                searchView.setIconified(false);
-                searchView.clearFocus();
-
+                if (!mSearchView.isIconified()) {
+                    mSearchView.setIconified(true);
+                }
+                mSearchView.clearFocus();
                 return false;
             }
 
@@ -273,18 +227,14 @@ public class ApplicationListActivity extends BaseActivity implements Application
             }
         });
 
-        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+        mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                Log.d("My", "setOnQueryTextFocusChangeListener onFocusChange");
-                Log.d("My", "setOnQueryTextFocusChangeListener hasFocus -> " + hasFocus);
                 if (!hasFocus) {
-                    searchView.onActionViewCollapsed();
+                    mSearchView.onActionViewCollapsed();
                 }
             }
         });
-
-        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -293,8 +243,6 @@ public class ApplicationListActivity extends BaseActivity implements Application
         int sizeArrNow = mApplicationsInfos.size();
         int sizeMustBe = applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId).size();
 
-//        Log.d("My", "onBackPressed mCitiesInfos.size(); -> " + mCitiesInfos.size());
-//        Log.d("My", "onBackPressed citiesInfoEngine.getAllCitiesById(mLongYearId).size() -> " + citiesInfoEngine.getAllCitiesById(mLongYearId).size());
         if ((sizeArrNow != sizeMustBe) && isDrawerClosed()) {
             updateInfo();
         } else {
@@ -304,8 +252,8 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
     @Override
     protected void onStop() {
-        super.onStop();
         updateInfo();
+        super.onStop();
     }
 
     private void updateInfo() {
@@ -340,60 +288,57 @@ public class ApplicationListActivity extends BaseActivity implements Application
 //        itemApplicantInfo.setIcon(infoDrawable);
 //        itemApplicantInfo.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 //
-//        MenuItem itemHelp = menu.add(3, MENU_ITEM_LEGEND,3, R.string.textLegend);
-//        itemHelp.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+//
 //
 //        return super.onCreateOptionsMenu(menu);
 //    }
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//
-//        switch (item.getItemId()){
-//            case ITEM_ID_APPLICANT_INFO:
-////                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-////                        Uri.parse("https://drive.google.com/open?id=0B4__5KtwLylAazV3TEtmWmNYMjQ"));
-////                startActivity(browserIntent);
-//
-//                Toast.makeText(this, "applicant info selected", Toast.LENGTH_SHORT).show();
-//                break;
-//            case MENU_ITEM_LEGEND:
-//                if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
-//                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-//                    Log.d("My", " if bottomSheetBehavior.setState - >" +  bottomSheetBehavior.getState());
-//                } else {
-//                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-//                    Log.d("My", " else bottomSheetBehavior.setState - >" +  bottomSheetBehavior.getState());
-//                }
-//
-//                Log.d("My", " bottomSheetBehavior.setState - >" +  bottomSheetBehavior.getState());
-//                Toast.makeText(this, "MENU_ITEM_LEGEND selected", Toast.LENGTH_SHORT).show();
-//                break;
-//
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case ITEM_ID_APPLICANT_INFO:
+//                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+//                        Uri.parse("https://drive.google.com/open?id=0B4__5KtwLylAazV3TEtmWmNYMjQ"));
+//                startActivity(browserIntent);
+
+                Toast.makeText(this, "applicant info selected", Toast.LENGTH_SHORT).show();
+                break;
+            case MENU_ITEM_LEGEND:
+                if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    Log.d("My", " if bottomSheetBehavior.setState - >" +  bottomSheetBehavior.getState());
+                } else {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    Log.d("My", " else bottomSheetBehavior.setState - >" +  bottomSheetBehavior.getState());
+                }
+
+                Log.d("My", " bottomSheetBehavior.setState - >" +  bottomSheetBehavior.getState());
+                Toast.makeText(this, "MENU_ITEM_LEGEND selected", Toast.LENGTH_SHORT).show();
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     private void setData() {
+
         ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
         if (applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId).isEmpty()) {
             if (!isOnline(this)) {
                 Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
                 finish();
+            } else {
+                parseData(DBConstants.Update.NO_NEED_TO_UPDATE);
             }
-            Log.d("My", "CitiesListActivity -> parseData");
-            parseData();
         } else {
             if (isDateComparison()) {
-                Log.d("My", "CitiesListActivity -> isDateComparison  getData(citiesInfoEngine); ");
-                getData(applicationInfoEngine);
+                getData();
             } else {
                 if (!isOnline(this)) {
                     Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
                 } else {
-                    updateData();
-                    Log.d("My", "CitiesListActivity -> (isDateComparison()) updateData(); is finished");
-
+                    parseData(DBConstants.Update.NEED_AN_UPDATE);
                 }
 
                 //set textViews text importantInfo
@@ -405,11 +350,12 @@ public class ApplicationListActivity extends BaseActivity implements Application
         }
     }
 
-    private void getData(ApplicationInfoEngine applicationInfoEngine) {
+    private void getData() {
+        ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
         mApplicationsInfos.clear();
         mApplicationsInfos.addAll(applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId));
         mApplicationAdapter = new ApplicationAdapter(mApplicationsInfos);
-//        mApplicationAdapter.notifyDataSetChanged();
+        mApplicationAdapter.notifyDataSetChanged();
         mApplicationAdapter.setOnClickApplicationItem(ApplicationListActivity.this);
         mRecyclerView.setAdapter(mApplicationAdapter);
         mRecyclerView.setVisibility(View.VISIBLE);
@@ -418,7 +364,9 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
     @Override
     public void onClickApplicationItem(ApplicationsInfo applicationInfo) {
-        Log.d("My", "isDateComparison dateAndTimeCitiesonClickApplicationItem(ApplicationsInfo  -> " + applicationInfo.getLongSpecialityId() + " ~ " + applicationInfo.getStrApplicantName());
+        if (mSearchView != null) {
+            mSearchView.onActionViewCollapsed();
+        }
         Intent intent = new Intent(this, DetailApplicantPagerActivity.class);
         intent.putExtra(DetailApplicantPagerActivity.INTENT_KEY_APPLICANT_INFO, applicationInfo);
         startActivity(intent);
@@ -426,62 +374,149 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
     private Boolean isDateComparison() {
 
-        Callable<Boolean> callable = new Callable<Boolean>() {
+        Calendar calendarCurrentTime = Calendar.getInstance();
+        if (Utils.isNeedToEqualsTime()) {
 
-            @Override
-            public Boolean call() throws Exception {
-                ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
-
-                String parseDate = "";
-                parseDate = parseDateAndTime();
-
-                String dateAndTime = applicationInfoEngine.getApplicationById(mLongSpecialityId).getStrDateLastUpdate();
-
-                Log.d("My", "isDateComparison dateAndTimeCities -> " + dateAndTime);
-
-                if (parseDate.equals(dateAndTime)) {
-                    Log.d("My", " isDateComparison parseDate.equals(dateAndTime) -> " + true);
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        };
-
-        FutureTask<Boolean> task = new FutureTask<>(callable);
-        Thread t = new Thread(task);
-        t.start();
-
-        try {
-            Log.d("My", " isDateComparison task.get() -> " + task.get());
-            return task.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            mCalendar.after(calendarCurrentTime);
+            return true;
+        } else {
+            mCalendar = Utils.getModDeviceTime();
+            return false;
         }
-        return false;
     }
 
-    private String parseDateAndTime() {
-        Document document;
-        String dateUpdateAndTime = null;
-        try {
-            document = Jsoup.connect(mStrApplicantCodeLink).get();
+    private void parseData(final boolean isNeedUpdate) {
 
-            //TODO при обновлении нужно затирать всю цепочку связаных данных в БД
+        new Thread(new Runnable() {
 
-            //get timeUpdate and dateUpdate update page
+            final ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
 
-            String strLastUpdatePage = document.select("div.title-page > p > small").text();
-            String[] arrayTimeDate = strLastUpdatePage.split(" ");
+            @Override
+            public void run() {
 
-            dateUpdateAndTime = arrayTimeDate[3] + "@" + arrayTimeDate[5];
-            Log.d("My", "dateUpdateAndTime -> " + dateUpdateAndTime);
+                if (Utils.connectToData(mStrApplicantCodeLink) && mLongSpecialityId > -1) {
+                    parse(mLongSpecialityId, applicationInfoEngine, isNeedUpdate);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
 
-        return dateUpdateAndTime;
+                            //set textViews text importantInfo
+                            setTextImportantTextView();
+
+                            if (mSwipeRefreshLayout.isRefreshing()) {
+                                getData();
+                                mSwipeRefreshLayout.setRefreshing(false);
+                            } else {
+                                mProgressBar.setVisibility(View.VISIBLE);
+                                getData();
+                            }
+                        }
+                    });
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), R.string.textBadInternetConnection, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+
+            private void parse(long specialityId, ApplicationInfoEngine applicationInfoEngine, boolean isNeedUpdate) {
+                //applicant data
+                String number;
+                String name;
+                String priority = "";
+                String totalScore;
+                String markDocument;
+                String markTest;
+                String markExam;
+                String extraPoints;
+                String originalDocument;
+
+                String color;
+                String someLink;
+
+                Document document;
+                ArrayList<ApplicationsInfo> applicationsInfos = new ArrayList<>();
+                try {
+                    document = Jsoup.connect(mStrApplicantCodeLink).get();
+
+                    //get time and date update page
+                    String strLastUpdatePage = document.select("div.title-page > p > small").text();
+                    String[] arrayTimeDate = strLastUpdatePage.split(" ");
+                    String dateUpdate = arrayTimeDate[3] + "@" + arrayTimeDate[5];
+
+                    //Data of applicants
+                    Elements links = document.getElementsByClass("tablesaw tablesaw-stack tablesaw-sortable");
+                    Elements elementsBody = links.select("tbody");
+                    Elements selectTrApplicant = elementsBody.select("tr");
+
+                    //Data of legend
+                    Element legendElementById = document.getElementById("legend");
+                    Elements selectLegendElements = legendElementById.select("tr");
+                    LegendEngine legendEngine = new LegendEngine(getApplication());
+                    if (legendEngine.getLegendsById(specialityId).isEmpty()) {
+                        parseLegendData(selectLegendElements, legendEngine, specialityId);
+                    }
+
+                    //Data of importantInfo & Data of University information
+                    Elements detailElements = document.getElementsByClass("title-page");
+                    Elements elementsThead = links.select("thead");
+                    Elements selectTrMarking = elementsThead.select("th");
+
+                    ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getApplication());
+                    if (importantApplicantInfoEngine.getImportantInfoById(specialityId) == null) {
+                        Log.d("My", "getImportantInfoById == null");
+                        parseImportantInfo(detailElements, selectTrMarking, specialityId);
+                    }
+
+                    for (Element link : selectTrApplicant) {
+                        Elements tdElements = link.select("td");
+
+                        //background
+                        color = parseBackgroundApplicant(tdElements);
+
+                        if (tdElements.size() == 8) {
+                            number = tdElements.get(0).text();
+                            name = tdElements.get(1).text();
+                            totalScore = tdElements.get(2).text();
+                            markDocument = tdElements.get(3).text();
+                            markTest = tdElements.get(4).text();
+                            markExam = tdElements.get(5).text();
+                            extraPoints = tdElements.get(6).text();
+                            originalDocument = tdElements.get(7).text();
+                        } else {
+                            number = tdElements.get(0).text();
+                            name = tdElements.get(1).text();
+                            priority = tdElements.get(2).text();
+                            totalScore = tdElements.get(3).text();
+                            markDocument = tdElements.get(4).text();
+                            markTest = tdElements.get(5).text();
+                            markExam = tdElements.get(6).text();
+                            extraPoints = tdElements.get(7).text();
+                            originalDocument = tdElements.get(8).text();
+                        }
+
+                        someLink = tdElements.attr("abs:href");
+
+                        applicationsInfos.add(new ApplicationsInfo(specialityId,
+                                number, name, priority, totalScore, markDocument, markTest, markExam,
+                                extraPoints, originalDocument, someLink, color, dateUpdate));
+                    }
+
+                    if (isNeedUpdate) {
+                        applicationInfoEngine.updateAllApplications(applicationsInfos);
+                    } else {
+                        applicationInfoEngine.addAllApplications(applicationsInfos);
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     //get legend data
@@ -514,43 +549,37 @@ public class ApplicationListActivity extends BaseActivity implements Application
             }
 
             if (detailLegend.size() == 1) {
-                Log.d("My", "legendEngine true -> ((");
                 legendName = "";
                 legendDetail = detailLegend.get(0).text().trim();
                 legendBackground = "#e0e0e0";
             }
             legendEngine.addLegend(new LegendInfo(specialityId, legendName, legendDetail, legendBackground));
-            Log.d("My", "legendEngine new legendBackground specialityId-> " + specialityId);
-            Log.d("My", "legendEngine new legendBackground legendName-> " + legendBackground);
-            Log.d("My", "legendEngine new legendBackground legendDetail-> " + legendDetail);
-            Log.d("My", "legendEngine new legendBackground legendBackground-> " + legendBackground);
         }
     }
 
     private void parseImportantInfo(Elements detailElements, Elements selectTrMarking, long specialityId) {
-        String universityName = null;
-        String speciality = null;
-        String specialization = null;
-        String faculty = null;
-        String timeForm = null;
-        String lastTimeUpdate = null;
+        String universityName = "";
+        String speciality = "";
+        String specialization = "";
+        String faculty = "";
+        String timeForm = "";
+        String lastTimeUpdate = "";
 
-        String number = null;
-        String name = null;
-        String priority = null;
-        String totalScore = null;
-        String markDocument = null;
-        String markTest = null;
-        String markExam = null;
-        String extraPoints = null;
-        String originalDocument = null;
+        String number ="";
+        String name = "";
+        String priority = "";
+        String totalScore = "";
+        String markDocument = "";
+        String markTest = "";
+        String markExam = "";
+        String extraPoints = "";
+        String originalDocument = "";
 
         ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getApplicationContext());
-        Log.d("My", "parseImportantInfo start -> " + importantApplicantInfoEngine.getImportantInfoById(specialityId));
         if (importantApplicantInfoEngine.getImportantInfoById(specialityId) == null) {
 
             universityName = detailElements.select(".title-description").text();
-            String universityInfos = null;
+            String universityInfos = "";
             if (detailElements.select("p").size() > 1) {
                 universityInfos = (detailElements.select("p").get(1).toString()).replaceAll("(?i)<br[^>]*>", "/");
             } else {
@@ -558,9 +587,7 @@ public class ApplicationListActivity extends BaseActivity implements Application
             }
 
             universityInfos = universityInfos.substring(4, universityInfos.indexOf("<small"));
-            Log.d("My", "detailElements speciality -> " + universityInfos);
             String[] arrSpecialities = universityInfos.split("[/]");
-            Log.d("My", "detailElements arrSpecialities.length -> " + arrSpecialities.length);
             if (arrSpecialities.length == 4) {
                 speciality = arrSpecialities[0];
                 specialization = arrSpecialities[1];
@@ -569,13 +596,9 @@ public class ApplicationListActivity extends BaseActivity implements Application
             }
 
             lastTimeUpdate = detailElements.select("p > small").text();
-            Log.d("My", "detailElements lastTimeUpdate -> " + lastTimeUpdate);
-
-            Log.d("My", "parseImportantInfo start");
 
             //applicant data
             if (selectTrMarking.size() == 8) {
-                Log.d("My", "parseImportantInfo start selectTrMarking.size() == 8");
                 number = selectTrMarking.get(0).text();
                 name = selectTrMarking.get(1).text();
                 totalScore = selectTrMarking.get(2).text();
@@ -586,7 +609,6 @@ public class ApplicationListActivity extends BaseActivity implements Application
                 originalDocument = selectTrMarking.get(7).text();
 
             } else {
-                Log.d("My", "parseImportantInfo start selectTrMarking.size() == 9");
                 number = selectTrMarking.get(0).text();
                 name = selectTrMarking.get(1).text();
                 priority = selectTrMarking.get(2).text();
@@ -601,14 +623,6 @@ public class ApplicationListActivity extends BaseActivity implements Application
             importantApplicantInfoEngine.addImportantInfo(new ImportantInfo(specialityId, universityName,
                     speciality, specialization, faculty, timeForm, lastTimeUpdate, number, name, priority, totalScore,
                     markDocument, markTest, markExam, extraPoints, originalDocument));
-
-            Log.d("My", "parseImportantInfo; universityName ->" + universityName);
-            Log.d("My", "parseImportantInfo; speciality ->" + speciality);
-            Log.d("My", "parseImportantInfo; specialization ->" + specialization);
-            Log.d("My", "parseImportantInfo; faculty ->" + faculty);
-            Log.d("My", "parseImportantInfo; timeForm ->" + timeForm);
-            Log.d("My", "parseImportantInfo; name ->" + name);
-
         }
     }
 
@@ -638,248 +652,7 @@ public class ApplicationListActivity extends BaseActivity implements Application
         } else {
             color = "#FFFFFF";
         }
-
         return color;
     }
 
-    private void parseData() {
-
-        new Thread(new Runnable() {
-
-            final ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
-
-            @Override
-            public void run() {
-
-                if (Utils.connectToData(mStrApplicantCodeLink) && mLongSpecialityId != 0) {
-                    parse(applicationInfoEngine);
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mProgressBar.setVisibility(View.VISIBLE);
-                            getData(applicationInfoEngine);
-
-                            //set textViews text importantInfo
-                            setTextImportantTextView();
-                        }
-                    });
-                } else {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(), R.string.textBadInternetConnection, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-            }
-
-            private void parse(ApplicationInfoEngine applicationInfoEngine) {
-                //applicant data
-                String number;
-                String name;
-                String priority = "";
-                String totalScore;
-                String markDocument;
-                String markTest;
-                String markExam;
-                String extraPoints;
-                String originalDocument;
-
-                String color;
-                String someLink;
-
-                Document document;
-                try {
-                    document = Jsoup.connect(mStrApplicantCodeLink).get();
-                    Log.d("My", "html -------> " + mStrApplicantCodeLink);
-
-                    //get time and date update page
-                    String dateUpdate = parseDateAndTime();
-//                    String dateUpdate = "31/02/17@23:45";
-                    Log.d("My", "date -> " + dateUpdate);
-
-                    //Data of applicants
-                    Elements links = document.getElementsByClass("tablesaw tablesaw-stack tablesaw-sortable");
-                    Elements elementsBody = links.select("tbody");
-                    Elements selectTrApplicant = elementsBody.select("tr");
-
-                    //Data of legend
-                    Element legendElementById = document.getElementById("legend");
-                    Elements selectLegendElements = legendElementById.select("tr");
-                    LegendEngine legendEngine = new LegendEngine(getApplication());
-                    if (legendEngine.getLegendsById(mLongSpecialityId).isEmpty()) {
-                        parseLegendData(selectLegendElements, legendEngine, mLongSpecialityId);
-                    }
-
-                    //Data of importantInfo & Data of University information
-                    Elements detailElements = document.getElementsByClass("title-page");
-                    Elements elementsThead = links.select("thead");
-                    Elements selectTrMarking = elementsThead.select("th");
-                    ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getApplication());
-                    if (importantApplicantInfoEngine.getImportantInfoById(mLongSpecialityId) == null) {
-                        Log.d("My", "getImportantInfoById == null");
-                        parseImportantInfo(detailElements, selectTrMarking, mLongSpecialityId);
-                    }
-
-                    for (Element link : selectTrApplicant) {
-                        Elements tdElements = link.select("td");
-
-                        //background
-                        color = parseBackgroundApplicant(tdElements);
-
-                        if (tdElements.size() == 8) {
-                            number = tdElements.get(0).text();
-                            name = tdElements.get(1).text();
-                            totalScore = tdElements.get(2).text();
-                            markDocument = tdElements.get(3).text();
-                            markTest = tdElements.get(4).text();
-                            markExam = tdElements.get(5).text();
-                            extraPoints = tdElements.get(6).text();
-                            originalDocument = tdElements.get(7).text();
-                        } else {
-                            number = tdElements.get(0).text();
-                            name = tdElements.get(1).text();
-                            priority = tdElements.get(2).text();
-                            totalScore = tdElements.get(3).text();
-                            markDocument = tdElements.get(4).text();
-                            markTest = tdElements.get(5).text();
-                            markExam = tdElements.get(6).text();
-                            extraPoints = tdElements.get(7).text();
-                            originalDocument = tdElements.get(8).text();
-                        }
-
-                        someLink = tdElements.attr("abs:href");
-
-                        applicationInfoEngine.addApplication(new ApplicationsInfo(mLongSpecialityId,
-                                number, name, priority, totalScore, markDocument, markTest, markExam,
-                                extraPoints, originalDocument, someLink, color, dateUpdate));
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
-
-    private void updateData() {
-
-        new Thread(new Runnable() {
-
-            final ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
-
-            @Override
-            public void run() {
-
-                if (Utils.connectToData(mStrApplicantCodeLink) && mLongSpecialityId != 0) {
-                    update(applicationInfoEngine);
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mProgressBar.setVisibility(View.VISIBLE);
-                            getData(applicationInfoEngine);
-
-                            //set textViews text importantInfo
-                            setTextImportantTextView();
-                        }
-                    });
-                } else {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(), R.string.textBadInternetConnection, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-            }
-
-            private void update(ApplicationInfoEngine applicationInfoEngine) {
-                //applicant data
-                String number;
-                String name;
-                String priority = "";
-                String totalScore;
-                String markDocument;
-                String markTest;
-                String markExam;
-                String extraPoints;
-                String originalDocument;
-
-                String color;
-                String someLink;
-
-                Document document;
-                try {
-                    document = Jsoup.connect(mStrApplicantCodeLink).get();
-                    Log.d("My", "html -------> " + mStrApplicantCodeLink);
-
-                    //get time and date update page
-                    String dateUpdate = parseDateAndTime();
-//                    String dateUpdate = "test";
-                    Log.d("My", "date -> " + dateUpdate);
-
-                    //Data of applicants
-                    Elements links = document.getElementsByClass("tablesaw tablesaw-stack tablesaw-sortable");
-                    Elements elementsBody = links.select("tbody");
-                    Elements selectTrApplicant = elementsBody.select("tr");
-
-//                    //Data of legend
-//                    Element legendElementById = document.getElementById("legend");
-//                    Elements selectLegendElements = legendElementById.select("tr");
-//                    LegendEngine legendEngine = new LegendEngine(getApplication());
-//                    if (legendEngine.getLegendsById(mLongSpecialityId).isEmpty()) {
-//                        parseLegendData(selectLegendElements, legendEngine, mLongSpecialityId);
-//                    }
-//
-//                    //Data of importantInfo & Data of University information
-//                    Elements detailElements = document.getElementsByClass("title-page");
-//                    Elements elementsThead = links.select("thead");
-//                    Elements selectTrMarking = elementsThead.select("th");
-//                    ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getApplication());
-//                    if (importantApplicantInfoEngine.getImportantInfoById(mLongSpecialityId) == null) {
-//                        parseImportantInfo(detailElements, selectTrMarking, mLongSpecialityId);
-//                    }
-
-                    for (Element link : selectTrApplicant) {
-                        Elements tdElements = link.select("td");
-
-                        //background
-                        color = parseBackgroundApplicant(tdElements);
-
-                        if (tdElements.size() == 8) {
-                            number = tdElements.get(0).text();
-                            name = tdElements.get(1).text();
-                            totalScore = tdElements.get(2).text();
-                            markDocument = tdElements.get(3).text();
-                            markTest = tdElements.get(4).text();
-                            markExam = tdElements.get(5).text();
-                            extraPoints = tdElements.get(6).text();
-                            originalDocument = tdElements.get(7).text();
-                        } else {
-                            number = tdElements.get(0).text();
-                            name = tdElements.get(1).text();
-                            priority = tdElements.get(2).text();
-                            totalScore = tdElements.get(3).text();
-                            markDocument = tdElements.get(4).text();
-                            markTest = tdElements.get(5).text();
-                            markExam = tdElements.get(6).text();
-                            extraPoints = tdElements.get(7).text();
-                            originalDocument = tdElements.get(8).text();
-                        }
-
-                        someLink = tdElements.attr("abs:href");
-
-                        applicationInfoEngine.updateApplicant(new ApplicationsInfo(mLongSpecialityId,
-                                number, name, priority, totalScore, markDocument, markTest, markExam,
-                                extraPoints, originalDocument, someLink, color, dateUpdate));
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
 }

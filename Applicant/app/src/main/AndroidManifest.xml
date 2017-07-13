@@ -9,10 +9,10 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/MaterialDrawerTheme.Light.DarkToolbar">
-        <activity android:name=".activities.TopLevelActivity">
+        android:screenOrientation="portrait"
+        android:theme="@style/AppTheme">
+        <activity android:name=".activities.CitiesListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -21,19 +21,15 @@
         </activity>
         <activity android:name=".activities.CategoryUniversListActivity"/>
         <activity android:name=".activities.AboutUniversityActivity"/>
-        <activity android:name=".activities.CitiesListActivity">
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
-        </activity>
         <activity android:name=".activities.SpecialtiesListActivity"/>
         <activity android:name=".activities.ApplicationListActivity"/>
         <activity android:name=".activities.DetailUniversListActivity"/>
         <activity android:name=".activities.TimeFormListActivity"/>
         <activity android:name=".activities.DetailApplicantPagerActivity"/>
         <activity android:name=".activities.UniversitiesListActivity"/>
-        <activity android:name=".activities.Applicant2017Activity"/>
         <activity android:name=".activities.FavoriteItemsActivity"/>
+        <activity android:name=".activities.ArchiveActivity"/>
+
     </application>
 
 </manifest>

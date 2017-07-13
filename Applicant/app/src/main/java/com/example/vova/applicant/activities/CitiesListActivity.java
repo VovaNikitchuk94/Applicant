@@ -9,23 +9,31 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
+import com.bignerdranch.android.multiselector.MultiSelector;
+import com.bignerdranch.android.multiselector.SwappingHolder;
 import com.example.vova.applicant.R;
-import com.example.vova.applicant.adapters.CitiesInfoAdapter;
 import com.example.vova.applicant.model.CitiesInfo;
 import com.example.vova.applicant.model.engines.CitiesInfoEngine;
+import com.example.vova.applicant.toolsAndConstans.Constans;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.Favorite;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.Update;
 import com.example.vova.applicant.utils.Utils;
 
 import org.jsoup.Jsoup;
@@ -35,32 +43,33 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
+import java.util.Calendar;
 
-public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapter.OnClickCityItem {
+public class CitiesListActivity extends BaseActivity {
 
     public static final String KEY_YEARS_CITIES_LIST_ACTIVITY = "KEY_YEARS_CITIES_LIST_ACTIVITY";
-    private static final int NOT_FAVORITE = 0;
-    private static final int MENU_ITEM_ADD_TO_FAVORITE = 123;
-
-    private static final boolean NEED_UPDATE = true;
-    private static final boolean DONT_NEED_UPDATE = false;
+    private static final String DATE_KEY_INDEX = "date_index";
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
+    private SearchView mSearchView = null;
 
     private ArrayList<CitiesInfo> mCitiesInfos = new ArrayList<>();
-    private CitiesInfoAdapter mCitiesInfoAdapter;
+    private MultiSelector mMultiSelector = new MultiSelector();
 
-    private long mLongYearId = 0;
+    private CitiesInfoAdapter mCitiesInfoAdapter;
+    private Calendar mCalendar;
+
+    private long mLongYearId = -1;
     private String mYearsCodeLink = "";
 
     @Override
     protected void initActivity() {
         Log.d("My", "CitiesListActivity --------> initActivity");
+
+        Utils.setNeedToEqualsTime(true);
+        mCalendar = Utils.getModDeviceTime();
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -71,6 +80,10 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
                     mLongYearId = Long.parseLong(mYearsCodeLink.
                             substring(mYearsCodeLink.length() - 2, mYearsCodeLink.length() - 1));
                 }
+            } else {
+                mYearsCodeLink = Constans.URL_VSTUP_INFO_2017;
+                mLongYearId = Long.parseLong(mYearsCodeLink.
+                        substring(mYearsCodeLink.length() - 2, mYearsCodeLink.length() - 1));
             }
         }
 
@@ -83,23 +96,16 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(true);
                 mRecyclerView.setVisibility(View.GONE);
-//                TODO запускать только когда можно обновить данные
-                Log.d("My", "SwipeRefreshLayout -> updateData -> is start");
                 if (!isOnline(getApplicationContext())) {
                     Toast.makeText(getApplicationContext(), R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.d("My", "CitiesListActivity -> (isDateComparison()) updateData() is started;");
-                    parseData(NEED_UPDATE);
-                    Log.d("My", "CitiesListActivity -> (isDateComparison()) updateData(); is finished");
+                    parseData(Update.NEED_AN_UPDATE);
                 }
-                Log.d("My", "SwipeRefreshLayout -> updateData -> is finish");
-                mRecyclerView.setVisibility(View.VISIBLE);
-                mSwipeRefreshLayout.setRefreshing(false);
             }
         });
 
-        TextView textView = (TextView) findViewById(R.id.textViewСhoiceCityCitiesActivity);
-        textView.setText(getText(R.string.chooseCityMainActivity));
+//        TextView textView = (TextView) findViewById(R.id.textViewСhoiceCityCitiesActivity);
+//        textView.setText(getText(R.string.chooseCityMainActivity));
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewCitiesListActivity);
         LinearLayoutManager layoutManager
@@ -115,12 +121,7 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_activity_main, menu);
-
         setToolbarSearchView(menu);
-
-        MenuItem itemAddToFavorite = menu.add(3, MENU_ITEM_ADD_TO_FAVORITE, 3, R.string.textAddToFavorite);
-        itemAddToFavorite.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -128,37 +129,35 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        mSearchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
-        //customized searchView from stackOverflow help
+        //customized mSearchView from stackOverflow help
         SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete)
-                searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.material_drawer_hint_text));
+                mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.primary_light));
         searchAutoComplete.setTextColor(Color.WHITE);
-        searchView.setQueryHint("Test");
+        mSearchView.setQueryHint(getString(R.string.textHintSearchCities));
 
         //clear button
-        ImageView searchCloseIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
+        ImageView searchCloseIcon = (ImageView) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
         searchCloseIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
         searchCloseIcon.setImageResource(R.drawable.ic_clear_search);
 
         //top button search icon
-        ImageView searchIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
+        ImageView searchIcon = (ImageView) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_button);
         searchIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
         searchIcon.setImageResource(R.drawable.ic_search);
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
 
                 updateInfo(query);
-                if(!searchView.isIconified()) {
-                    searchView.setIconified(true);
+                if (!mSearchView.isIconified()) {
+                    mSearchView.setIconified(true);
                 }
-//                searchView.setIconified(false);
-                searchView.clearFocus();
-
+                mSearchView.clearFocus();
                 return false;
             }
 
@@ -171,28 +170,14 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
             }
         });
 
-        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+        mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                Log.d("My", "setOnQueryTextFocusChangeListener onFocusChange");
-                Log.d("My", "setOnQueryTextFocusChangeListener hasFocus -> " + hasFocus);
                 if (!hasFocus) {
-                    searchView.onActionViewCollapsed();
+                    mSearchView.onActionViewCollapsed();
                 }
             }
         });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case MENU_ITEM_ADD_TO_FAVORITE:
-                Toast.makeText(this, "MENU_ITEM_ADD_TO_FAVORITE selected", Toast.LENGTH_SHORT).show();
-                break;
-        }
-        Log.d("My", "onOptionsItemSelected item -> " + item);
-        return super.onOptionsItemSelected(item);
     }
 
     //TODO обработать все варианты нажатий
@@ -200,11 +185,9 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
     public void onBackPressed() {
         CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
         int sizeArrNow = mCitiesInfos.size();
-        int sizeMustBe = citiesInfoEngine.getAllCitiesById(mLongYearId).size();
+        int sizeArrMustBe = citiesInfoEngine.getAllCitiesById(mLongYearId).size();
 
-//        Log.d("My", "onBackPressed mCitiesInfos.size(); -> " + mCitiesInfos.size());
-//        Log.d("My", "onBackPressed citiesInfoEngine.getAllCitiesById(mLongYearId).size() -> " + citiesInfoEngine.getAllCitiesById(mLongYearId).size());
-        if ((sizeArrNow != sizeMustBe) && isDrawerClosed()) {
+        if ((sizeArrNow != sizeArrMustBe) && isDrawerClosed()) {
             updateInfo();
         } else {
             super.onBackPressed();
@@ -213,9 +196,25 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
 
     @Override
     protected void onStop() {
-        super.onStop();
         updateInfo();
+        super.onStop();
     }
+
+    //TODO слхранять календать
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d("My", "onSaveInstanceState  -> ");
+        outState.putSerializable(DATE_KEY_INDEX, mCalendar);
+        outState.putSerializable("KEY_URL", mYearsCodeLink);
+        outState.putSerializable("KEY_YEAR_ID", mLongYearId);
+    }
+
+    //    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        setFirstStart(false);
+//    }
 
     @Override
     protected int getLayoutId() {
@@ -228,28 +227,21 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
         CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
         if (citiesInfoEngine.getAllCitiesById(mLongYearId).isEmpty()) {
 
-            //TODO проверять наличие интернета и уведомлять пользователя если его нет
             //TODO upgrade, check data in recyclerView
             if (!isOnline(this)) {
                 Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
                 finish();
+            } else {
+                parseData(Update.NO_NEED_TO_UPDATE);
             }
-//            Log.d("My", "CitiesListActivity -> parseData");
-            parseData(DONT_NEED_UPDATE);
-
         } else {
-
             if (isDateComparison()) {
-//                Log.d("My", "CitiesListActivity -> isDateComparison  getData(citiesInfoEngine); ");
-                getData(citiesInfoEngine);
+                getData();
             } else {
                 if (!isOnline(this)) {
                     Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
                 } else {
-//                    Log.d("My", "CitiesListActivity -> (isDateComparison()) updateData() is started;");
-                    parseData(NEED_UPDATE);
-//                    parseData();
-//                    Log.d("My", "CitiesListActivity -> (isDateComparison()) updateData(); is finished");
+                    parseData(Update.NEED_AN_UPDATE);
                 }
             }
         }
@@ -277,13 +269,12 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
         }
     }
 
-    //try use Kostya's method
-    private void getData(CitiesInfoEngine citiesInfoEngine) {
+    private void getData() {
+        CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
         mCitiesInfos.clear();
         mCitiesInfos.addAll(citiesInfoEngine.getAllCitiesById(mLongYearId));
         mCitiesInfoAdapter = new CitiesInfoAdapter(mCitiesInfos);
         mCitiesInfoAdapter.notifyDataSetChanged();
-        mCitiesInfoAdapter.setOnClickCityInfoItem(CitiesListActivity.this);
         mRecyclerView.setAdapter(mCitiesInfoAdapter);
         mRecyclerView.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.GONE);
@@ -291,69 +282,15 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
 
     private Boolean isDateComparison() {
 
-        Callable<Boolean> callable = new Callable<Boolean>() {
+        Calendar calendarCurrentTime = Calendar.getInstance();
+        if (Utils.isNeedToEqualsTime()) {
 
-            @Override
-            public Boolean call() throws Exception {
-                final CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
-
-                String parseDate = "";
-                parseDate = parseDateAndTime();
-
-                String dateAndTime = citiesInfoEngine.getCityById(mLongYearId).getStrDateLastUpdate();
-
-//                Log.d("My", "isDateComparison dateAndTimeCities -> " + dateAndTime);
-
-                if (parseDate.equals(dateAndTime)) {
-//                    Log.d("My", " isDateComparison parseDate.equals(dateAndTime) -> " + true);
-                    return true;
-                }
-                return false;
-            }
-        };
-
-        FutureTask<Boolean> task = new FutureTask<>(callable);
-        Thread t = new Thread(task);
-        t.start();
-
-        try {
-//            Log.d("My", " isDateComparison task.get() -> " + task.get());
-            return task.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            mCalendar.after(calendarCurrentTime);
+            return true;
+        } else {
+            mCalendar = Utils.getModDeviceTime();
+            return false;
         }
-        return false;
-    }
-
-    private String parseDateAndTime() {
-        Document document;
-        String dateUpdateAndTime = null;
-        try {
-            document = Jsoup.connect(mYearsCodeLink).get();
-
-            //TODO при обновлении нужно затирать всю цепочку связаных данных в БД
-
-            //get timeUpdate and dateUpdate update page
-            String strLastUpdatePage = document.select("div.title-page > small").text();
-//            Log.d("My", "strLastUpdatePage -> " + strLastUpdatePage);
-            String[] arrayTimeDate = strLastUpdatePage.split(" ");
-
-            dateUpdateAndTime = arrayTimeDate[3] + "@" + arrayTimeDate[5];
-//            Log.d("My", "dateUpdateAndTime -> " + dateUpdateAndTime);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return dateUpdateAndTime;
-    }
-
-    @Override
-    public void onClickCityItem(CitiesInfo citiesInfo) {
-
-        Intent intent = new Intent(this, CategoryUniversListActivity.class);
-        intent.putExtra(CategoryUniversListActivity.INTENT_KEY_UNIVERSITY_ACTIVITY, citiesInfo);
-        startActivity(intent);
     }
 
     private void parseData(final boolean isNeedUpdate) {
@@ -363,16 +300,19 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
             public void run() {
 
                 final CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
-//                boolean isNeedUpdate = isDateComparison();
-                if (Utils.connectToData(mYearsCodeLink) && mLongYearId != 0) {
+                if (Utils.connectToData(mYearsCodeLink) && mLongYearId > -1) {
                     parse(mLongYearId, citiesInfoEngine, isNeedUpdate);
 
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mProgressBar.setVisibility(View.VISIBLE);
-                            final CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
-                            getData(citiesInfoEngine);
+                            if (mSwipeRefreshLayout.isRefreshing()) {
+                                getData();
+                                mSwipeRefreshLayout.setRefreshing(false);
+                            } else {
+                                mProgressBar.setVisibility(View.VISIBLE);
+                                getData();
+                            }
                         }
                     });
 
@@ -386,38 +326,34 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
                 }
             }
 
+            //TODO обработать парсинг страницы с рекламой!
             private void parse(long yearsId, CitiesInfoEngine citiesInfoEngine, boolean isNeedUpdate) {
                 Document document;
                 ArrayList<CitiesInfo> citiesInfos = new ArrayList<>();
                 try {
                     document = Jsoup.connect(mYearsCodeLink).get();
 
-                    String dateUpdate = parseDateAndTime();
+                    String strLastUpdatePage = document.select("div.title-page > small").text();
+                    String[] arrayTimeDate = strLastUpdatePage.split(" ");
+                    String dateUpdate = arrayTimeDate[3] + "@" + arrayTimeDate[5];
 
                     Element elementRegion = document.getElementById("region");
-                    Elements linksByTag = elementRegion.getElementsByTag("a");
 
-                    for (Element link : linksByTag) {
+                    Elements trElements = elementRegion.select("tr");
+                    for (Element link : trElements) {
+                        Elements tdElements = link.select("td");
+                        Elements aElements = tdElements.get(0).getElementsByTag("a");
 
-                        String citiesName = link.text();
-                        String citiesLink = link.attr("abs:href");
+                        String citiesName = tdElements.get(0).text();
+                        String citiesLink = aElements.attr("abs:href");
 
-                        citiesInfos.add(new CitiesInfo(yearsId, citiesName, citiesLink, dateUpdate, NOT_FAVORITE));
-
-//                        citiesInfoEngine.addItem(new CitiesInfo(yearsId, citiesName, citiesLink, dateUpdate, NOT_FAVORITE));
-
-                        Log.d("My", "parse yearsId -> " + yearsId);
-                        Log.d("My", "parse citiesName -> " + citiesName);
-                        Log.d("My", "parse citiesLink -> " + citiesLink);
-                        Log.d("My", "parse dateUpdate -> " + dateUpdate);
+                        citiesInfos.add(new CitiesInfo(yearsId, citiesName, citiesLink, dateUpdate, Favorite.NOT_A_FAVORITE));
                     }
-                    Log.d("My", "citiesInfos.size() -> " + citiesInfos.size());
 
-                    if (!isNeedUpdate) {
-                        citiesInfoEngine.addAllCities(citiesInfos);
-                    } else {
-//                        citiesInfoEngine.updateCity();
+                    if (isNeedUpdate) {
                         citiesInfoEngine.updateAllCitiies(citiesInfos);
+                    } else {
+                        citiesInfoEngine.addAllCities(citiesInfos);
                     }
 
                 } catch (IOException e) {
@@ -427,65 +363,123 @@ public class CitiesListActivity extends BaseActivity implements CitiesInfoAdapte
         }).start();
     }
 
-    //try use single method for update data
-//    private void updateData() {
-//
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//
-//                final CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
-//                if (Utils.connectToData(mYearsCodeLink) && mLongYearId != 0) {
-//                    update(mLongYearId, citiesInfoEngine);
-//
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            mProgressBar.setVisibility(View.VISIBLE);
-//                            final CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
-//                            getData(citiesInfoEngine);
-//                        }
-//                    });
-//
-//                } else {
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            Toast.makeText(getApplicationContext(), R.string.textBadInternetConnection, Toast.LENGTH_SHORT).show();
-//                        }
-//                    });
-//                }
-//            }
-//
-//            private void update(long yearsId, CitiesInfoEngine citiesInfoEngine) {
-//                Document document;
-//                try {
-//                    document = Jsoup.connect(mYearsCodeLink).get();
-//
-//                    String dateUpdate = parseDateAndTime();
-////                    String dateUpdate = "20/02/17@23:45";
-//
-//                    Element elementRegion = document.getElementById("region");
-//                    Elements linksByTag = elementRegion.getElementsByTag("a");
-//
-//                    for (Element link : linksByTag) {
-//
-//                        String citiesName = link.text();
-//                        String citiesLink = link.attr("abs:href");
-//
-//                        citiesInfoEngine.updateCity(new CitiesInfo(yearsId, citiesName, citiesLink, dateUpdate, NOT_FAVORITE));
-////                        Log.d("My", "update yearsId -> " + yearsId);
-////                        Log.d("My", "update citiesName -> " + citiesName);
-////                        Log.d("My", "update citiesLink -> " + citiesLink);
-////                        Log.d("My", "update dateUpdate -> " + dateUpdate);
-//                    }
-//
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }).start();
-//    }
-}
+    private class CitiesInfoAdapter extends RecyclerView.Adapter<CitiesInfoAdapter.CitiesInfoHolder> {
 
+        public CitiesInfoAdapter(ArrayList<CitiesInfo> citiesInfos) {
+            mCitiesInfos = citiesInfos;
+        }
+
+        @Override
+        public CitiesInfoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.list_item_cities_info, parent, false);
+            return new CitiesInfoHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(CitiesInfoHolder holder, int position) {
+            CitiesInfo citiesInfo = mCitiesInfos.get(position);
+            holder.bindCity(citiesInfo);
+        }
+
+        @Override
+        public int getItemCount() {
+            return mCitiesInfos.size();
+        }
+
+        public class CitiesInfoHolder extends SwappingHolder
+                implements View.OnLongClickListener, View.OnClickListener {
+
+            private TextView nameTextView;
+            private CitiesInfo mCitiesInfo;
+
+
+            public CitiesInfoHolder(View itemView) {
+                super(itemView, mMultiSelector);
+
+                nameTextView = (TextView) itemView.findViewById(R.id.textViewCitiesInfoNameCitiesInfoItem);
+
+                itemView.setOnClickListener(this);
+                itemView.setOnLongClickListener(this);
+                itemView.setLongClickable(true);
+            }
+
+            public void bindCity(CitiesInfo citiesInfo) {
+                mCitiesInfo = citiesInfo;
+                nameTextView.setText(citiesInfo.getStrCityName());
+
+                setSelectable(mMultiSelector.isSelectable());
+                setActivated(mMultiSelector.isSelected(getAdapterPosition(), getItemId()));
+            }
+
+            @Override
+            public void onClick(View v) {
+                Log.d("My", "onClick work getId -> " + v.getId());
+                if (mCitiesInfo == null) {
+                    return;
+                }
+                if (!mMultiSelector.tapSelection(CitiesInfoHolder.this)) {
+                    selectCity(mCitiesInfo);
+                }
+            }
+
+            @Override
+            public boolean onLongClick(View v) {
+                Log.d("My", "onLongClick work -> ");
+                Log.d("My", "onLongClick v.getId() -> " + v.getId());
+
+                if (!mMultiSelector.isSelectable()) {
+                    startSupportActionMode(mActionModeCallBack);
+                    Log.d("My", "onLongClick mMultiSelector.tapSelection(this) -> " + true);
+                    mMultiSelector.setSelectable(true);
+                    mMultiSelector.setSelected(CitiesInfoHolder.this, true);
+                    return true;
+                }
+                return false;
+            }
+        }
+    }
+
+    private void selectCity(CitiesInfo citiesInfo) {
+        if (mSearchView != null) {
+            mSearchView.onActionViewCollapsed();
+        }
+        Intent intent = new Intent(this, CategoryUniversListActivity.class);
+        intent.putExtra(CategoryUniversListActivity.INTENT_KEY_UNIVERSITY_ACTIVITY, citiesInfo);
+        startActivity(intent);
+    }
+
+    private ModalMultiSelectorCallback mActionModeCallBack = new ModalMultiSelectorCallback(mMultiSelector) {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            getMenuInflater().inflate(R.menu.menu_add_to_favorite, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+
+            switch (item.getItemId()) {
+                case R.id.menu_item_add_to_favorite:
+
+                    mode.finish();
+                    CitiesInfoEngine engine = new CitiesInfoEngine(getApplicationContext());
+
+                    for (int i = mCitiesInfos.size()-1; i >= 0; i--) {
+                        if (mMultiSelector.isSelected(i, 0)) {
+                            CitiesInfo citiesInfo = mCitiesInfos.get(i);
+                            citiesInfo.setFavorite(1);
+                            engine.updateCity(citiesInfo);
+                        }
+                    }
+                    return true;
+
+                default:
+                    break;
+            }
+            return false;
+        }
+    };
+}
 

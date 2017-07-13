@@ -5,6 +5,16 @@ public class DBConstants {
     public static final String DB_NAME = "note_db";
     public static final int DB_VERSION = 1;
 
+    public static final class Favorite {
+        public static final int FAVORITE = 1;
+        public static final int NOT_A_FAVORITE = 0;
+    }
+
+    public static final class Update {
+        public static final boolean NEED_AN_UPDATE = true;
+        public static final boolean NO_NEED_TO_UPDATE = false;
+    }
+
     public static final class CitiesTable {
         public static final String TABLE_NAME = "CitiesInfo";
 
@@ -39,6 +49,7 @@ public class DBConstants {
             public static final String UNIVERSITY_INFO_FIELD_CATEGORY_LINK = "_category_link";
             public static final String UNIVERSITY_INFO_FIELD_NAME = "_name";
             public static final String UNIVERSITY_INFO_FIELD_LINK = "_link";
+            public static final String UNIVERSITY_INFO_FIELD_FAVORITE = "_favorite";
         }
     }
 
@@ -93,6 +104,7 @@ public class DBConstants {
             public static final String SPECIALITIES_INFO_FIELD_EXAMS = "_exams";
             public static final String SPECIALITIES_INFO_FIELD_LINK = "_link";
             public static final String SPECIALITIES_INFO_FIELD_DATE_UPDATE = "_date_update";
+            public static final String SPECIALITIES_INFO_FIELD_FAVORITE = "_favorite";
         }
     }
 
