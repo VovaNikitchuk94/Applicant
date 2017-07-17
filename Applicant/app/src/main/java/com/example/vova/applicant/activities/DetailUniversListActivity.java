@@ -119,6 +119,7 @@ public class DetailUniversListActivity extends BaseActivity implements
             } else {
                 if (!isOnline(this)) {
                     Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
+                    mProgressBar.setVisibility(View.INVISIBLE);
                 } else {
                     parseData(Update.NEED_AN_UPDATE);
                 }
@@ -154,30 +155,6 @@ public class DetailUniversListActivity extends BaseActivity implements
                 startActivity(intent);
             }
         }
-    }
-
-    private String parseDateAndTime() {
-
-        Document document;
-        String dateUpdateAndTime = null;
-        try {
-            document = Jsoup.connect(mUniversityCodeLink).get();
-
-            //TODO при обновлении нужно затирать всю цепочку связаных данных в БД
-
-            //get timeUpdate and dateUpdate update page
-            String strLastUpdatePage = document.select("div.title-page > small").text();
-            Log.d("My", "strLastUpdatePage -> " + strLastUpdatePage);
-            String[] arrayTimeDate = strLastUpdatePage.split(" ");
-
-            dateUpdateAndTime = arrayTimeDate[3] + "@" + arrayTimeDate[5];
-            Log.d("My", "dateUpdateAndTime -> " + dateUpdateAndTime);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return dateUpdateAndTime;
     }
 
     private Boolean isDateComparison() {
@@ -220,6 +197,7 @@ public class DetailUniversListActivity extends BaseActivity implements
                         @Override
                         public void run() {
                             Toast.makeText(getApplicationContext(), R.string.textBadInternetConnection, Toast.LENGTH_SHORT).show();
+                            mProgressBar.setVisibility(View.INVISIBLE);
                         }
                     });
                 }
@@ -232,9 +210,7 @@ public class DetailUniversListActivity extends BaseActivity implements
                     document = Jsoup.connect(mUniversityCodeLink).get();
 
                     String strLastUpdatePage = document.select("div.title-page > small").text();
-                    Log.d("My", "strLastUpdatePage -> " + strLastUpdatePage);
                     String[] arrayTimeDate = strLastUpdatePage.split(" ");
-
                     String dateUpdate = arrayTimeDate[3] + "@" + arrayTimeDate[5];
 
                     Elements elementsByClass = document.getElementsByClass("accordion-heading togglize");

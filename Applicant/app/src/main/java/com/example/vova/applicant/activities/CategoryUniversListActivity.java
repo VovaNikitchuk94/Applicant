@@ -120,11 +120,11 @@ public class CategoryUniversListActivity extends BaseActivity implements
             }
         } else {
             if (isDateComparison()) {
-                Log.d("My", "CitiesListActivity -> isDateComparison  getData(citiesInfoEngine); ");
                 getData();
             } else {
                 if (!isOnline(this)) {
                     Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
+                    mProgressBar.setVisibility(View.INVISIBLE);
                 } else {
                     parseData(Update.NEED_AN_UPDATE);
                 }
@@ -192,7 +192,7 @@ public class CategoryUniversListActivity extends BaseActivity implements
                         @Override
                         public void run() {
                             Toast.makeText(getApplicationContext(), R.string.textBadInternetConnection, Toast.LENGTH_SHORT).show();
-//                            finish();
+                            mProgressBar.setVisibility(View.INVISIBLE);
                         }
                     });
                 }
@@ -223,9 +223,11 @@ public class CategoryUniversListActivity extends BaseActivity implements
                         Elements elementsTextType = elementsNameType.select("a");
                         for (Element elementType : elementsTextType) {
                             categoryName = elementType.text();
+                            categoryLink = elementType.attr("abs:href");
+                            Log.d("My", " categoryLink in first loop -> " + categoryLink);
 
-                            categoryUniversInfos.add(new CategoryUniversInfo(cityId,
-                                    categoryName, dateUpdate));
+                            categoryUniversInfos.add(new CategoryUniversInfo(cityId, categoryName,
+                                    categoryLink, dateUpdate));
                         }
 
                     //add universities to DB
@@ -237,6 +239,8 @@ public class CategoryUniversListActivity extends BaseActivity implements
                             for (Element elementType : elementsTextType) {
                                 categoryName = elementType.text();
                                 categoryLink = elementType.attr("abs:href");
+
+                                Log.d("My", " categoryLink in second loop -> " + categoryLink);
                             }
 
                             Elements elementsByClass = group.select(".accordion-inner");
@@ -246,6 +250,8 @@ public class CategoryUniversListActivity extends BaseActivity implements
 
                                 universityName = element.text();
                                 universityLink = element.attr("abs:href");
+
+                                Log.d("My", " universityLink in second loop -> " + universityLink);
 
                                 universityInfos.add(new UniversityInfo(cityId,
                                         categoryName, categoryLink, universityName, universityLink, Favorite.NOT_A_FAVORITE));

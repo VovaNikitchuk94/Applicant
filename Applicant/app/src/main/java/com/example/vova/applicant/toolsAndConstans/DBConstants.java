@@ -35,6 +35,7 @@ public class DBConstants {
             public static final String CATEGORY_UNIVERS_INFO_FIELD_ID = "_id";
             public static final String CATEGORY_UNIVERS_INFO_FIELD_CITIES_ID = "_city_id";
             public static final String CATEGORY_UNIVERS_INFO_FIELD_NAME = "_name";
+            public static final String CATEGORY_UNIVERS_INFO_FIELD_LINK = "_link";
             public static final String CATEGORY_UNIVERS_INFO_FIELD_DATE_UPDATE = "_date_update";
         }
     }
@@ -108,26 +109,33 @@ public class DBConstants {
         }
     }
 
+    public static final class ApplicationsTable {
+        public static final String TABLE_NAME = "ApplicationsTable";
+
+        public static final class Cols {
+            public static final String APPLICATIONS_INFO_FIELD_ID = "_id";
+            public static final String APPLICATIONS_INFO_FIELD_SPECIALITY_ID = "_speciality_id";
+
+            public static final String APPLICATIONS_INFO_FIELD_NUMBER = "_number";
+            public static final String APPLICATIONS_INFO_FIELD_NAME = "_name";
+            public static final String APPLICATIONS_INFO_FIELD_TOTAL_SCORE = "_total_score";
+            public static final String APPLICATIONS_INFO_FIELD_MARK_DOCUMENT = "_mark_document";
+            public static final String APPLICATIONS_INFO_FIELD_MARK_TEST = "_mark_test";
+            public static final String APPLICATION_INFO_FIELD_FULL_DATA = "_full_data";
+
+            public static final String APPLICATIONS_INFO_FIELD_LINK = "_link";
+            public static final String APPLICATIONS_INFO_FIELD_BACKGROUND = "_background";
+            public static final String APPLICATIONS_INFO_FIELD_DATE_UPDATE = "_date_update";
+        }
+    }
+
     public static final class ApplicationTable {
         public static final String TABLE_NAME = "ApplicationTable";
 
         public static final class Cols {
             public static final String APPLICATION_INFO_FIELD_ID = "_id";
-            public static final String APPLICATION_INFO_FIELD_SPECIALITY_ID = "_speciality_id";
-
-            public static final String APPLICATION_INFO_FIELD_NUMBER = "_number";
+            public static final String APPLICATION_INFO_FIELD_APPLICATIONS_ID = "_applications_id";
             public static final String APPLICATION_INFO_FIELD_NAME = "_name";
-            public static final String APPLICATION_INFO_FIELD_PRIORITY = "_priority";
-            public static final String APPLICATION_INFO_FIELD_TOTAL_SCORE = "_total_score";
-            public static final String APPLICATION_INFO_FIELD_MARK_DOCUMENT = "_mark_document";
-            public static final String APPLICATION_INFO_FIELD_MARK_TEST = "_mark_test";
-            public static final String APPLICATION_INFO_FIELD_MARK_EXAM = "_mark_exam";
-            public static final String APPLICATION_INFO_FIELD_EXTRA_POINTS = "_extra_points";
-            public static final String APPLICATION_INFO_FIELD_ORIGINAL_DOCUMENT = "_original_document";
-
-            public static final String APPLICATION_INFO_FIELD_LINK = "_link";
-            public static final String APPLICATION_INFO_FIELD_BACKGROUND = "_background";
-            public static final String APPLICATION_INFO_FIELD_DATE_UPDATE = "_date_update";
         }
     }
 
@@ -147,13 +155,15 @@ public class DBConstants {
 
             public static final String IMPORTANT_INFO_FIELD_NUMBER = "_number";
             public static final String IMPORTANT_INFO_FIELD_NAME = "_name";
-            public static final String IMPORTANT_INFO_FIELD_PRIORITY = "_priority";
+//            public static final String IMPORTANT_INFO_FIELD_PRIORITY = "_priority";
             public static final String IMPORTANT_INFO_FIELD_TOTAL_SCORE = "_total_score";
             public static final String IMPORTANT_INFO_FIELD_MARK_DOCUMENT = "_mark_document";
             public static final String IMPORTANT_INFO_FIELD_MARK_TEST = "_mark_test";
-            public static final String IMPORTANT_INFO_FIELD_MARK_EXAM = "_mark_exam";
-            public static final String IMPORTANT_INFO_FIELD_EXTRA_POINTS = "_extra_points";
-            public static final String IMPORTANT_INFO_FIELD_ORIGINAL_DOCUMENT = "_original_document";
+//            public static final String IMPORTANT_INFO_FIELD_MARK_EXAM = "_mark_exam";
+//            public static final String IMPORTANT_INFO_FIELD_EXTRA_POINTS = "_extra_points";
+//            public static final String IMPORTANT_INFO_FIELD_ORIGINAL_DOCUMENT = "_original_document";
+
+            public static final String IMPORTANT_INFO_FIELD_FULL_DATA = "_full_data";
         }
     }
 

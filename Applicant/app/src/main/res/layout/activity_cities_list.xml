@@ -15,14 +15,6 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools">
 
-        <!--<TextView-->
-            <!--android:id="@+id/textViewСhoiceCityCitiesActivity"-->
-            <!--style="@style/headTextViewStyle"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentTop="true"-->
-            <!--tools:text="TExtView HEad"/>-->
-
         <ProgressBar
             android:id="@+id/progress_bar"
             style="?android:progressBarStyle"

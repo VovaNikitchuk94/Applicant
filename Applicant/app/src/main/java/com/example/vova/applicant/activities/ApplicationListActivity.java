@@ -28,11 +28,13 @@ import android.widget.Toast;
 import com.example.vova.applicant.R;
 import com.example.vova.applicant.adapters.ApplicationAdapter;
 import com.example.vova.applicant.adapters.LegendAdapter;
+import com.example.vova.applicant.model.ApplicationInfo;
 import com.example.vova.applicant.model.ApplicationsInfo;
 import com.example.vova.applicant.model.ImportantInfo;
 import com.example.vova.applicant.model.LegendInfo;
 import com.example.vova.applicant.model.SpecialtiesInfo;
-import com.example.vova.applicant.model.engines.ApplicationInfoEngine;
+import com.example.vova.applicant.model.engines.ApplicationEngine;
+import com.example.vova.applicant.model.engines.ApplicationsEngine;
 import com.example.vova.applicant.model.engines.ImportantApplicantInfoEngine;
 import com.example.vova.applicant.model.engines.LegendEngine;
 import com.example.vova.applicant.toolsAndConstans.DBConstants;
@@ -239,9 +241,9 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
     @Override
     public void onBackPressed() {
-        ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
+        ApplicationsEngine applicationsEngine = new ApplicationsEngine(getApplication());
         int sizeArrNow = mApplicationsInfos.size();
-        int sizeMustBe = applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId).size();
+        int sizeMustBe = applicationsEngine.getAllApplicationsById(mLongSpecialityId).size();
 
         if ((sizeArrNow != sizeMustBe) && isDrawerClosed()) {
             updateInfo();
@@ -258,8 +260,8 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
     private void updateInfo() {
         mApplicationsInfos.clear();
-        ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
-        mApplicationsInfos.addAll(applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId));
+        ApplicationsEngine applicationsEngine = new ApplicationsEngine(getApplication());
+        mApplicationsInfos.addAll(applicationsEngine.getAllApplicationsById(mLongSpecialityId));
         if (mApplicationAdapter != null) {
             mApplicationAdapter.notifyDataSetChanged();
         }
@@ -267,11 +269,11 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
     private void updateInfo(String search) {
         mApplicationsInfos.clear();
-        ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
+        ApplicationsEngine applicationsEngine = new ApplicationsEngine(getApplication());
         if (search.isEmpty()) {
-            mApplicationsInfos.addAll(applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId));
+            mApplicationsInfos.addAll(applicationsEngine.getAllApplicationsById(mLongSpecialityId));
         } else {
-            mApplicationsInfos.addAll(applicationInfoEngine.getAllApplicationsBySearchString(mLongSpecialityId, search));
+            mApplicationsInfos.addAll(applicationsEngine.getAllApplicationsBySearchString(mLongSpecialityId, search));
         }
         if (mApplicationAdapter != null) {
             mApplicationAdapter.notifyDataSetChanged();
@@ -323,8 +325,8 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
     private void setData() {
 
-        ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
-        if (applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId).isEmpty()) {
+        ApplicationsEngine applicationsEngine = new ApplicationsEngine(getApplication());
+        if (applicationsEngine.getAllApplicationsById(mLongSpecialityId).isEmpty()) {
             if (!isOnline(this)) {
                 Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
                 finish();
@@ -337,6 +339,7 @@ public class ApplicationListActivity extends BaseActivity implements Application
             } else {
                 if (!isOnline(this)) {
                     Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
+                    mProgressBar.setVisibility(View.INVISIBLE);
                 } else {
                     parseData(DBConstants.Update.NEED_AN_UPDATE);
                 }
@@ -351,9 +354,9 @@ public class ApplicationListActivity extends BaseActivity implements Application
     }
 
     private void getData() {
-        ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
+        ApplicationsEngine applicationsEngine = new ApplicationsEngine(getApplication());
         mApplicationsInfos.clear();
-        mApplicationsInfos.addAll(applicationInfoEngine.getAllApplicantionsById(mLongSpecialityId));
+        mApplicationsInfos.addAll(applicationsEngine.getAllApplicationsById(mLongSpecialityId));
         mApplicationAdapter = new ApplicationAdapter(mApplicationsInfos);
         mApplicationAdapter.notifyDataSetChanged();
         mApplicationAdapter.setOnClickApplicationItem(ApplicationListActivity.this);
@@ -389,13 +392,13 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
         new Thread(new Runnable() {
 
-            final ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
+            final ApplicationsEngine mApplicationsEngine = new ApplicationsEngine(getApplication());
 
             @Override
             public void run() {
 
                 if (Utils.connectToData(mStrApplicantCodeLink) && mLongSpecialityId > -1) {
-                    parse(mLongSpecialityId, applicationInfoEngine, isNeedUpdate);
+                    parse(mLongSpecialityId, mApplicationsEngine, isNeedUpdate);
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -418,22 +421,20 @@ public class ApplicationListActivity extends BaseActivity implements Application
                         @Override
                         public void run() {
                             Toast.makeText(getApplicationContext(), R.string.textBadInternetConnection, Toast.LENGTH_SHORT).show();
+                            mProgressBar.setVisibility(View.INVISIBLE);
                         }
                     });
                 }
             }
 
-            private void parse(long specialityId, ApplicationInfoEngine applicationInfoEngine, boolean isNeedUpdate) {
+            private void parse(long specialityId, ApplicationsEngine applicationsEngine, boolean isNeedUpdate) {
                 //applicant data
                 String number;
                 String name;
-                String priority = "";
                 String totalScore;
                 String markDocument;
                 String markTest;
-                String markExam;
-                String extraPoints;
-                String originalDocument;
+                String fullData = "";
 
                 String color;
                 String someLink;
@@ -472,8 +473,24 @@ public class ApplicationListActivity extends BaseActivity implements Application
                         parseImportantInfo(detailElements, selectTrMarking, specialityId);
                     }
 
+//                    ArrayList<String> testSecondArray = new ArrayList<String>();
+//                    ArrayList<String> testFirstArray = new ArrayList<String>();
+//                    ArrayList<ApplicationInfo> applicationInfos = new ArrayList<ApplicationInfo>();
+
+
                     for (Element link : selectTrApplicant) {
                         Elements tdElements = link.select("td");
+
+                        for (Element elementTest: tdElements) {
+                            fullData += elementTest.text() + "/";
+
+                        }
+
+                        Log.d("My", "parseData parse applicant testSecondArray string -> " + fullData);
+//                        Log.d("My", "parseData parse applicant testSecondArray size -> " + testFirstArray.size());
+//                        Log.d("My", "parseData parse applicant testSecondArray size -> " + testSecondArray.size());
+
+
 
                         //background
                         color = parseBackgroundApplicant(tdElements);
@@ -484,32 +501,37 @@ public class ApplicationListActivity extends BaseActivity implements Application
                             totalScore = tdElements.get(2).text();
                             markDocument = tdElements.get(3).text();
                             markTest = tdElements.get(4).text();
-                            markExam = tdElements.get(5).text();
-                            extraPoints = tdElements.get(6).text();
-                            originalDocument = tdElements.get(7).text();
+//                            markExam = tdElements.get(5).text();
+//                            extraPoints = tdElements.get(6).text();
+//                            originalDocument = tdElements.get(7).text();
                         } else {
                             number = tdElements.get(0).text();
                             name = tdElements.get(1).text();
-                            priority = tdElements.get(2).text();
+//                            priority = tdElements.get(2).text();
                             totalScore = tdElements.get(3).text();
                             markDocument = tdElements.get(4).text();
                             markTest = tdElements.get(5).text();
-                            markExam = tdElements.get(6).text();
-                            extraPoints = tdElements.get(7).text();
-                            originalDocument = tdElements.get(8).text();
+//                            markExam = tdElements.get(6).text();
+//                            extraPoints = tdElements.get(7).text();
+//                            originalDocument = tdElements.get(8).text();
                         }
 
                         someLink = tdElements.attr("abs:href");
 
+//                        applicationsInfos.add(new ApplicationsInfo(specialityId,
+//                                number, name, priority, totalScore, markDocument, markTest, markExam,
+//                                extraPoints, originalDocument, someLink, color, dateUpdate));
+
                         applicationsInfos.add(new ApplicationsInfo(specialityId,
-                                number, name, priority, totalScore, markDocument, markTest, markExam,
-                                extraPoints, originalDocument, someLink, color, dateUpdate));
+                                number, name, totalScore, markDocument, markTest, fullData,
+                                someLink, color, dateUpdate));
+                        fullData = "";
                     }
 
                     if (isNeedUpdate) {
-                        applicationInfoEngine.updateAllApplications(applicationsInfos);
+                        applicationsEngine.updateAllApplications(applicationsInfos);
                     } else {
-                        applicationInfoEngine.addAllApplications(applicationsInfos);
+                        applicationsEngine.addAllApplications(applicationsInfos);
                     }
 
                 } catch (IOException e) {
@@ -575,6 +597,8 @@ public class ApplicationListActivity extends BaseActivity implements Application
         String extraPoints = "";
         String originalDocument = "";
 
+        String fullData = "";
+
         ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getApplicationContext());
         if (importantApplicantInfoEngine.getImportantInfoById(specialityId) == null) {
 
@@ -604,25 +628,34 @@ public class ApplicationListActivity extends BaseActivity implements Application
                 totalScore = selectTrMarking.get(2).text();
                 markDocument = selectTrMarking.get(3).text();
                 markTest = selectTrMarking.get(4).text();
-                markExam = selectTrMarking.get(5).text();
-                extraPoints = selectTrMarking.get(6).text();
-                originalDocument = selectTrMarking.get(7).text();
+//                markExam = selectTrMarking.get(5).text();
+//                extraPoints = selectTrMarking.get(6).text();
+//                originalDocument = selectTrMarking.get(7).text();
 
             } else {
                 number = selectTrMarking.get(0).text();
                 name = selectTrMarking.get(1).text();
-                priority = selectTrMarking.get(2).text();
+//                priority = selectTrMarking.get(2).text();
                 totalScore = selectTrMarking.get(3).text();
                 markDocument = selectTrMarking.get(4).text();
                 markTest = selectTrMarking.get(5).text();
-                markExam = selectTrMarking.get(6).text();
-                extraPoints = selectTrMarking.get(7).text();
-                originalDocument = selectTrMarking.get(8).text();
+//                markExam = selectTrMarking.get(6).text();
+//                extraPoints = selectTrMarking.get(7).text();
+//                originalDocument = selectTrMarking.get(8).text();
             }
 
+            for (Element elementTest: selectTrMarking) {
+                fullData += elementTest.text() + "/";
+
+            }
+
+//            importantApplicantInfoEngine.addImportantInfo(new ImportantInfo(specialityId, universityName,
+//                    speciality, specialization, faculty, timeForm, lastTimeUpdate, number, name, priority, totalScore,
+//                    markDocument, markTest, markExam, extraPoints, originalDocument));
+
             importantApplicantInfoEngine.addImportantInfo(new ImportantInfo(specialityId, universityName,
-                    speciality, specialization, faculty, timeForm, lastTimeUpdate, number, name, priority, totalScore,
-                    markDocument, markTest, markExam, extraPoints, originalDocument));
+                    speciality, specialization, faculty, timeForm, lastTimeUpdate, number, name, totalScore,
+                    markDocument, markTest, fullData));
         }
     }
 
@@ -644,7 +677,7 @@ public class ApplicationListActivity extends BaseActivity implements Application
             backgroundFirst = backgroundFirst.substring(backgroundFirst.indexOf("#"), backgroundFirst.indexOf(">") - 1);
             backgroundSecond = backgroundSecond.substring(backgroundSecond.indexOf("#"), backgroundSecond.indexOf(">") - 1);
 
-            if (!backgroundFirst.equals(backgroundSecond)) {
+            if (!backgroundFirst.equals(backgroundSecond) || backgroundFirst.contains("#ff9")) {
                 color = "#FFFF99";
             } else {
                 color = backgroundFirst;

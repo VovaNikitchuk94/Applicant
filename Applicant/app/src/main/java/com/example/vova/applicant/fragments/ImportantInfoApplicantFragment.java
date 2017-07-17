@@ -27,7 +27,7 @@ public class ImportantInfoApplicantFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mApplicationsInfo = DetailApplicantPagerActivity.mInfo;
-        Log.d("My", "ImportantInfoApplicantFragment mApplicationsInfo ->" + mApplicationsInfo);
+//        Log.d("My", "ImportantInfoApplicantFragment mApplicationsInfo ->" + mApplicationsInfo);
 
     }
 

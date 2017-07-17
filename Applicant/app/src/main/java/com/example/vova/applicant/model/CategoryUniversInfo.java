@@ -11,11 +11,13 @@ public class CategoryUniversInfo extends BaseEntity implements Parcelable{
 
     private long mLongCityId;
     private String mStrCategoryName;
+    private String mStrCategoryLink;
     private String mStrDateLastUpdate;
 
-    public CategoryUniversInfo(long longCityId, String strCategoryName, String strDateLastUpdate) {
+    public CategoryUniversInfo(long longCityId, String strCategoryName, String strCategoryLink, String strDateLastUpdate) {
         mLongCityId = longCityId;
         mStrCategoryName = strCategoryName;
+        mStrCategoryLink = strCategoryLink;
         mStrDateLastUpdate = strDateLastUpdate;
     }
 
@@ -23,6 +25,7 @@ public class CategoryUniversInfo extends BaseEntity implements Parcelable{
         setId(cursor.getLong(cursor.getColumnIndex(CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_ID)));
         mLongCityId = cursor.getLong(cursor.getColumnIndex(CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_CITIES_ID));
         mStrCategoryName = cursor.getString(cursor.getColumnIndex(CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_NAME));
+        mStrCategoryLink = cursor.getString(cursor.getColumnIndex(CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_LINK));
         mStrDateLastUpdate = cursor.getString(cursor.getColumnIndex(CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_DATE_UPDATE));
     }
 
@@ -30,6 +33,7 @@ public class CategoryUniversInfo extends BaseEntity implements Parcelable{
         setId(parcel.readLong());
         mLongCityId = parcel.readLong();
         mStrCategoryName = parcel.readString();
+        mStrCategoryLink = parcel.readString();
         mStrDateLastUpdate = parcel.readString();
     }
 
@@ -45,11 +49,16 @@ public class CategoryUniversInfo extends BaseEntity implements Parcelable{
         return mStrDateLastUpdate;
     }
 
+    public String getStrCategoryLink() {
+        return mStrCategoryLink;
+    }
+
     @Override
     public ContentValues getContentValues() {
         ContentValues values = new ContentValues();
         values.put(CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_CITIES_ID, getLongCityId());
         values.put(CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_NAME, getStrCategoryName());
+        values.put(CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_LINK, getStrCategoryLink());
         values.put(CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_DATE_UPDATE, getStrDateLastUpdate());
         return values;
     }
@@ -64,6 +73,7 @@ public class CategoryUniversInfo extends BaseEntity implements Parcelable{
         dest.writeLong(getId());
         dest.writeLong(mLongCityId);
         dest.writeString(mStrCategoryName);
+        dest.writeString(mStrCategoryLink);
         dest.writeString(mStrDateLastUpdate);
     }
 

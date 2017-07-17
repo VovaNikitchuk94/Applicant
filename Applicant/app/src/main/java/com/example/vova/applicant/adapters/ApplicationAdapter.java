@@ -2,6 +2,7 @@ package com.example.vova.applicant.adapters;
 
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,7 @@ public class ApplicationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         final ApplicationsInfo applicationsInfo = mApplicationsInfos.get(position);
         //set background
         //TODO сделать правильный подбор цветов списка
+        Log.d("My", "ApplicantAdapter color -> " + applicationsInfo.getStrBackground());
         applicationsInfoViewHolder.rootView.setBackgroundColor(Color.parseColor(applicationsInfo.getStrBackground()));
         //set text
         applicationsInfoViewHolder.numberTextView.setText(applicationsInfo.getStrApplicantNumber());

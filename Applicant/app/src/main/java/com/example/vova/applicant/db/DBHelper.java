@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.example.vova.applicant.toolsAndConstans.DBConstants;
 import com.example.vova.applicant.toolsAndConstans.DBConstants.AboutUniversityTable;
 import com.example.vova.applicant.toolsAndConstans.DBConstants.ApplicationTable;
+import com.example.vova.applicant.toolsAndConstans.DBConstants.ApplicationsTable;
 import com.example.vova.applicant.toolsAndConstans.DBConstants.CategoryUniversTable;
 import com.example.vova.applicant.toolsAndConstans.DBConstants.CitiesTable;
 import com.example.vova.applicant.toolsAndConstans.DBConstants.ImportantInfoTable;
@@ -37,6 +38,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + " (" + CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_CITIES_ID + " INTEGER NOT NULL, "
                 + CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_NAME + " TEXT NOT NULL, "
+                + CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_LINK + " TEXT NOT NULL, "
                 + CategoryUniversTable.Cols.CATEGORY_UNIVERS_INFO_FIELD_DATE_UPDATE + " TEXT NOT NULL);");
 
         sqLiteDatabase.execSQL("CREATE TABLE " + UniversityTable.TABLE_NAME
@@ -83,24 +85,26 @@ public class DBHelper extends SQLiteOpenHelper {
                 + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_DATE_UPDATE + " TEXT NOT NULL, "
                 + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_FAVORITE + " TEXT NOT NULL);");
 
-        sqLiteDatabase.execSQL("CREATE TABLE " + ApplicationTable.TABLE_NAME
-                + " (" + ApplicationTable.Cols.APPLICATION_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_SPECIALITY_ID + " INTEGER NOT NULL, "
+        sqLiteDatabase.execSQL("CREATE TABLE " + ApplicationsTable.TABLE_NAME
+                + " (" + DBConstants.ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + DBConstants.ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_SPECIALITY_ID + " INTEGER NOT NULL, "
 
                 //applicant detail info
-                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_NUMBER + " INTEGER, "
-                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_NAME + " TEXT NOT NULL, "
-                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_PRIORITY + " TEXT, "
-                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_TOTAL_SCORE + " TEXT, "
-                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_MARK_DOCUMENT + " TEXT, "
-                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_MARK_TEST + " TEXT, "
-                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_MARK_EXAM + " TEXT, "
-                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_EXTRA_POINTS + " TEXT, "
-                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_ORIGINAL_DOCUMENT + " TEXT, "
+                + ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_NUMBER + " INTEGER, "
+                + ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_NAME + " TEXT NOT NULL, "
+                + DBConstants.ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_TOTAL_SCORE + " TEXT, "
+                + DBConstants.ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_MARK_DOCUMENT + " TEXT, "
+                + DBConstants.ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_MARK_TEST + " TEXT, "
+                + ApplicationsTable.Cols.APPLICATION_INFO_FIELD_FULL_DATA + " TEXT NOT NULL, "
 
-                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_LINK + " TEXT, "
-                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_BACKGROUND + " TEXT, "
-                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_DATE_UPDATE + " TEXT NOT NULL);");
+                + DBConstants.ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_LINK + " TEXT, "
+                + ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_BACKGROUND + " TEXT, "
+                + DBConstants.ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_DATE_UPDATE + " TEXT NOT NULL);");
+
+        sqLiteDatabase.execSQL("CREATE TABLE " + ApplicationTable.TABLE_NAME
+                + " (" + ApplicationTable.Cols.APPLICATION_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+//                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_APPLICATIONS_ID + " INTEGER NOT NULL, "
+                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_NAME + " TEXT NOT NULL); ");
 
         sqLiteDatabase.execSQL("CREATE TABLE " + ImportantInfoTable.TABLE_NAME
                 + " (" + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -115,13 +119,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
                 + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_NUMBER + " TEXT, "
                 + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_NAME + " TEXT NOT NULL, "
-                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_PRIORITY + " TEXT, "
+//                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_PRIORITY + " TEXT, "
                 + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_TOTAL_SCORE + " TEXT, "
                 + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_MARK_DOCUMENT + " TEXT, "
                 + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_MARK_TEST + " TEXT, "
-                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_MARK_EXAM + " TEXT, "
-                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_EXTRA_POINTS + " TEXT, "
-                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_ORIGINAL_DOCUMENT + " TEXT);");
+//                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_MARK_EXAM + " TEXT, "
+//                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_EXTRA_POINTS + " TEXT, "
+//                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_ORIGINAL_DOCUMENT + " TEXT);");
+                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_FULL_DATA + " TEXT NOT NULL);");
 
         sqLiteDatabase.execSQL("CREATE TABLE " + LegendInfoTable.TABLE_NAME
                 + " (" + LegendInfoTable.Cols.LEGEND_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "

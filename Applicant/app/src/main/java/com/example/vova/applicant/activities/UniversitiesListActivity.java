@@ -29,6 +29,7 @@ import com.example.vova.applicant.R;
 import com.example.vova.applicant.model.CategoryUniversInfo;
 import com.example.vova.applicant.model.UniversityInfo;
 import com.example.vova.applicant.model.engines.UniversitiesInfoEngine;
+import com.example.vova.applicant.toolsAndConstans.Constans;
 import com.example.vova.applicant.toolsAndConstans.DBConstants.Favorite;
 
 import java.util.ArrayList;
@@ -101,7 +102,7 @@ public class UniversitiesListActivity extends BaseActivity {
         SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete)
                 mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.primary_light));
-        searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.primary_light));
+        searchAutoComplete.setTextColor(Color.WHITE);
         mSearchView.setQueryHint(getString(R.string.textHintSearchUniversity));
 
         //clear button
@@ -149,6 +150,10 @@ public class UniversitiesListActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
+    }
+
+    private boolean isCurrentYear() {
+        return mCategoryUniversInfo.getStrCategoryLink().contains(Constans.URL_VSTUP_INFO_2017);
     }
 
     private void updateInfo(){
@@ -265,7 +270,7 @@ public class UniversitiesListActivity extends BaseActivity {
                 Log.d("My", "onLongClick work -> ");
                 Log.d("My", "onLongClick v.getId() -> " + v.getId());
 
-                if (!mMultiSelector.isSelectable()) {
+                if (!mMultiSelector.isSelectable() && isCurrentYear()) {
                     startSupportActionMode(mActionModeCallBack);
                     Log.d("My", "onLongClick mMultiSelector.tapSelection(this) -> " + true);
                     mMultiSelector.setSelectable(true);

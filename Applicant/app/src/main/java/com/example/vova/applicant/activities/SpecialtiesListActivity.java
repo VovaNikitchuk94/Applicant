@@ -32,6 +32,7 @@ import com.example.vova.applicant.R;
 import com.example.vova.applicant.model.SpecialtiesInfo;
 import com.example.vova.applicant.model.TimeFormInfo;
 import com.example.vova.applicant.model.engines.SpecialityInfoEngine;
+import com.example.vova.applicant.toolsAndConstans.Constans;
 import com.example.vova.applicant.toolsAndConstans.DBConstants.Favorite;
 import com.example.vova.applicant.toolsAndConstans.DBConstants.Update;
 import com.example.vova.applicant.utils.Utils;
@@ -46,8 +47,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class SpecialtiesListActivity extends BaseActivity {
-
-    // TODO rename all fields
 
     public static final String KEY_SPECIALITIES_LINK = "KEY_SPECIALITIES_LINK";
     public static final String KEY_SPECIALITIES_TITLE_STRING = "KEY_SPECIALITIES_TITLE_STRING";
@@ -82,8 +81,8 @@ public class SpecialtiesListActivity extends BaseActivity {
                 if (mTimeFormInfo != null) {
                     mLongTimeFormId = mTimeFormInfo.getId();
                     mTimeFormCodeLink = mTimeFormInfo.getStrTimeFormLink();
-                    mLongDegree = Long.parseLong(mTimeFormInfo.getStrTimeFormLink().substring(mTimeFormInfo.getStrTimeFormLink().length() - 1));
-                    Log.d("My", "SpecialtiesListActivity -> mLongDegree -> " + mLongDegree);
+                    mLongDegree = Long.parseLong(mTimeFormInfo.getStrTimeFormLink()
+                            .substring(mTimeFormInfo.getStrTimeFormLink().length() - 1));
                 }
             }
         }
@@ -211,6 +210,10 @@ public class SpecialtiesListActivity extends BaseActivity {
         super.onStop();
     }
 
+    private boolean isCurrentYear() {
+        return mTimeFormCodeLink.contains(Constans.URL_VSTUP_INFO_2017);
+    }
+
     private void setData() {
 
         SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplication());
@@ -227,6 +230,7 @@ public class SpecialtiesListActivity extends BaseActivity {
             } else {
                 if (!isOnline(this)) {
                     Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
+                    mProgressBar.setVisibility(View.INVISIBLE);
                 } else {
                     parseData(Update.NEED_AN_UPDATE);
                 }
@@ -279,23 +283,6 @@ public class SpecialtiesListActivity extends BaseActivity {
         }
     }
 
-//    private String parseDateAndTime() {
-//        Document document;
-//        String dateUpdateAndTime = null;
-//        try {
-//            document = Jsoup.connect(mTimeFormCodeLink).get();
-//
-//            //get timeUpdate and dateUpdate update page
-//            String strLastUpdatePage = document.select("div.title-page > small").text();
-//            String[] arrayTimeDate = strLastUpdatePage.split(" ");
-//            dateUpdateAndTime = arrayTimeDate[3] + "@" + arrayTimeDate[5];
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return dateUpdateAndTime;
-//    }
-
     private void parseData(final boolean isNeedUpdate) {
 
         new Thread(new Runnable() {
@@ -324,6 +311,7 @@ public class SpecialtiesListActivity extends BaseActivity {
                         @Override
                         public void run() {
                             Toast.makeText(getApplicationContext(), R.string.textBadInternetConnection, Toast.LENGTH_SHORT).show();
+                            mProgressBar.setVisibility(View.INVISIBLE);
                         }
                     });
                 }
@@ -348,6 +336,7 @@ public class SpecialtiesListActivity extends BaseActivity {
 
                     document = Jsoup.connect(mTimeFormCodeLink).get();
 
+                    //get date update
                     String strLastUpdatePage = document.select("div.title-page > small").text();
                     String[] arrayTimeDate = strLastUpdatePage.split(" ");
                     dateUpdate = arrayTimeDate[3] + "@" + arrayTimeDate[5];
@@ -391,9 +380,6 @@ public class SpecialtiesListActivity extends BaseActivity {
                                 .replaceAll("(?i)<[/]td[^>]*>", "").replaceAll("(?i)<br[^>]*>", "\n");
 
                         newLink = elements.attr("abs:href");
-
-//                        dateUpdate = parseDateAndTime();
-//                            Log.d("My", "SpecialtiesListActivity get more data dateUpdate -> " + dateUpdate);
 
                         specialtiesInfos.add(new SpecialtiesInfo(timeFormId, mLongDegree,
                                 specialty, applications, accepted, recommended, licenseOrder, volumeOrder,
@@ -489,6 +475,14 @@ public class SpecialtiesListActivity extends BaseActivity {
                     recommendedTextView.setTextColor(emptyColor);
                     licenseOrderTextView.setTextColor(emptyColor);
                     volumeOrderTextView.setTextColor(emptyColor);
+                } else {
+                    int normalTextColor = ContextCompat.getColor(mContext, R.color.primary_text);
+                    specialtyTextView.setTextColor(normalTextColor);
+                    applicationsTextView.setTextColor(normalTextColor);
+                    acceptedTextView.setTextColor(normalTextColor);
+                    recommendedTextView.setTextColor(normalTextColor);
+                    licenseOrderTextView.setTextColor(normalTextColor);
+                    volumeOrderTextView.setTextColor(normalTextColor);
                 }
 
                 setSelectable(mMultiSelector.isSelectable());
@@ -497,7 +491,6 @@ public class SpecialtiesListActivity extends BaseActivity {
 
             @Override
             public void onClick(View v) {
-                Log.d("My", "onClick work getId -> " + v.getId());
                 if (mSpecialtiesInfo == null) {
                     return;
                 }
@@ -508,17 +501,11 @@ public class SpecialtiesListActivity extends BaseActivity {
 
             @Override
             public boolean onLongClick(View v) {
-                Log.d("My", "onLongClick work -> ");
-                Log.d("My", "onLongClick v.getId() -> " + v.getId());
-
-                if (!mMultiSelector.isSelectable()) {
+                if (!mMultiSelector.isSelectable() && isCurrentYear()) {
                     startSupportActionMode(mActionModeCallBack);
-                    Log.d("My", "onLongClick mMultiSelector.tapSelection(this) -> " + true);
                     mMultiSelector.setSelectable(true);
                     mMultiSelector.setSelected(SpecialitiesInfoHolder.this, true);
                     return true;
-                } else {
-                    Log.d("My", "onLongClick else -> ");
                 }
                 return false;
             }
@@ -542,14 +529,12 @@ public class SpecialtiesListActivity extends BaseActivity {
 
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-            Log.d("My", "onCreateActionMode start ->");
             getMenuInflater().inflate(R.menu.menu_add_to_favorite, menu);
             return true;
         }
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            Log.d("My", "onActionItemClicked start ->");
 
             switch (item.getItemId()) {
                 case R.id.menu_item_add_to_favorite:
@@ -557,15 +542,11 @@ public class SpecialtiesListActivity extends BaseActivity {
                     mode.finish();
                     SpecialityInfoEngine specialityInfoEngine = new SpecialityInfoEngine(getApplicationContext());
 
-                    for (int i = mSpecialtiesInfos.size()-1; i >= 0; i--) {
+                    for (int i = mSpecialtiesInfos.size() - 1; i >= 0; i--) {
                         if (mMultiSelector.isSelected(i, 0)) {
                             SpecialtiesInfo specialtiesInfo = mSpecialtiesInfos.get(i);
-
-                            Log.d("My", "onActionItemClicked for start -> " + specialtiesInfo.getStrSpecialty());
-                            Log.d("My", "onActionItemClicked  before getFavorite -> " + specialtiesInfo.getIsFavorite());
                             specialtiesInfo.setIsFavorite(Favorite.FAVORITE);
                             specialityInfoEngine.updateSpeciality(specialtiesInfo);
-                            Log.d("My", "onClick else after getFavorite -> " + specialtiesInfo.getIsFavorite());
                         }
                     }
                     return true;

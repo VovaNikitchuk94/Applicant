@@ -52,8 +52,7 @@ public class SpecialitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         specialitiesInfoViewHolder.volumeOrderTextView.setText(specialtiesInfo.getStrVolumeOrder());
         //TODO обработать ошибку когда не пустые items определяються как пустые
         //TODO обработать ошибку когда в пустые списки дублируються записи из предыдущего item
-        Log.d("My", "SpecialitiesAdapter Link ~ applications -> " + specialtiesInfo.getStrLink() + " ~ " + specialtiesInfo.getStrApplications());
-        if (specialtiesInfo.getStrLink().isEmpty() && specialtiesInfo.getStrApplications().equals("заяв: 0") && mContext != null) {
+        if (specialtiesInfo.getStrLink().isEmpty()) {
             int emptyColor = ContextCompat.getColor(mContext, R.color.md_grey_400);
             specialitiesInfoViewHolder.specialtyTextView.setTextColor(emptyColor);
             specialitiesInfoViewHolder.applicationsTextView.setTextColor(emptyColor);
@@ -61,8 +60,9 @@ public class SpecialitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             specialitiesInfoViewHolder.recommendedTextView.setTextColor(emptyColor);
             specialitiesInfoViewHolder.licenseOrderTextView.setTextColor(emptyColor);
             specialitiesInfoViewHolder.volumeOrderTextView.setTextColor(emptyColor);
-
         }
+
+
         specialitiesInfoViewHolder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

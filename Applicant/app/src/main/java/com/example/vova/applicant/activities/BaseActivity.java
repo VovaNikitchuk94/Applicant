@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.example.vova.applicant.R;
+import com.example.vova.applicant.toolsAndConstans.Constans;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
@@ -63,20 +64,14 @@ public abstract class BaseActivity extends AppCompatActivity {
                                 startActivity(intent);
                                 break;
                             case 8:
-                                intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + "vova.nikitchuk.94@gmail.com"));
+                                intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + Constans.DEV_EMAIL));
                                 startActivity(intent);
-                                break;
-                            case 9:
-
                                 break;
                             default:
                                 intent = new Intent(view.getContext(), ArchiveActivity.class);
                                 startActivity(intent);
                                 break;
                         }
-                        Log.d("My", "setDrawer  view.getId() ->" + view.getId());
-                        Log.d("My", "setDrawer  position ->" + position);
-                        Log.d("My", "setDrawer  drawerItem ->" + drawerItem);
                         return false;
                     }
                 })
@@ -84,14 +79,12 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .withOnDrawerListener(new Drawer.OnDrawerListener() {
                     @Override
                     public void onDrawerOpened(View drawerView) {
-                        Log.d("My", " onDrawerOpened isDrawerClosed ->" +false);
                         isDrawerClosed = false;
                     }
 
                     @Override
                     public void onDrawerClosed(View drawerView) {
                         isDrawerClosed = true;
-                        Log.d("My", " onDrawerOpened isDrawerClosed ->" +true);
                     }
 
                     @Override

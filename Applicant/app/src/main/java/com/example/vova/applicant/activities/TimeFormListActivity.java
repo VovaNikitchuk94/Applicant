@@ -124,6 +124,7 @@ public class TimeFormListActivity extends BaseActivity implements
             } else {
                 if (!isOnline(this)) {
                     Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
+                    mProgressBar.setVisibility(View.INVISIBLE);
                 } else {
                     parseData(DBConstants.Update.NEED_AN_UPDATE);
                 }
@@ -191,6 +192,7 @@ public class TimeFormListActivity extends BaseActivity implements
                         @Override
                         public void run() {
                             Toast.makeText(getApplicationContext(), R.string.textBadInternetConnection, Toast.LENGTH_SHORT).show();
+                            mProgressBar.setVisibility(View.INVISIBLE);
                         }
                     });
                 }

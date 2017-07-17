@@ -119,6 +119,7 @@ public class AboutUniversityActivity extends BaseActivity implements
             } else {
                 if (!isOnline(this)) {
                     Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
+                    mProgressBar.setVisibility(View.INVISIBLE);
                 } else {
                     parseData(DBConstants.Update.NEED_AN_UPDATE);
                 }
@@ -169,8 +170,6 @@ public class AboutUniversityActivity extends BaseActivity implements
                 Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + dataLink);
                 intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                 startActivity(intent);
-                //open for google Maps
-//              intent.setPackage("com.google.android.apps.maps");
                 break;
             case "Телефони:":
                 //TODO правильность написания номера и если у номера нет кода города
@@ -247,6 +246,7 @@ public class AboutUniversityActivity extends BaseActivity implements
                         @Override
                         public void run() {
                             Toast.makeText(getApplicationContext(), R.string.textBadInternetConnection, Toast.LENGTH_SHORT).show();
+                            mProgressBar.setVisibility(View.INVISIBLE);
                         }
                     });
                 }

@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-    android:padding="16dp"
-    android:paddingTop="0dp">
+              android:layout_marginStart="8dp"
+              android:layout_marginTop="8dp"
+              android:layout_marginEnd="8dp"
+              android:background="#bdbdbd"
+              android:paddingTop="0dp">
+
+    <include layout="@layout/recycler_view"/>
 
     <!--<TextView-->
         <!--android:layout_width="match_parent"-->
@@ -21,129 +27,147 @@
         <!--android:layout_height="wrap_content"-->
         <!--android:id="@+id/textDateOfLastUpdateFragmentDetailApplicant"/>-->
 
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:stretchColumns="*">
+    <!--<TableLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:stretchColumns="*">-->
 
-        <TableRow>
+        <!--<TableRow>-->
 
-            <TextView
-                android:background="#e0e0e0"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textNumberApplicantFragmentImportantInfoApplicant"/>
+            <!--<TextView-->
+                <!--tools:text="#"-->
+                <!--android:background="#e0e0e0"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/textNumberApplicantFragmentImportantInfoApplicant"/>-->
 
-            <TextView
-                android:background="#bbdefb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textFullNameApplicantFragmentImportantInfoApplicant"/>
+            <!--<TextView-->
+                <!--tools:text="25"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/textNumberApplicantFragmentDetailApplicant"-->
+                <!--android:background="#e0e0e0"/>-->
 
-            <TextView
-                android:background="#e0e0e0"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textPriorityApplicantFragmentImportantInfoApplicant"/>
+            <!--<TextView-->
+                <!--android:background="#bbdefb"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/textFullNameApplicantFragmentImportantInfoApplicant"/>-->
 
-            <TextView
-                android:background="#bbdefb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textTotalScoreApplicantFragmentImportantInfoApplicant"/>
+            <!--<TextView-->
+                <!--android:background="#e0e0e0"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/textPriorityApplicantFragmentImportantInfoApplicant"/>-->
 
-            <TextView
-                android:background="#e0e0e0"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textMarkDocumentApplicantFragmentImportantInfoApplicant"/>
+            <!--<TextView-->
+                <!--android:background="#bbdefb"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/textTotalScoreApplicantFragmentImportantInfoApplicant"/>-->
 
-            <TextView
-                android:background="#bbdefb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textMarkTestApplicantFragmentImportantInfoApplicant"/>
+            <!--<TextView-->
+                <!--android:background="#e0e0e0"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/textMarkDocumentApplicantFragmentImportantInfoApplicant"/>-->
 
-            <TextView
-                android:background="#e0e0e0"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textMarkExamApplicantFragmentImportantInfoApplicant"/>
+            <!--<TextView-->
+                <!--android:background="#bbdefb"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/textMarkTestApplicantFragmentImportantInfoApplicant"/>-->
 
-            <TextView
-                android:background="#bbdefb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textExtraPointsApplicantFragmentImportantInfoApplicant"/>
+            <!--<TextView-->
+                <!--android:background="#e0e0e0"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/textMarkExamApplicantFragmentImportantInfoApplicant"/>-->
 
-            <TextView
-                android:background="#e0e0e0"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textOriginalDocumentApplicantFragmentImportantInfoApplicant"/>
+            <!--<TextView-->
+                <!--android:background="#bbdefb"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/textExtraPointsApplicantFragmentImportantInfoApplicant"/>-->
+
+            <!--<TextView-->
+                <!--android:background="#e0e0e0"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/textOriginalDocumentApplicantFragmentImportantInfoApplicant"/>-->
 
 
-        </TableRow>
+        <!--</TableRow>-->
 
-        <TableRow>
+        <!--<TableRow>-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textNumberApplicantFragmentDetailApplicant"
-                android:background="#e0e0e0"/>
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/textNumberApplicantFragmentDetailApplicant"-->
+                <!--android:background="#e0e0e0"/>-->
 
-            <TextView
-                android:background="#bbdefb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textFullNameApplicantFragmentDetailApplicant"/>
+            <!--<TextView-->
+                <!--tools:text="ПІБ"-->
 
-            <TextView
-                android:background="#e0e0e0"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textPriorityApplicantFragmentDetailApplicant"/>
+                <!--android:background="#bbdefb"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/textFullNameApplicantFragmentDetailApplicant"/>-->
 
-            <TextView
-                android:background="#bbdefb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textTotalScoreApplicantFragmentDetailApplicant"/>
+            <!--<TextView-->
+                <!--tools:text="Никитчук В.Л."-->
 
-            <TextView
-                android:background="#e0e0e0"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textMarkDocumentApplicantFragmentDetailApplicant"/>
+                <!--android:background="#bbdefb"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/textFullNameApplicantFragmentImportantInfoApplicant"/>-->
 
-            <TextView
-                android:background="#bbdefb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textMarkTestApplicantFragmentDetailApplicant"/>
+            <!--<TextView-->
+                <!--android:background="#e0e0e0"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/textPriorityApplicantFragmentDetailApplicant"/>-->
 
-            <TextView
-                android:background="#e0e0e0"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textMarkExamApplicantFragmentDetailApplicant"/>
+            <!--<TextView-->
+                <!--android:background="#bbdefb"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/textTotalScoreApplicantFragmentDetailApplicant"/>-->
 
-            <TextView
-                android:background="#bbdefb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textExtraPointsApplicantFragmentDetailApplicant"/>
+            <!--<TextView-->
+                <!--android:background="#e0e0e0"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/textMarkDocumentApplicantFragmentDetailApplicant"/>-->
 
-            <TextView
-                android:background="#e0e0e0"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textOriginalDocumentApplicantFragmentDetailApplicant"/>
+            <!--<TextView-->
+                <!--android:background="#bbdefb"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/textMarkTestApplicantFragmentDetailApplicant"/>-->
 
-        </TableRow>
+            <!--<TextView-->
+                <!--android:background="#e0e0e0"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/textMarkExamApplicantFragmentDetailApplicant"/>-->
 
-    </TableLayout>
+            <!--<TextView-->
+                <!--android:background="#bbdefb"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/textExtraPointsApplicantFragmentDetailApplicant"/>-->
+
+            <!--<TextView-->
+                <!--android:background="#e0e0e0"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/textOriginalDocumentApplicantFragmentDetailApplicant"/>-->
+
+        <!--</TableRow>-->
+
+    <!--</TableLayout>-->
 
 </LinearLayout>

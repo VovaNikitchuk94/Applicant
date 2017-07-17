@@ -18,28 +18,6 @@
         android:minHeight="?attr/actionBarSize"
         android:transitionName="actionBar" />
 
-    <!--<TextView-->
-        <!--android:id="@+id/textViewChooseUniverDetailCategoryUniversActivity"-->
-        <!--style="@style/headTextViewStyle"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="@string/text_choose_category"/>-->
-
-    <!--<android.support.v4.widget.SwipeRefreshLayout-->
-        <!--android:id="@+id/activity_category_univers_swipe_refresh_layout"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content">-->
-
-        <!--<android.support.v7.widget.RecyclerView-->
-
-            <!--android:id="@+id/recyclerViewCategoryUniversListActivity"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content">-->
-
-        <!--</android.support.v7.widget.RecyclerView>-->
-
-    <!--</android.support.v4.widget.SwipeRefreshLayout>-->
-
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">

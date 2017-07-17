@@ -23,6 +23,7 @@ public class UniversitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void setOnClickUniversityItem(OnClickUniversityItem onClickUniversityItem){
         mOnClickUniversityItem = onClickUniversityItem;
     }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder viewHolder = null;

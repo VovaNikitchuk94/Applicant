@@ -1,6 +1,7 @@
 package com.example.vova.applicant.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,8 @@ public class TimeFormAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         TimeFormInfoViewHolder timeFormInfoViewHolder = (TimeFormInfoViewHolder) holder;
         final TimeFormInfo timeFormInfo = mTimeFormInfos.get(position);
+        Log.d("My", "TimeFormAdapter onBindViewHolder -> " + timeFormInfo.getLongDetailUNVId()
+            + " ~~~ " + timeFormInfo.getStrTimeFormName());
         timeFormInfoViewHolder.nameTextView.setText(timeFormInfo.getStrTimeFormName());
         timeFormInfoViewHolder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override

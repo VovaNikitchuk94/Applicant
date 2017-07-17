@@ -26,7 +26,7 @@ import com.example.vova.applicant.fragments.DetailApplicantFragment;
 import com.example.vova.applicant.fragments.ImportantInfoApplicantFragment;
 import com.example.vova.applicant.model.ApplicationsInfo;
 import com.example.vova.applicant.model.LegendInfo;
-import com.example.vova.applicant.model.engines.ApplicationInfoEngine;
+import com.example.vova.applicant.model.engines.ApplicationsEngine;
 import com.example.vova.applicant.model.engines.LegendEngine;
 
 import java.util.ArrayList;
@@ -65,12 +65,12 @@ public class DetailApplicantPagerActivity extends BaseActivity {
         }
 
         mViewPager = (ViewPager) findViewById(R.id.activity_detail_applicant_view_pager);
-        final ApplicationInfoEngine applicationInfoEngine = new ApplicationInfoEngine(getApplication());
-        mInfoList = applicationInfoEngine.getAllApplicantionsById(mInfo.getLongSpecialityId());
+        final ApplicationsEngine applicationsEngine = new ApplicationsEngine(getApplication());
+        mInfoList = applicationsEngine.getAllApplicationsById(mInfo.getLongSpecialityId());
         Log.d("My", "mInfo.getLongSpecialityId() ->" + mInfo.getStrApplicantName());
         Log.d("My", "mInfo.getLongSpecialityId() ->" + mInfo.getLongSpecialityId());
-        Log.d("My", "mInfo.applicationInfoEngine.getAllApplicantionsById(mInfo.getId())() ->" + applicationInfoEngine.getAllApplicantionsById(mInfo.getId()).size());
-        Log.d("My", "mInfo.applicationInfoEngine.getAllApplicantionsById(mInfo.getLongSpecialityId())() ->" + applicationInfoEngine.getAllApplicantionsById(mInfo.getLongSpecialityId()).size());
+        Log.d("My", "mInfo.applicationsEngine.getAllApplicationsById(mInfo.getId())() ->" + applicationsEngine.getAllApplicationsById(mInfo.getId()).size());
+        Log.d("My", "mInfo.applicationsEngine.getAllApplicationsById(mInfo.getLongSpecialityId())() ->" + applicationsEngine.getAllApplicationsById(mInfo.getLongSpecialityId()).size());
 
 
         mViewPager.setAdapter(new FragmentStatePagerAdapter(manager) {

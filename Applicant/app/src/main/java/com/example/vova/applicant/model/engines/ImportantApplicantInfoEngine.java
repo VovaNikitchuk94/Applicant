@@ -15,7 +15,7 @@ public class ImportantApplicantInfoEngine extends BaseEngine {
     }
 
     public ImportantInfo getImportantInfoById(long nId) {
-        Log.d("My", "ImportantApplicantInfoEngine ----------> getImportantInfoById");
+//        Log.d("My", "ImportantApplicantInfoEngine ----------> getImportantInfoById");
         ImportantApplicantInfoDBWrapper importantApplicantInfoDBWrapper = new ImportantApplicantInfoDBWrapper(getContext());
         return importantApplicantInfoDBWrapper.getImportantInfoById(nId);
     }

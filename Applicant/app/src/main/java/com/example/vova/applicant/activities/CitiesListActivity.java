@@ -104,9 +104,6 @@ public class CitiesListActivity extends BaseActivity {
             }
         });
 
-//        TextView textView = (TextView) findViewById(R.id.textViewСhoiceCityCitiesActivity);
-//        textView.setText(getText(R.string.chooseCityMainActivity));
-
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewCitiesListActivity);
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -221,6 +218,9 @@ public class CitiesListActivity extends BaseActivity {
         return R.layout.activity_cities_list;
     }
 
+    private boolean isCurrentYear() {
+        return mYearsCodeLink.contains(Constans.URL_VSTUP_INFO_2017);
+    }
 
     //TODO modified method
     private void setData() {
@@ -240,6 +240,7 @@ public class CitiesListActivity extends BaseActivity {
             } else {
                 if (!isOnline(this)) {
                     Toast.makeText(this, R.string.textNOInternetConnection, Toast.LENGTH_SHORT).show();
+                    mProgressBar.setVisibility(View.INVISIBLE);
                 } else {
                     parseData(Update.NEED_AN_UPDATE);
                 }
@@ -321,6 +322,7 @@ public class CitiesListActivity extends BaseActivity {
                         @Override
                         public void run() {
                             Toast.makeText(getApplicationContext(), R.string.textBadInternetConnection, Toast.LENGTH_SHORT).show();
+                            mProgressBar.setVisibility(View.INVISIBLE);
                         }
                     });
                 }
@@ -428,7 +430,7 @@ public class CitiesListActivity extends BaseActivity {
                 Log.d("My", "onLongClick work -> ");
                 Log.d("My", "onLongClick v.getId() -> " + v.getId());
 
-                if (!mMultiSelector.isSelectable()) {
+                if (!mMultiSelector.isSelectable() && isCurrentYear()) {
                     startSupportActionMode(mActionModeCallBack);
                     Log.d("My", "onLongClick mMultiSelector.tapSelection(this) -> " + true);
                     mMultiSelector.setSelectable(true);
