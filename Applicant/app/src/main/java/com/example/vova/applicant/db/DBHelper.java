@@ -76,10 +76,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_DEGREE + " INTEGER NOT NULL, "
                 + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_SPECIALITY + " TEXT NOT NULL, "
                 + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_APPLICATION + " TEXT, "
-                + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_ACCEPTED + " TEXT, "
-                + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_RECOMMENDED + " TEXT, "
-                + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_LICENSED_ORDERS + " TEXT, "
-                + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_VOLUME_ORDERS + " TEXT, "
+                + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_ORDERS + " TEXT, "
                 + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_EXAMS + " TEXT, "
                 + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_LINK + " TEXT NOT NULL, "
                 + SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_DATE_UPDATE + " TEXT NOT NULL, "
@@ -92,40 +89,39 @@ public class DBHelper extends SQLiteOpenHelper {
                 //applicant detail info
                 + ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_NUMBER + " INTEGER, "
                 + ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_NAME + " TEXT NOT NULL, "
-                + DBConstants.ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_TOTAL_SCORE + " TEXT, "
-                + DBConstants.ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_MARK_DOCUMENT + " TEXT, "
-                + DBConstants.ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_MARK_TEST + " TEXT, "
+                + ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_PRIORITY + " TEXT, "
+                + ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_TOTAL_SCORE + " TEXT, "
+                + ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_MARK_DOCUMENT + " TEXT, "
+                + ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_MARK_TEST + " TEXT, "
+                + ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_ORIGINAL_DOCUMENT + " TEXT,"
                 + ApplicationsTable.Cols.APPLICATION_INFO_FIELD_FULL_DATA + " TEXT NOT NULL, "
 
-                + DBConstants.ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_LINK + " TEXT, "
+                + ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_LINK + " TEXT, "
                 + ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_BACKGROUND + " TEXT, "
-                + DBConstants.ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_DATE_UPDATE + " TEXT NOT NULL);");
+                + ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_DATE_UPDATE + " TEXT NOT NULL);");
 
         sqLiteDatabase.execSQL("CREATE TABLE " + ApplicationTable.TABLE_NAME
                 + " (" + ApplicationTable.Cols.APPLICATION_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-//                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_APPLICATIONS_ID + " INTEGER NOT NULL, "
                 + ApplicationTable.Cols.APPLICATION_INFO_FIELD_NAME + " TEXT NOT NULL); ");
 
         sqLiteDatabase.execSQL("CREATE TABLE " + ImportantInfoTable.TABLE_NAME
                 + " (" + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_SPECIALITY_ID + " INTEGER NOT NULL, "
 
-                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_UNIVERSITY_NAME + " TEXT, "
-                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_SPECIALITY + " TEXT, "
-                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_SPECIALIZATION + " TEXT, "
-                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_FACULTY + " TEXT, "
-                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_TIME_FORM + " TEXT, "
-                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_LAST_TIME_UPDATE + " TEXT, "
+                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_UNIVERSITY_INFOS + " TEXT, "
+//                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_SPECIALITY + " TEXT, "
+//                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_SPECIALIZATION + " TEXT, "
+//                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_FACULTY + " TEXT, "
+//                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_TIME_FORM + " TEXT, "
+//                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_LAST_TIME_UPDATE + " TEXT, "
 
                 + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_NUMBER + " TEXT, "
                 + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_NAME + " TEXT NOT NULL, "
-//                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_PRIORITY + " TEXT, "
+                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_PRIORITY + " TEXT, "
                 + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_TOTAL_SCORE + " TEXT, "
                 + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_MARK_DOCUMENT + " TEXT, "
                 + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_MARK_TEST + " TEXT, "
-//                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_MARK_EXAM + " TEXT, "
-//                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_EXTRA_POINTS + " TEXT, "
-//                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_ORIGINAL_DOCUMENT + " TEXT);");
+                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_ORIGINAL_DOCUMENT + " TEXT,"
                 + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_FULL_DATA + " TEXT NOT NULL);");
 
         sqLiteDatabase.execSQL("CREATE TABLE " + LegendInfoTable.TABLE_NAME

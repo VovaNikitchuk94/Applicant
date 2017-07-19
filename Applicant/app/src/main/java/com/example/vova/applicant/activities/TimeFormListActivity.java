@@ -54,7 +54,7 @@ public class TimeFormListActivity extends BaseActivity implements
     private String mDetailCodeLink = "";
 
     @Override
-    protected void initActivity() {
+    protected void initActivity(Bundle savedInstanceState) {
         Log.d("My", "TimeFormListActivity --------> initActivity");
 
         Utils.setNeedToEqualsTime(true);

@@ -18,9 +18,11 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
     //Detail applicant info
     private String mStrApplicantNumber;
     private String mStrApplicantName;
+    private String mStrPriority;
     private String mStrApplicantTotalScores;
     private String mStrApplicantMarkDocument;
     private String mStrApplicantMarkTest;
+    private String mStrOriginalDocument;
     private String mStrApplicantFullData;
 
     private String mStrApplicantLink;
@@ -28,16 +30,18 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
     private String mStrDateLastUpdate;
 
     public ApplicationsInfo(long longSpecialityId, String strApplicantNumber, String strApplicantName,
-                            String strApplicantTotalScores, String strApplicantMarkDocument,
-                            String strApplicantMarkTest, String strApplicantFullData, String strApplicantLink,
-                            String strBackground, String strDateLastUpdate) {
+                            String strPriority, String strApplicantTotalScores, String strApplicantMarkDocument,
+                            String strApplicantMarkTest, String strOriginalDocument, String strApplicantFullData,
+                            String strApplicantLink, String strBackground, String strDateLastUpdate) {
         mLongSpecialityId = longSpecialityId;
 
         mStrApplicantNumber = strApplicantNumber;
         mStrApplicantName = strApplicantName;
+        mStrPriority = strPriority;
         mStrApplicantTotalScores = strApplicantTotalScores;
         mStrApplicantMarkDocument = strApplicantMarkDocument;
         mStrApplicantMarkTest = strApplicantMarkTest;
+        mStrOriginalDocument = strOriginalDocument;
         mStrApplicantFullData = strApplicantFullData;
 
         mStrApplicantLink = strApplicantLink;
@@ -51,9 +55,12 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
 
         mStrApplicantNumber = cursor.getString(cursor.getColumnIndex(DBConstants.ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_NUMBER));
         mStrApplicantName = cursor.getString(cursor.getColumnIndex(DBConstants.ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_NAME));
+        mStrPriority = cursor.getString(cursor.getColumnIndex(ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_PRIORITY));
+
         mStrApplicantTotalScores = cursor.getString(cursor.getColumnIndex(DBConstants.ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_TOTAL_SCORE));
         mStrApplicantMarkDocument = cursor.getString(cursor.getColumnIndex(ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_MARK_DOCUMENT));
         mStrApplicantMarkTest = cursor.getString(cursor.getColumnIndex(ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_MARK_TEST));
+        mStrOriginalDocument = cursor.getString(cursor.getColumnIndex(ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_ORIGINAL_DOCUMENT));
         mStrApplicantFullData = cursor.getString(cursor.getColumnIndex(ApplicationsTable.Cols.APPLICATION_INFO_FIELD_FULL_DATA));
 
         mStrApplicantLink = cursor.getString(cursor.getColumnIndex(ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_LINK));
@@ -67,9 +74,11 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
 
         mStrApplicantNumber = parcel.readString();
         mStrApplicantName = parcel.readString();
+        mStrPriority = parcel.readString();
         mStrApplicantTotalScores = parcel.readString();
         mStrApplicantMarkDocument = parcel.readString();
         mStrApplicantMarkTest = parcel.readString();
+        mStrOriginalDocument = parcel.readString();
         mStrApplicantFullData = parcel.readString();
 
         mStrApplicantLink = parcel.readString();
@@ -117,6 +126,14 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
         return mStrDateLastUpdate;
     }
 
+    public String getStrPriority() {
+        return mStrPriority;
+    }
+
+    public String getStrOriginalDocument() {
+        return mStrOriginalDocument;
+    }
+
     @Override
     public ContentValues getContentValues() {
         ContentValues values = new ContentValues();
@@ -125,9 +142,11 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
 
         values.put(ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_NUMBER, getStrApplicantNumber());
         values.put(DBConstants.ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_NAME, getStrApplicantName());
+        values.put(ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_PRIORITY, getStrPriority());
         values.put(ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_TOTAL_SCORE, getStrApplicantTotalScores());
         values.put(DBConstants.ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_MARK_DOCUMENT, getStrApplicantMarkDocument());
         values.put(DBConstants.ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_MARK_TEST, getStrApplicantMarkTest());
+        values.put(ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_ORIGINAL_DOCUMENT, getStrOriginalDocument());
         values.put(ApplicationsTable.Cols.APPLICATION_INFO_FIELD_FULL_DATA, getStrApplicantFullData());
 
         values.put(ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_LINK, getStrApplicantLink());
@@ -149,9 +168,11 @@ public class ApplicationsInfo extends BaseEntity implements Parcelable {
 
         dest.writeString(mStrApplicantNumber);
         dest.writeString(mStrApplicantName);
+        dest.writeString(mStrPriority);
         dest.writeString(mStrApplicantTotalScores);
         dest.writeString(mStrApplicantMarkDocument);
         dest.writeString(mStrApplicantMarkTest);
+        dest.writeString(mStrOriginalDocument);
         dest.writeString(mStrApplicantFullData);
 
         dest.writeString(mStrApplicantLink);

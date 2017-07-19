@@ -1,6 +1,7 @@
 package com.example.vova.applicant.activities;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -16,7 +17,7 @@ public class ArchiveActivity extends BaseActivity implements View.OnClickListene
     private String yearsCodeLink = "";
 
     @Override
-    protected void initActivity() {
+    protected void initActivity(Bundle savedInstanceState) {
         initializeView();
     }
 

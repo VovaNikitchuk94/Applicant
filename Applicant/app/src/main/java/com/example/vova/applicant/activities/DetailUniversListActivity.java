@@ -50,7 +50,7 @@ public class DetailUniversListActivity extends BaseActivity implements
     private String mUniversityCodeLink = "";
 
     @Override
-    protected void initActivity() {
+    protected void initActivity(Bundle savedInstanceState) {
         Log.d("My", "DetailUniversListActivity --------> initActivity");
 
         Utils.setNeedToEqualsTime(true);

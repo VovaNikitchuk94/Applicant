@@ -56,7 +56,7 @@ public class CategoryUniversListActivity extends BaseActivity implements
     }
 
     @Override
-    protected void initActivity() {
+    protected void initActivity(Bundle savedInstanceState) {
         Log.d("My", "CategoryUniversListActivity --------> initActivity");
 
         Utils.setNeedToEqualsTime(true);

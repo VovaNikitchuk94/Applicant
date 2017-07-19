@@ -48,7 +48,7 @@ public class AboutUniversityActivity extends BaseActivity implements
     private String mDetailCodeLink = "";
 
     @Override
-    protected void initActivity() {
+    protected void initActivity(Bundle savedInstanceState) {
         Log.d("My", "AboutUniversityActivity -> OnCreate");
 
         Utils.setNeedToEqualsTime(true);
@@ -185,11 +185,8 @@ public class AboutUniversityActivity extends BaseActivity implements
                     if (phoneNumbers[0].length() > phoneNumbers[1].length()) {
                         int numberFirstCount = phoneNumbers[0].length();
                         int numberSecondCount = phoneNumbers[1].length();
-                        Log.d("My", "numberFirstCount -> " + numberFirstCount);
-                        Log.d("My", "numberSecondCount -> " + numberSecondCount);
 
                         String phoneCode = (phoneNumbers[0].substring(0, numberFirstCount - numberSecondCount));
-                        Log.d("My", "phoneCode -> " + phoneCode);
                         for (int i = 1; i < phoneNumbers.length; i++) {
                             phoneNumbers[i] = phoneCode + phoneNumbers[i];
                         }

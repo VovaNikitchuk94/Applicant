@@ -45,7 +45,7 @@ public class DetailApplicantPagerActivity extends BaseActivity {
     public static ApplicationsInfo mInfo;
 
     @Override
-    protected void initActivity() {
+    protected void initActivity(Bundle savedInstanceState) {
         FragmentManager manager = getSupportFragmentManager();
 
         // add new fragment

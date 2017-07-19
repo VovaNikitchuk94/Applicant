@@ -13,26 +13,41 @@ public class SpecialtiesInfo extends BaseEntity implements Parcelable {
     private long mLongDegree;
     private String mStrSpecialty;
     private String mStrApplications;
-    private String mStrAccepted;
-    private String mStrRecommended;
-    private String mStrLicensedOrder;
-    private String mStrVolumeOrder;
+//    private String mStrAccepted;
+//    private String mStrRecommended;
+//    private String mStrLicensedOrder;
+//    private String mStrVolumeOrder;
+    private String mStrOrder;
     private String mStrExam;
     private String mStrLink;
     private String mStrDateLastUpdate;
     private int mIsFavorite;
 
+//    public SpecialtiesInfo(long longTimeFormId, long longDegree, String strSpecialty, String strApplications,
+//                           String strAccepted, String strRecommended, String strLicensedOrder, String strVolumeOrder,
+//                           String strExam, String strLink, String strDateLastUpdate, int isFavorite) {
+//        mLongTimeFormId = longTimeFormId;
+//        mLongDegree = longDegree;
+//        mStrSpecialty = strSpecialty;
+//        mStrApplications = strApplications;
+//        mStrAccepted = strAccepted;
+//        mStrRecommended = strRecommended;
+//        mStrLicensedOrder = strLicensedOrder;
+//        mStrVolumeOrder = strVolumeOrder;
+//        mStrExam = strExam;
+//        mStrLink = strLink;
+//        mStrDateLastUpdate = strDateLastUpdate;
+//        mIsFavorite = isFavorite;
+//    }
+
+
     public SpecialtiesInfo(long longTimeFormId, long longDegree, String strSpecialty, String strApplications,
-                           String strAccepted, String strRecommended, String strLicensedOrder, String strVolumeOrder,
-                           String strExam, String strLink, String strDateLastUpdate, int isFavorite) {
+                           String strOrder, String strExam, String strLink, String strDateLastUpdate, int isFavorite) {
         mLongTimeFormId = longTimeFormId;
         mLongDegree = longDegree;
         mStrSpecialty = strSpecialty;
         mStrApplications = strApplications;
-        mStrAccepted = strAccepted;
-        mStrRecommended = strRecommended;
-        mStrLicensedOrder = strLicensedOrder;
-        mStrVolumeOrder = strVolumeOrder;
+        mStrOrder = strOrder;
         mStrExam = strExam;
         mStrLink = strLink;
         mStrDateLastUpdate = strDateLastUpdate;
@@ -45,10 +60,11 @@ public class SpecialtiesInfo extends BaseEntity implements Parcelable {
         mLongDegree = cursor.getLong(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_DEGREE));
         mStrSpecialty = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_SPECIALITY));
         mStrApplications = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_APPLICATION));
-        mStrAccepted = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_ACCEPTED));
-        mStrRecommended = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_RECOMMENDED));
-        mStrLicensedOrder = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_LICENSED_ORDERS));
-        mStrVolumeOrder = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_VOLUME_ORDERS));
+//        mStrAccepted = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_ACCEPTED));
+//        mStrRecommended = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_RECOMMENDED));
+//        mStrLicensedOrder = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_LICENSED_ORDERS));
+//        mStrVolumeOrder = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_VOLUME_ORDERS));
+        mStrOrder = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_ORDERS));
         mStrExam = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_EXAMS));
         mStrLink = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_LINK));
         mStrDateLastUpdate = cursor.getString(cursor.getColumnIndex(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_DATE_UPDATE));
@@ -61,10 +77,11 @@ public class SpecialtiesInfo extends BaseEntity implements Parcelable {
         mLongDegree = parcel.readLong();
         mStrSpecialty = parcel.readString();
         mStrApplications = parcel.readString();
-        mStrAccepted = parcel.readString();
-        mStrRecommended = parcel.readString();
-        mStrLicensedOrder = parcel.readString();
-        mStrVolumeOrder = parcel.readString();
+//        mStrAccepted = parcel.readString();
+//        mStrRecommended = parcel.readString();
+//        mStrLicensedOrder = parcel.readString();
+//        mStrVolumeOrder = parcel.readString();
+        mStrOrder = parcel.readString();
         mStrExam = parcel.readString();
         mStrLink = parcel.readString();
         mStrDateLastUpdate = parcel.readString();
@@ -79,9 +96,9 @@ public class SpecialtiesInfo extends BaseEntity implements Parcelable {
         return mStrApplications;
     }
 
-    public String getStrAccepted() {
-        return mStrAccepted;
-    }
+//    public String getStrAccepted() {
+//        return mStrAccepted;
+//    }
 
     public String getStrLink() {
         return mStrLink;
@@ -95,16 +112,21 @@ public class SpecialtiesInfo extends BaseEntity implements Parcelable {
         return mLongDegree;
     }
 
-    public String getStrRecommended() {
-        return mStrRecommended;
-    }
+//    public String getStrRecommended() {
+//        return mStrRecommended;
+//    }
 
-    public String getStrLicensedOrder() {
-        return mStrLicensedOrder;
-    }
+//    public String getStrLicensedOrder() {
+//        return mStrLicensedOrder;
+//    }
 
-    public String getStrVolumeOrder() {
-        return mStrVolumeOrder;
+//    public String getStrVolumeOrder() {
+//        return mStrVolumeOrder;
+//    }
+
+
+    public String getStrOrder() {
+        return mStrOrder;
     }
 
     public String getStrExam() {
@@ -130,10 +152,11 @@ public class SpecialtiesInfo extends BaseEntity implements Parcelable {
         values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_DEGREE, getLongDegree());
         values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_SPECIALITY, getStrSpecialty());
         values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_APPLICATION, getStrApplications());
-        values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_ACCEPTED, getStrAccepted());
-        values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_RECOMMENDED, getStrRecommended());
-        values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_LICENSED_ORDERS, getStrLicensedOrder());
-        values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_VOLUME_ORDERS, getStrVolumeOrder());
+//        values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_ACCEPTED, getStrAccepted());
+//        values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_RECOMMENDED, getStrRecommended());
+//        values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_LICENSED_ORDERS, getStrLicensedOrder());
+//        values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_VOLUME_ORDERS, getStrVolumeOrder());
+        values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_ORDERS, getStrOrder());
         values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_EXAMS, getStrExam());
         values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_LINK, getStrLink());
         values.put(SpecialitiesTable.Cols.SPECIALITIES_INFO_FIELD_DATE_UPDATE, getStrDateLastUpdate());
@@ -153,10 +176,11 @@ public class SpecialtiesInfo extends BaseEntity implements Parcelable {
         dest.writeLong(mLongDegree);
         dest.writeString(mStrSpecialty);
         dest.writeString(mStrApplications);
-        dest.writeString(mStrAccepted);
-        dest.writeString(mStrRecommended);
-        dest.writeString(mStrLicensedOrder);
-        dest.writeString(mStrVolumeOrder);
+//        dest.writeString(mStrAccepted);
+//        dest.writeString(mStrRecommended);
+//        dest.writeString(mStrLicensedOrder);
+//        dest.writeString(mStrVolumeOrder);
+        dest.writeString(mStrOrder);
         dest.writeString(mStrExam);
         dest.writeString(mStrLink);
         dest.writeString(mStrDateLastUpdate);

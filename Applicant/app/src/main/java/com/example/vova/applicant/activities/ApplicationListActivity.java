@@ -28,12 +28,10 @@ import android.widget.Toast;
 import com.example.vova.applicant.R;
 import com.example.vova.applicant.adapters.ApplicationAdapter;
 import com.example.vova.applicant.adapters.LegendAdapter;
-import com.example.vova.applicant.model.ApplicationInfo;
 import com.example.vova.applicant.model.ApplicationsInfo;
 import com.example.vova.applicant.model.ImportantInfo;
 import com.example.vova.applicant.model.LegendInfo;
 import com.example.vova.applicant.model.SpecialtiesInfo;
-import com.example.vova.applicant.model.engines.ApplicationEngine;
 import com.example.vova.applicant.model.engines.ApplicationsEngine;
 import com.example.vova.applicant.model.engines.ImportantApplicantInfoEngine;
 import com.example.vova.applicant.model.engines.LegendEngine;
@@ -60,7 +58,8 @@ public class ApplicationListActivity extends BaseActivity implements Application
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ProgressBar mProgressBar;
     private BottomSheetBehavior bottomSheetBehavior;
-    private TextView numberTextView, nameTextView, competitionScoreTextView, BDOScoreTextView, ZNOScoreTextView;
+    private TextView numberTextView, nameTextView, totalScoreOrPriorityTextView,
+            markDocumentTotalScoreTextView, ZNOScoreOrOrigDocumentTextView;
     private SearchView mSearchView = null;
 
     private SpecialtiesInfo mSpecialtiesInfo;
@@ -72,7 +71,7 @@ public class ApplicationListActivity extends BaseActivity implements Application
     private String mStrApplicantCodeLink = "";
 
     @Override
-    protected void initActivity() {
+    protected void initActivity(Bundle savedInstanceState) {
 
         Utils.setNeedToEqualsTime(true);
         mCalendar = Utils.getModDeviceTime();
@@ -110,9 +109,9 @@ public class ApplicationListActivity extends BaseActivity implements Application
         //get textView from important info
         numberTextView = (TextView) findViewById(R.id.textViewLegendSequenceNumberApplicantInfo);
         nameTextView = (TextView) findViewById(R.id.textViewLegendNameApplicantsApplicantInfo);
-        competitionScoreTextView = (TextView) findViewById(R.id.textViewLegendCompetitionScoresApplicantInfo);
-        BDOScoreTextView = (TextView) findViewById(R.id.textViewLegendBDOScoreApplicantsApplicantInfo);
-        ZNOScoreTextView = (TextView) findViewById(R.id.textViewLegendZNOScoreApplicantsApplicantInfo);
+        totalScoreOrPriorityTextView = (TextView) findViewById(R.id.textViewLegendCompetitionScoresApplicantInfo);
+        markDocumentTotalScoreTextView = (TextView) findViewById(R.id.textViewLegendBDOScoreApplicantsApplicantInfo);
+        ZNOScoreOrOrigDocumentTextView = (TextView) findViewById(R.id.textViewLegendZNOScoreApplicantsApplicantInfo);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewApplicationListActivity);
         LinearLayoutManager layoutManager
@@ -135,9 +134,23 @@ public class ApplicationListActivity extends BaseActivity implements Application
         ImportantInfo importantInfos = importantApplicantInfoEngine.getImportantInfoById(mSpecialtiesInfo.getId());
         numberTextView.setText(importantInfos.getStrNumber());
         nameTextView.setText(importantInfos.getStrName());
-        competitionScoreTextView.setText(importantInfos.getStrTotalScores());
-        BDOScoreTextView.setText(importantInfos.getStrMarkDocument());
-        ZNOScoreTextView.setText(importantInfos.getStrMarkTest());
+
+        Log.d("My", "setTextImportantTextView importantInfos.getStrOriginalDocument() - >" + importantInfos.getStrOriginalDocument());
+
+        if (importantInfos.getStrMarkDocument().isEmpty()) {
+            if (importantInfos.getStrPriority().isEmpty()) {
+                markDocumentTotalScoreTextView.setText(importantInfos.getStrTotalScores());
+                ZNOScoreOrOrigDocumentTextView.setText(importantInfos.getStrOriginalDocument());
+            } else {
+                totalScoreOrPriorityTextView.setText(importantInfos.getStrPriority());
+                markDocumentTotalScoreTextView.setText(importantInfos.getStrTotalScores());
+                ZNOScoreOrOrigDocumentTextView.setText(importantInfos.getStrOriginalDocument());
+            }
+        } else {
+            totalScoreOrPriorityTextView.setText(importantInfos.getStrTotalScores());
+            markDocumentTotalScoreTextView.setText(importantInfos.getStrMarkDocument());
+            ZNOScoreOrOrigDocumentTextView.setText(importantInfos.getStrMarkTest());
+        }
     }
 
     private void setLegendList() {
@@ -429,11 +442,13 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
             private void parse(long specialityId, ApplicationsEngine applicationsEngine, boolean isNeedUpdate) {
                 //applicant data
-                String number;
-                String name;
-                String totalScore;
-                String markDocument;
-                String markTest;
+                String number = "";
+                String name = "";
+                String priority = "";
+                String totalScore = "";
+                String markDocument = "";
+                String markTest = "";
+                String originalDocument = "";
                 String fullData = "";
 
                 String color;
@@ -473,24 +488,12 @@ public class ApplicationListActivity extends BaseActivity implements Application
                         parseImportantInfo(detailElements, selectTrMarking, specialityId);
                     }
 
-//                    ArrayList<String> testSecondArray = new ArrayList<String>();
-//                    ArrayList<String> testFirstArray = new ArrayList<String>();
-//                    ArrayList<ApplicationInfo> applicationInfos = new ArrayList<ApplicationInfo>();
-
-
                     for (Element link : selectTrApplicant) {
                         Elements tdElements = link.select("td");
 
                         for (Element elementTest: tdElements) {
                             fullData += elementTest.text() + "/";
-
                         }
-
-                        Log.d("My", "parseData parse applicant testSecondArray string -> " + fullData);
-//                        Log.d("My", "parseData parse applicant testSecondArray size -> " + testFirstArray.size());
-//                        Log.d("My", "parseData parse applicant testSecondArray size -> " + testSecondArray.size());
-
-
 
                         //background
                         color = parseBackgroundApplicant(tdElements);
@@ -501,20 +504,32 @@ public class ApplicationListActivity extends BaseActivity implements Application
                             totalScore = tdElements.get(2).text();
                             markDocument = tdElements.get(3).text();
                             markTest = tdElements.get(4).text();
-//                            markExam = tdElements.get(5).text();
-//                            extraPoints = tdElements.get(6).text();
-//                            originalDocument = tdElements.get(7).text();
-                        } else {
+                        } else if (tdElements.size() >= 9){
                             number = tdElements.get(0).text();
                             name = tdElements.get(1).text();
-//                            priority = tdElements.get(2).text();
                             totalScore = tdElements.get(3).text();
                             markDocument = tdElements.get(4).text();
-                            markTest = tdElements.get(5).text();
-//                            markExam = tdElements.get(6).text();
-//                            extraPoints = tdElements.get(7).text();
-//                            originalDocument = tdElements.get(8).text();
+                        } else if (tdElements.size() >= 4 ) {
+                            number = tdElements.get(0).text();
+                            name = tdElements.get(1).text();
+                            if (tdElements.size() == 5 ) {
+                                priority = tdElements.get(2).text();
+                                totalScore = tdElements.get(3).text();
+                                originalDocument = tdElements.get(4).text();
+                            } else {
+                                totalScore = tdElements.get(2).text();
+                                originalDocument = tdElements.get(3).text();
+                            }
                         }
+
+                        Log.d("My", "parse applicant tdElements.size() -> " + tdElements.size());
+                        Log.d("My", "parse applicant number -> " + number);
+                        Log.d("My", "parse applicant name -> " + name);
+                        Log.d("My", "parse applicant priority -> " + priority);
+                        Log.d("My", "parse applicant totalScore -> " + totalScore);
+                        Log.d("My", "parse applicant markDocument -> " + markDocument);
+                        Log.d("My", "parse applicant originalDocument -> " + originalDocument);
+
 
                         someLink = tdElements.attr("abs:href");
 
@@ -523,8 +538,9 @@ public class ApplicationListActivity extends BaseActivity implements Application
 //                                extraPoints, originalDocument, someLink, color, dateUpdate));
 
                         applicationsInfos.add(new ApplicationsInfo(specialityId,
-                                number, name, totalScore, markDocument, markTest, fullData,
-                                someLink, color, dateUpdate));
+                                number, name, priority, totalScore, markDocument, markTest, originalDocument,
+                                fullData, someLink, color, dateUpdate));
+                        Log.d("My", "parse applicant fullData -> " + fullData);
                         fullData = "";
                     }
 
@@ -580,12 +596,11 @@ public class ApplicationListActivity extends BaseActivity implements Application
     }
 
     private void parseImportantInfo(Elements detailElements, Elements selectTrMarking, long specialityId) {
-        String universityName = "";
-        String speciality = "";
-        String specialization = "";
-        String faculty = "";
-        String timeForm = "";
-        String lastTimeUpdate = "";
+//        String speciality = "";
+//        String specialization = "";
+//        String faculty = "";
+//        String timeForm = "";
+//        String lastTimeUpdate = "";
 
         String number ="";
         String name = "";
@@ -593,33 +608,42 @@ public class ApplicationListActivity extends BaseActivity implements Application
         String totalScore = "";
         String markDocument = "";
         String markTest = "";
-        String markExam = "";
-        String extraPoints = "";
         String originalDocument = "";
-
         String fullData = "";
 
         ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getApplicationContext());
         if (importantApplicantInfoEngine.getImportantInfoById(specialityId) == null) {
-
-            universityName = detailElements.select(".title-description").text();
+//
+            String universityName = detailElements.select(".title-description").text();
             String universityInfos = "";
             if (detailElements.select("p").size() > 1) {
-                universityInfos = (detailElements.select("p").get(1).toString()).replaceAll("(?i)<br[^>]*>", "/");
+                universityInfos = (detailElements.select("p").get(1).toString()).replaceAll("(?i)<p[^>]*>", "")
+                        .replaceAll("(?i)<[/]p[^>]*>", "").replaceAll("(?i)<nobr[^>]*>", "")
+                        .replaceAll("(?i)<[/]nobr[^>]*>", "").replaceAll("(?i)<small[^>]*>", "")
+                        .replaceAll("(?i)<[/]small[^>]*>", "").replaceAll("(?i)<br[^>]*>", "\n");
             } else {
-                universityInfos = (detailElements.select("p").get(0).toString()).replaceAll("(?i)<br[^>]*>", "/");
+                universityInfos = (detailElements.select("p").get(0).toString()).replaceAll("(?i)<p[^>]*>", "")
+                        .replaceAll("(?i)<[/]p[^>]*>", "").replaceAll("(?i)<nobr[^>]*>", "")
+                        .replaceAll("(?i)<[/]nobr[^>]*>", "").replaceAll("(?i)<small[^>]*>", "")
+                        .replaceAll("(?i)<[/]small[^>]*>", "").replaceAll("(?i)<br[^>]*>", "\n");
             }
-
-            universityInfos = universityInfos.substring(4, universityInfos.indexOf("<small"));
-            String[] arrSpecialities = universityInfos.split("[/]");
-            if (arrSpecialities.length == 4) {
-                speciality = arrSpecialities[0];
-                specialization = arrSpecialities[1];
-                faculty = arrSpecialities[2];
-                timeForm = arrSpecialities[3];
-            }
-
-            lastTimeUpdate = detailElements.select("p > small").text();
+            Log.d("My", "parse importantInfo universityInfos -> " + universityInfos);
+//
+//            universityInfos = universityInfos.substring(4, universityInfos.indexOf("<small"));
+//            String[] arrSpecialities = universityInfos.split("[/]");
+//            if (arrSpecialities.length == 4) {
+//                speciality = arrSpecialities[0];
+//                specialization = arrSpecialities[1];
+//                faculty = arrSpecialities[2];
+//                timeForm = arrSpecialities[3];
+//                Log.d("My", "parse importantInfo speciality -> " + speciality);
+//                Log.d("My", "parse importantInfo specialization -> " + specialization);
+//                Log.d("My", "parse importantInfo faculty -> " + faculty);
+//                Log.d("My", "parse importantInfo timeForm -> " + timeForm);
+//            }
+//
+//            lastTimeUpdate = detailElements.select("p > small").text();
+//            Log.d("My", "parse importantInfo lastTimeUpdate -> " + lastTimeUpdate);
 
             //applicant data
             if (selectTrMarking.size() == 8) {
@@ -628,34 +652,43 @@ public class ApplicationListActivity extends BaseActivity implements Application
                 totalScore = selectTrMarking.get(2).text();
                 markDocument = selectTrMarking.get(3).text();
                 markTest = selectTrMarking.get(4).text();
-//                markExam = selectTrMarking.get(5).text();
-//                extraPoints = selectTrMarking.get(6).text();
-//                originalDocument = selectTrMarking.get(7).text();
-
-            } else {
+            } else if (selectTrMarking.size() >= 9){
                 number = selectTrMarking.get(0).text();
                 name = selectTrMarking.get(1).text();
-//                priority = selectTrMarking.get(2).text();
+                priority = selectTrMarking.get(2).text();
                 totalScore = selectTrMarking.get(3).text();
                 markDocument = selectTrMarking.get(4).text();
-                markTest = selectTrMarking.get(5).text();
-//                markExam = selectTrMarking.get(6).text();
-//                extraPoints = selectTrMarking.get(7).text();
-//                originalDocument = selectTrMarking.get(8).text();
+            } else if (selectTrMarking.size() >= 4 ) {
+                number = selectTrMarking.get(0).text();
+                name = selectTrMarking.get(1).text();
+                if (selectTrMarking.size() == 5) {
+                    priority = selectTrMarking.get(2).text();
+                    totalScore = selectTrMarking.get(3).text();
+                    originalDocument = selectTrMarking.get(4).text();
+                } else {
+                    totalScore = selectTrMarking.get(2).text();
+                    originalDocument = selectTrMarking.get(3).text();
+                }
             }
+
+            Log.d("My", "parse importantInfo tdElements.size() -> " + selectTrMarking.size());
+            Log.d("My", "parse importantInfo number -> " + number);
+            Log.d("My", "parse importantInfo name -> " + name);
+            Log.d("My", "parse importantInfo priority -> " + priority);
+            Log.d("My", "parse importantInfo totalScore -> " + totalScore);
+            Log.d("My", "parse importantInfo markDocument -> " + markDocument);
+            Log.d("My", "parse importantInfo markTest -> " + markTest);
+            Log.d("My", "parse importantInfo originalDocument -> " + originalDocument);
 
             for (Element elementTest: selectTrMarking) {
                 fullData += elementTest.text() + "/";
-
             }
 
-//            importantApplicantInfoEngine.addImportantInfo(new ImportantInfo(specialityId, universityName,
-//                    speciality, specialization, faculty, timeForm, lastTimeUpdate, number, name, priority, totalScore,
-//                    markDocument, markTest, markExam, extraPoints, originalDocument));
+            Log.d("My", "parse importantInfo fullData -> " + fullData);
 
-            importantApplicantInfoEngine.addImportantInfo(new ImportantInfo(specialityId, universityName,
-                    speciality, specialization, faculty, timeForm, lastTimeUpdate, number, name, totalScore,
-                    markDocument, markTest, fullData));
+
+            importantApplicantInfoEngine.addImportantInfo(new ImportantInfo(specialityId, universityInfos, number, name, priority,
+                    totalScore, markDocument, markTest, originalDocument, fullData));
         }
     }
 
@@ -677,7 +710,7 @@ public class ApplicationListActivity extends BaseActivity implements Application
             backgroundFirst = backgroundFirst.substring(backgroundFirst.indexOf("#"), backgroundFirst.indexOf(">") - 1);
             backgroundSecond = backgroundSecond.substring(backgroundSecond.indexOf("#"), backgroundSecond.indexOf(">") - 1);
 
-            if (!backgroundFirst.equals(backgroundSecond) || backgroundFirst.contains("#ff9")) {
+            if (!backgroundFirst.equals(backgroundSecond) | backgroundFirst.contains("#ff9")) {
                 color = "#FFFF99";
             } else {
                 color = backgroundFirst;

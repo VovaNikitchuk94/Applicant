@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.vova.applicant.R;
@@ -15,8 +14,6 @@ import com.example.vova.applicant.activities.DetailApplicantPagerActivity;
 import com.example.vova.applicant.model.ApplicationsInfo;
 import com.example.vova.applicant.model.ImportantInfo;
 import com.example.vova.applicant.model.engines.ImportantApplicantInfoEngine;
-
-import java.util.ArrayList;
 
 public class ImportantInfoApplicantFragment extends Fragment {
 
@@ -37,12 +34,12 @@ public class ImportantInfoApplicantFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_important_info_applicant, container, false);
         Log.d("My", "ImportantInfoApplicantFragment onCreateView ->");
 
-        TextView textViewNameOfUniversity = (TextView) view.findViewById(R.id.textNameOfUniversityFragmentDetailApplicant);
-        TextView textViewSpeciality = (TextView) view.findViewById(R.id.textSpecialityFragmentDetailApplicant);
-        TextView textViewSpecialization = (TextView) view.findViewById(R.id.textSpecializationFragmentDetailApplicant);
-        TextView textViewFaculty = (TextView) view.findViewById(R.id.textFacultyFragmentDetailApplicant);
-        TextView textViewTimeForm = (TextView) view.findViewById(R.id.textTimeFormFragmentDetailApplicant);
-        TextView textViewLastTimeUpdate = (TextView) view.findViewById(R.id.textLastTimeUpdateFragmentDetailApplicant);
+        TextView textViewUniversityInfos = (TextView) view.findViewById(R.id.textViewUniversityInfosFragmentDetailApplicant);
+//        TextView textViewSpeciality = (TextView) view.findViewById(R.id.textSpecialityFragmentDetailApplicant);
+//        TextView textViewSpecialization = (TextView) view.findViewById(R.id.textSpecializationFragmentDetailApplicant);
+//        TextView textViewFaculty = (TextView) view.findViewById(R.id.textFacultyFragmentDetailApplicant);
+//        TextView textViewTimeForm = (TextView) view.findViewById(R.id.textTimeFormFragmentDetailApplicant);
+//        TextView textViewLastTimeUpdate = (TextView) view.findViewById(R.id.textLastTimeUpdateFragmentDetailApplicant);
 
         //TODO распарсить и правильно отобразить техтвьюшки с важной информацией
 
@@ -52,12 +49,12 @@ public class ImportantInfoApplicantFragment extends Fragment {
             ImportantInfo importantInfo = importantApplicantInfoEngine.getImportantInfoById(mApplicationsInfo.getLongSpecialityId());
 
             if (importantInfo != null) {
-                textViewNameOfUniversity.setText(importantInfo.getStrUniversityName());
-                textViewSpeciality.setText(importantInfo.getStrSpeciality());
-                textViewSpecialization.setText(importantInfo.getStrSpecialization());
-                textViewFaculty.setText(importantInfo.getStrFaculty());
-                textViewTimeForm.setText(importantInfo.getStrTimeForm());
-                textViewLastTimeUpdate.setText(importantInfo.getStrLastTimeUpdate());
+                textViewUniversityInfos.setText(importantInfo.getStrUniversityInfos());
+//                textViewSpeciality.setText(importantInfo.getStrSpeciality());
+//                textViewSpecialization.setText(importantInfo.getStrSpecialization());
+//                textViewFaculty.setText(importantInfo.getStrFaculty());
+//                textViewTimeForm.setText(importantInfo.getStrTimeForm());
+//                textViewLastTimeUpdate.setText(importantInfo.getStrLastTimeUpdate());
             }
         }
 

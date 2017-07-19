@@ -124,7 +124,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         setToolbar();
         setDrawer();
-        initActivity();
+        initActivity(savedInstanceState);
     }
 
     @Override
@@ -140,7 +140,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         return isDrawerClosed;
     }
 
-    protected abstract void initActivity();
+    protected abstract void initActivity(Bundle savedInstanceState);
 
     protected abstract int getLayoutId();
 }

@@ -46,20 +46,22 @@ public class SpecialitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final SpecialtiesInfo specialtiesInfo = mSpecialtiesInfos.get(position);
         specialitiesInfoViewHolder.specialtyTextView.setText(specialtiesInfo.getStrSpecialty());
         specialitiesInfoViewHolder.applicationsTextView.setText(specialtiesInfo.getStrApplications());
-        specialitiesInfoViewHolder.acceptedTextView.setText(specialtiesInfo.getStrAccepted());
-        specialitiesInfoViewHolder.recommendedTextView.setText(specialtiesInfo.getStrRecommended());
-        specialitiesInfoViewHolder.licenseOrderTextView.setText(specialtiesInfo.getStrLicensedOrder());
-        specialitiesInfoViewHolder.volumeOrderTextView.setText(specialtiesInfo.getStrVolumeOrder());
+//        specialitiesInfoViewHolder.acceptedTextView.setText(specialtiesInfo.getStrAccepted());
+//        specialitiesInfoViewHolder.recommendedTextView.setText(specialtiesInfo.getStrRecommended());
+//        specialitiesInfoViewHolder.licenseOrderTextView.setText(specialtiesInfo.getStrLicensedOrder());
+//        specialitiesInfoViewHolder.volumeOrderTextView.setText(specialtiesInfo.getStrVolumeOrder());
+        specialitiesInfoViewHolder.orderTextView.setText(specialtiesInfo.getStrOrder());
         //TODO обработать ошибку когда не пустые items определяються как пустые
         //TODO обработать ошибку когда в пустые списки дублируються записи из предыдущего item
         if (specialtiesInfo.getStrLink().isEmpty()) {
             int emptyColor = ContextCompat.getColor(mContext, R.color.md_grey_400);
             specialitiesInfoViewHolder.specialtyTextView.setTextColor(emptyColor);
             specialitiesInfoViewHolder.applicationsTextView.setTextColor(emptyColor);
-            specialitiesInfoViewHolder.acceptedTextView.setTextColor(emptyColor);
-            specialitiesInfoViewHolder.recommendedTextView.setTextColor(emptyColor);
-            specialitiesInfoViewHolder.licenseOrderTextView.setTextColor(emptyColor);
-            specialitiesInfoViewHolder.volumeOrderTextView.setTextColor(emptyColor);
+//            specialitiesInfoViewHolder.acceptedTextView.setTextColor(emptyColor);
+//            specialitiesInfoViewHolder.recommendedTextView.setTextColor(emptyColor);
+//            specialitiesInfoViewHolder.licenseOrderTextView.setTextColor(emptyColor);
+//            specialitiesInfoViewHolder.volumeOrderTextView.setTextColor(emptyColor);
+            specialitiesInfoViewHolder.orderTextView.setTextColor(emptyColor);
         }
 
 
@@ -83,20 +85,22 @@ public class SpecialitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         View rootView;
         TextView specialtyTextView;
         TextView applicationsTextView;
-        TextView acceptedTextView;
-        TextView recommendedTextView;
-        TextView licenseOrderTextView;
-        TextView volumeOrderTextView;
+//        TextView acceptedTextView;
+//        TextView recommendedTextView;
+//        TextView licenseOrderTextView;
+//        TextView volumeOrderTextView;
+        TextView orderTextView;
 
         public SpecialitiesInfoViewHolder(View itemView) {
             super(itemView);
             rootView = itemView;
             specialtyTextView = (TextView) itemView.findViewById(R.id.textViewSpecialtySpecialtiesInfo);
             applicationsTextView = (TextView) itemView.findViewById(R.id.textViewApplicationsSpecialtiesInfo);
-            acceptedTextView = (TextView) itemView.findViewById(R.id.textViewmStrAcceptedSpecialtiesInfo);
-            recommendedTextView = (TextView) itemView.findViewById(R.id.textViewmStrRecommendedSpecialtiesInfo);
-            licenseOrderTextView = (TextView) itemView.findViewById(R.id.textViewmmStrLicensedOrderSpecialtiesInfo);
-            volumeOrderTextView = (TextView) itemView.findViewById(R.id.textViewmmStrVolumeOrderSpecialtiesInfo);
+//            acceptedTextView = (TextView) itemView.findViewById(R.id.textViewmStrAcceptedSpecialtiesInfo);
+//            recommendedTextView = (TextView) itemView.findViewById(R.id.textViewmStrRecommendedSpecialtiesInfo);
+//            licenseOrderTextView = (TextView) itemView.findViewById(R.id.textViewmmStrLicensedOrderSpecialtiesInfo);
+//            volumeOrderTextView = (TextView) itemView.findViewById(R.id.textViewmmStrVolumeOrderSpecialtiesInfo);
+            orderTextView = (TextView) itemView.findViewById(R.id.textViewOrderSpecialtiesInfo);
         }
     }
 

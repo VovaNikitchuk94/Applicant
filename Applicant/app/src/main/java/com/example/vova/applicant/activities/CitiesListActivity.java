@@ -49,6 +49,8 @@ public class CitiesListActivity extends BaseActivity {
 
     public static final String KEY_YEARS_CITIES_LIST_ACTIVITY = "KEY_YEARS_CITIES_LIST_ACTIVITY";
     private static final String DATE_KEY_INDEX = "date_index";
+    public static final String KEY_URL = "KEY_URL";
+    public static final String KEY_YEAR_ID = "KEY_YEAR_ID";
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
@@ -62,11 +64,17 @@ public class CitiesListActivity extends BaseActivity {
     private Calendar mCalendar;
 
     private long mLongYearId = -1;
-    private String mYearsCodeLink = "";
+    private String mYearsCodeLink = Constans.URL_VSTUP_INFO_2017;
 
     @Override
-    protected void initActivity() {
+    protected void initActivity(Bundle savedInstanceState) {
         Log.d("My", "CitiesListActivity --------> initActivity");
+
+        if (savedInstanceState != null) {
+            mCalendar = (Calendar) savedInstanceState.get(DATE_KEY_INDEX);
+            mYearsCodeLink = (String) savedInstanceState.get(KEY_URL);
+            mLongYearId = (long) savedInstanceState.get(KEY_YEAR_ID);
+        }
 
         Utils.setNeedToEqualsTime(true);
         mCalendar = Utils.getModDeviceTime();
@@ -203,8 +211,8 @@ public class CitiesListActivity extends BaseActivity {
         super.onSaveInstanceState(outState);
         Log.d("My", "onSaveInstanceState  -> ");
         outState.putSerializable(DATE_KEY_INDEX, mCalendar);
-        outState.putSerializable("KEY_URL", mYearsCodeLink);
-        outState.putSerializable("KEY_YEAR_ID", mLongYearId);
+        outState.putSerializable(KEY_URL, mYearsCodeLink);
+        outState.putSerializable(KEY_YEAR_ID, mLongYearId);
     }
 
     //    @Override

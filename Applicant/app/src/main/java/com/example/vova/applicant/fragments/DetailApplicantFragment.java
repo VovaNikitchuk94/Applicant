@@ -85,7 +85,9 @@ public class DetailApplicantFragment extends Fragment {
                 }
             }
 
-            mDetailApplicantAdapter = new DetailApplicantAdapter(mFullApplicantInfoArray, mImportantInfoArray);
+            String color = mApplicationsInfo.getStrBackground();
+
+            mDetailApplicantAdapter = new DetailApplicantAdapter(color, mFullApplicantInfoArray, mImportantInfoArray);
             mDetailApplicantAdapter.notifyDataSetChanged();
             mRecyclerView.setAdapter(mDetailApplicantAdapter);
         }

@@ -1,5 +1,6 @@
 package com.example.vova.applicant.adapters;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +15,10 @@ public class DetailApplicantAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     private ArrayList<String> mFullApplicantInfoArray = new ArrayList<>();
     private ArrayList<String> mImportantInfoArray = new ArrayList<>();
+    private String mStrColor;
 
-    public DetailApplicantAdapter(ArrayList<String> fullApplicantInfo, ArrayList<String> importantInfo ) {
+    public DetailApplicantAdapter(String color, ArrayList<String> fullApplicantInfo, ArrayList<String> importantInfo ) {
+        mStrColor = color;
         mFullApplicantInfoArray = fullApplicantInfo;
         mImportantInfoArray = importantInfo;
     }
@@ -34,6 +37,7 @@ public class DetailApplicantAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         DetailApplicantInfoViewHolder detailApplicantInfoViewHolder = (DetailApplicantInfoViewHolder) holder;
 
+        detailApplicantInfoViewHolder.itemView.setBackgroundColor(Color.parseColor(mStrColor));
         String fullApplicationData = mFullApplicantInfoArray.get(position);
         String importantData = mImportantInfoArray.get(position);
         detailApplicantInfoViewHolder.conventionTextView.setText(importantData);

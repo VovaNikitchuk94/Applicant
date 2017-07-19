@@ -50,7 +50,7 @@ public class UniversitiesListActivity extends BaseActivity {
     private String mStringCategory;
 
     @Override
-    protected void initActivity() {
+    protected void initActivity(Bundle savedInstanceState) {
         Log.d("My", "UniversitiesListActivity --------> initActivity");
 
         Intent intent = getIntent();

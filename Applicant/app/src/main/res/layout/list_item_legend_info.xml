@@ -17,12 +17,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <!--<LinearLayout-->
-            <!--android:background="#616161"-->
-            <!--android:id="@+id/testLinealLayoutLegendInfo"-->
-            <!--android:layout_width="48dp"-->
-            <!--android:layout_height="30dp">-->
-
             <TextView
                 android:id="@+id/textViewTextLegendItemName"
                 android:layout_width="48dp"
@@ -35,16 +29,12 @@
                 android:gravity="center"
                 tools:text="PYJ"/>
 
-            <!--</LinearLayout>-->
-
-
             <TextView
                 android:id="@+id/textViewTextLegendItemDetail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="16dp"
-                android:layout_weight="1"
                 tools:text="Рекомендовано до зарахування, оригінали документів подано. Очікуйте зарахування!"/>
 
         </TableRow>

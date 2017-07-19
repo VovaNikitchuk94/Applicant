@@ -47,9 +47,20 @@ public class ApplicationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         //set text
         applicationsInfoViewHolder.numberTextView.setText(applicationsInfo.getStrApplicantNumber());
         applicationsInfoViewHolder.nameTextView.setText(applicationsInfo.getStrApplicantName());
-        applicationsInfoViewHolder.totalScoreTextView.setText(applicationsInfo.getStrApplicantTotalScores());
-        applicationsInfoViewHolder.BDOScoreTextView.setText(applicationsInfo.getStrApplicantMarkDocument());
-        applicationsInfoViewHolder.ZNOScoreTextView.setText(applicationsInfo.getStrApplicantMarkTest());
+        if (applicationsInfo.getStrApplicantMarkDocument().isEmpty()) {
+            if (applicationsInfo.getStrPriority().isEmpty()) {
+                applicationsInfoViewHolder.markDocumentTotalScoreTextView.setText(applicationsInfo.getStrApplicantTotalScores());
+                applicationsInfoViewHolder.ZNOScoreOrOrigDocumentTextView.setText(applicationsInfo.getStrOriginalDocument());
+            } else {
+                applicationsInfoViewHolder.totalScoreOrPriorityTextView.setText(applicationsInfo.getStrPriority());
+                applicationsInfoViewHolder.markDocumentTotalScoreTextView.setText(applicationsInfo.getStrApplicantTotalScores());
+                applicationsInfoViewHolder.ZNOScoreOrOrigDocumentTextView.setText(applicationsInfo.getStrOriginalDocument());
+            }
+        } else {
+            applicationsInfoViewHolder.totalScoreOrPriorityTextView.setText(applicationsInfo.getStrApplicantTotalScores());
+            applicationsInfoViewHolder.markDocumentTotalScoreTextView.setText(applicationsInfo.getStrApplicantMarkDocument());
+            applicationsInfoViewHolder.ZNOScoreOrOrigDocumentTextView.setText(applicationsInfo.getStrApplicantMarkTest());
+        }
         //set clickListener
         applicationsInfoViewHolder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,18 +82,18 @@ public class ApplicationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         View rootView;
         TextView numberTextView;
         TextView nameTextView;
-        TextView totalScoreTextView;
-        TextView BDOScoreTextView;
-        TextView ZNOScoreTextView;
+        TextView totalScoreOrPriorityTextView;
+        TextView markDocumentTotalScoreTextView;
+        TextView ZNOScoreOrOrigDocumentTextView;
 
         ApplicationsInfoViewHolder(View itemView) {
             super(itemView);
             rootView = itemView;
             numberTextView = (TextView) itemView.findViewById(R.id.textViewSequenceNumberApplicantInfo);
             nameTextView = (TextView) itemView.findViewById(R.id.textViewNameApplicantsApplicantInfo);
-            totalScoreTextView = (TextView) itemView.findViewById(R.id.textViewCompetitionScoresApplicantInfo);
-            BDOScoreTextView = (TextView) itemView.findViewById(R.id.textViewBDOScoreApplicantsApplicantInfo);
-            ZNOScoreTextView = (TextView) itemView.findViewById(R.id.textViewZNOScoreApplicantsApplicantInfo);
+            totalScoreOrPriorityTextView = (TextView) itemView.findViewById(R.id.textViewCompetitionScoresApplicantInfo);
+            markDocumentTotalScoreTextView = (TextView) itemView.findViewById(R.id.textViewBDOScoreApplicantsApplicantInfo);
+            ZNOScoreOrOrigDocumentTextView = (TextView) itemView.findViewById(R.id.textViewZNOScoreApplicantsApplicantInfo);
         }
     }
 

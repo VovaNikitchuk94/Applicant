@@ -64,6 +64,8 @@
     <string name="textHintSearchCities">Search City</string>
     <string name="textHintSearchUniversity">Search University</string>
     <string name="textHintSearchEnrollee">Search enrollee</string>
+    <string name="textExams">Exams</string>
+    <string name="textExamsArray">Exams</string>
 </resources>
 
 

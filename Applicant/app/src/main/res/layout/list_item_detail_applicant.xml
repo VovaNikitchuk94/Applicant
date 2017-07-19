@@ -1,22 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
-              android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              android:paddingBottom="8dp"
+              android:paddingEnd="12dp"
+              android:paddingStart="12dp">
 
-    <TextView
-        tools:text="PIB"
-        android:id="@+id/textViewConventionsDetailApplicant"
-        android:layout_width="wrap_content"
+    <TableLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"/>
+        android:paddingTop="8dp"
+        android:shrinkColumns="1"
+        android:stretchColumns="1">
 
-    <TextView
-        tools:text="Nikitchuk V.L."
-        android:layout_weight="4"
-        android:id="@+id/textViewDefinitionDetailApplicant"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        <TableRow>
+
+            <TextView
+                android:id="@+id/textViewConventionsDetailApplicant"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                tools:text="PIB"/>
+
+            <TextView
+                android:id="@+id/textViewDefinitionDetailApplicant"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                tools:text="Nikitchuk V.L."/>
+
+        </TableRow>
+
+    </TableLayout>
 
 </LinearLayout>
