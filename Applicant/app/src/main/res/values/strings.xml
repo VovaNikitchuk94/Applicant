@@ -66,6 +66,8 @@
     <string name="textHintSearchEnrollee">Search enrollee</string>
     <string name="textExams">Exams</string>
     <string name="textExamsArray">Exams</string>
+    <string name="textHintSearchSpecialty">Search specialty</string>
+    <string name="textThisfunctionWillBeAddedSoon">This function will be added soon.</string>
 </resources>
 
 

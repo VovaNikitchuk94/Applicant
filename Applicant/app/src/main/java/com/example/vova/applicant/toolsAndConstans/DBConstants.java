@@ -128,16 +128,6 @@ public class DBConstants {
         }
     }
 
-    public static final class ApplicationTable {
-        public static final String TABLE_NAME = "ApplicationTable";
-
-        public static final class Cols {
-            public static final String APPLICATION_INFO_FIELD_ID = "_id";
-//            public static final String APPLICATION_INFO_FIELD_APPLICATIONS_ID = "_applications_id";
-            public static final String APPLICATION_INFO_FIELD_NAME = "_name";
-        }
-    }
-
     public static final class ImportantInfoTable {
         public static final String TABLE_NAME = "ImportantInfoTable";
 
@@ -146,12 +136,6 @@ public class DBConstants {
             public static final String IMPORTANT_INFO_FIELD_SPECIALITY_ID = "_speciality_id";
 
             public static final String IMPORTANT_INFO_FIELD_UNIVERSITY_INFOS = "_university_infos";
-//            public static final String IMPORTANT_INFO_FIELD_SPECIALITY = "_speciality";
-//            public static final String IMPORTANT_INFO_FIELD_SPECIALIZATION = "_specialization";
-//            public static final String IMPORTANT_INFO_FIELD_FACULTY = "_faculty";
-//            public static final String IMPORTANT_INFO_FIELD_TIME_FORM = "_time_form";
-//            public static final String IMPORTANT_INFO_FIELD_LAST_TIME_UPDATE = "_last_time_update";
-
             public static final String IMPORTANT_INFO_FIELD_NUMBER = "_number";
             public static final String IMPORTANT_INFO_FIELD_NAME = "_name";
             public static final String IMPORTANT_INFO_FIELD_PRIORITY = "_priority";

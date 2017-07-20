@@ -22,6 +22,7 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:background="#e0e0e0"
             android:id="@+id/textViewHeadAboutUniversityActivity"
             style="@style/headTextViewStyle"
             android:layout_width="match_parent"

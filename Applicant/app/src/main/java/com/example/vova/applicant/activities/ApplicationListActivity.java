@@ -51,7 +51,6 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
     public static final String INTENT_KEY_APPLICANT_ACTIVITY = "INTENT_KEY_APPLICANT_ACTIVITY";
 
-    private static final int ITEM_ID_APPLICANT_INFO = 112;
     private static final int MENU_ITEM_LEGEND = 113;
 
     private RecyclerView mRecyclerView;
@@ -90,7 +89,6 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
-        //TODO при обновлении и последующем открытии активи пропадает данные и ImportantInfo
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_applicant_swipe_refresh_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -135,8 +133,6 @@ public class ApplicationListActivity extends BaseActivity implements Application
         numberTextView.setText(importantInfos.getStrNumber());
         nameTextView.setText(importantInfos.getStrName());
 
-        Log.d("My", "setTextImportantTextView importantInfos.getStrOriginalDocument() - >" + importantInfos.getStrOriginalDocument());
-
         if (importantInfos.getStrMarkDocument().isEmpty()) {
             if (importantInfos.getStrPriority().isEmpty()) {
                 markDocumentTotalScoreTextView.setText(importantInfos.getStrTotalScores());
@@ -154,8 +150,6 @@ public class ApplicationListActivity extends BaseActivity implements Application
     }
 
     private void setLegendList() {
-        Log.d("My", "setLegendList start - >" + true);
-
         RecyclerView legendRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewLegendInfoListActivity);
         LinearLayoutManager legendLayoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -169,16 +163,13 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
         // настройка поведения нижнего экрана
         bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+//        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         bottomSheetBehavior.setHideable(true);
 
         LegendEngine legendEngine = new LegendEngine(getApplication());
         ArrayList<LegendInfo> legendInfos = legendEngine.getLegendsById(mLongSpecialityId);
-        Log.d("My", "setLegendList start legendInfos size- >" + legendInfos.size());
         LegendAdapter legendAdapter = new LegendAdapter(legendInfos);
         legendRecyclerView.setAdapter(legendAdapter);
-
-        Log.d("My", "setLegendList  bottomSheetBehavior.setState - >" + bottomSheetBehavior.getState());
     }
 
     @Override
@@ -293,45 +284,17 @@ public class ApplicationListActivity extends BaseActivity implements Application
         }
     }
 
-    //TODO пока не трогать
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        //set applicantItem icon
-//        MenuItem itemApplicantInfo = menu.add(0, ITEM_ID_APPLICANT_INFO, 0, R.string.textInfoForApplicant);
-//        Drawable infoDrawable = ContextCompat.getDrawable(this, R.drawable.ic_info_black_24dp);
-//        infoDrawable.setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
-//        itemApplicantInfo.setIcon(infoDrawable);
-//        itemApplicantInfo.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-//
-//
-//
-//        return super.onCreateOptionsMenu(menu);
-//    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()){
-            case ITEM_ID_APPLICANT_INFO:
-//                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-//                        Uri.parse("https://drive.google.com/open?id=0B4__5KtwLylAazV3TEtmWmNYMjQ"));
-//                startActivity(browserIntent);
-
-                Toast.makeText(this, "applicant info selected", Toast.LENGTH_SHORT).show();
-                break;
             case MENU_ITEM_LEGEND:
                 if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                    Log.d("My", " if bottomSheetBehavior.setState - >" +  bottomSheetBehavior.getState());
                 } else {
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                    Log.d("My", " else bottomSheetBehavior.setState - >" +  bottomSheetBehavior.getState());
                 }
-
-                Log.d("My", " bottomSheetBehavior.setState - >" +  bottomSheetBehavior.getState());
-                Toast.makeText(this, "MENU_ITEM_LEGEND selected", Toast.LENGTH_SHORT).show();
                 break;
-
         }
         return super.onOptionsItemSelected(item);
     }
@@ -356,13 +319,13 @@ public class ApplicationListActivity extends BaseActivity implements Application
                 } else {
                     parseData(DBConstants.Update.NEED_AN_UPDATE);
                 }
-
-                //set textViews text importantInfo
-                setTextImportantTextView();
-
-                //set recyclerView with legend data
-                setLegendList();
             }
+
+            //set textViews text importantInfo
+            setTextImportantTextView();
+
+            //set recyclerView with legend data
+            setLegendList();
         }
     }
 
@@ -419,6 +382,8 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
                             //set textViews text importantInfo
                             setTextImportantTextView();
+
+                            setLegendList();
 
                             if (mSwipeRefreshLayout.isRefreshing()) {
                                 getData();
@@ -484,7 +449,6 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
                     ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getApplication());
                     if (importantApplicantInfoEngine.getImportantInfoById(specialityId) == null) {
-                        Log.d("My", "getImportantInfoById == null");
                         parseImportantInfo(detailElements, selectTrMarking, specialityId);
                     }
 
@@ -522,25 +486,12 @@ public class ApplicationListActivity extends BaseActivity implements Application
                             }
                         }
 
-                        Log.d("My", "parse applicant tdElements.size() -> " + tdElements.size());
-                        Log.d("My", "parse applicant number -> " + number);
-                        Log.d("My", "parse applicant name -> " + name);
-                        Log.d("My", "parse applicant priority -> " + priority);
-                        Log.d("My", "parse applicant totalScore -> " + totalScore);
-                        Log.d("My", "parse applicant markDocument -> " + markDocument);
-                        Log.d("My", "parse applicant originalDocument -> " + originalDocument);
-
-
                         someLink = tdElements.attr("abs:href");
-
-//                        applicationsInfos.add(new ApplicationsInfo(specialityId,
-//                                number, name, priority, totalScore, markDocument, markTest, markExam,
-//                                extraPoints, originalDocument, someLink, color, dateUpdate));
 
                         applicationsInfos.add(new ApplicationsInfo(specialityId,
                                 number, name, priority, totalScore, markDocument, markTest, originalDocument,
                                 fullData, someLink, color, dateUpdate));
-                        Log.d("My", "parse applicant fullData -> " + fullData);
+
                         fullData = "";
                     }
 
@@ -558,8 +509,6 @@ public class ApplicationListActivity extends BaseActivity implements Application
     }
 
     //get legend data
-    //todo грузить легеннду для каждого списка абитуры
-    //todo учесть что там есть текст жирным шрифтом, доделать внешний вид легенды
     private void parseLegendData(Elements selectLegendElements, LegendEngine legendEngine, long specialityId) {
         final String getStyle = "*[style*='background']";
 
@@ -572,7 +521,7 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
             if (detailLegend.get(0).select(getStyle).size() > 0) {
                 String style = detailLegend.get(0).select(getStyle).toString();
-                if (style.length() > 132) {
+                if (style.length() > 132 | style.contains("#ff9")) {
                     legendBackground = "#FFFF99";
                 } else {
                     legendBackground = style.substring(style.indexOf("#"), style.indexOf(";"));
@@ -591,17 +540,13 @@ public class ApplicationListActivity extends BaseActivity implements Application
                 legendDetail = detailLegend.get(0).text().trim();
                 legendBackground = "#e0e0e0";
             }
+            Log.d("My", "parseLegendData legendBackground -> " + legendBackground);
             legendEngine.addLegend(new LegendInfo(specialityId, legendName, legendDetail, legendBackground));
         }
     }
 
     private void parseImportantInfo(Elements detailElements, Elements selectTrMarking, long specialityId) {
-//        String speciality = "";
-//        String specialization = "";
-//        String faculty = "";
-//        String timeForm = "";
-//        String lastTimeUpdate = "";
-
+        String universityInfos = "";
         String number ="";
         String name = "";
         String priority = "";
@@ -614,8 +559,8 @@ public class ApplicationListActivity extends BaseActivity implements Application
         ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getApplicationContext());
         if (importantApplicantInfoEngine.getImportantInfoById(specialityId) == null) {
 //
-            String universityName = detailElements.select(".title-description").text();
-            String universityInfos = "";
+//            String universityName = detailElements.select(".title-description").text();
+
             if (detailElements.select("p").size() > 1) {
                 universityInfos = (detailElements.select("p").get(1).toString()).replaceAll("(?i)<p[^>]*>", "")
                         .replaceAll("(?i)<[/]p[^>]*>", "").replaceAll("(?i)<nobr[^>]*>", "")
@@ -627,23 +572,6 @@ public class ApplicationListActivity extends BaseActivity implements Application
                         .replaceAll("(?i)<[/]nobr[^>]*>", "").replaceAll("(?i)<small[^>]*>", "")
                         .replaceAll("(?i)<[/]small[^>]*>", "").replaceAll("(?i)<br[^>]*>", "\n");
             }
-            Log.d("My", "parse importantInfo universityInfos -> " + universityInfos);
-//
-//            universityInfos = universityInfos.substring(4, universityInfos.indexOf("<small"));
-//            String[] arrSpecialities = universityInfos.split("[/]");
-//            if (arrSpecialities.length == 4) {
-//                speciality = arrSpecialities[0];
-//                specialization = arrSpecialities[1];
-//                faculty = arrSpecialities[2];
-//                timeForm = arrSpecialities[3];
-//                Log.d("My", "parse importantInfo speciality -> " + speciality);
-//                Log.d("My", "parse importantInfo specialization -> " + specialization);
-//                Log.d("My", "parse importantInfo faculty -> " + faculty);
-//                Log.d("My", "parse importantInfo timeForm -> " + timeForm);
-//            }
-//
-//            lastTimeUpdate = detailElements.select("p > small").text();
-//            Log.d("My", "parse importantInfo lastTimeUpdate -> " + lastTimeUpdate);
 
             //applicant data
             if (selectTrMarking.size() == 8) {
@@ -671,22 +599,9 @@ public class ApplicationListActivity extends BaseActivity implements Application
                 }
             }
 
-            Log.d("My", "parse importantInfo tdElements.size() -> " + selectTrMarking.size());
-            Log.d("My", "parse importantInfo number -> " + number);
-            Log.d("My", "parse importantInfo name -> " + name);
-            Log.d("My", "parse importantInfo priority -> " + priority);
-            Log.d("My", "parse importantInfo totalScore -> " + totalScore);
-            Log.d("My", "parse importantInfo markDocument -> " + markDocument);
-            Log.d("My", "parse importantInfo markTest -> " + markTest);
-            Log.d("My", "parse importantInfo originalDocument -> " + originalDocument);
-
             for (Element elementTest: selectTrMarking) {
                 fullData += elementTest.text() + "/";
             }
-
-            Log.d("My", "parse importantInfo fullData -> " + fullData);
-
-
             importantApplicantInfoEngine.addImportantInfo(new ImportantInfo(specialityId, universityInfos, number, name, priority,
                     totalScore, markDocument, markTest, originalDocument, fullData));
         }
@@ -694,8 +609,6 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
 
     //get background color applicant item
-    //TODO get all backgrounds обработать все возможные трехзначные цвета
-    //TODO даже при том что я вітаскиваю все цвета нужно правильно их ковертировать нужные мне цвета
     private String parseBackgroundApplicant(Elements tdElements) {
         final String getStyle = "*[style*='background']";
         String backgroundFirst;

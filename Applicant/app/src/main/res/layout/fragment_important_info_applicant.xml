@@ -14,35 +14,4 @@
         android:gravity="center_horizontal"
         tools:text="Державний університет телекомунікацій"/>
 
-    <!--<TextView-->
-        <!--android:id="@+id/textSpecialityFragmentDetailApplicant"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--tools:text="Спеціальність: 124 Системний аналіз"/>-->
-
-    <!--<TextView-->
-        <!--android:id="@+id/textSpecializationFragmentDetailApplicant"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--tools:text="Спеціалізація: Системний аналіз,"/>-->
-
-    <!--<TextView-->
-        <!--android:id="@+id/textFacultyFragmentDetailApplicant"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--tools:text="факультет: Інформаційних технологій"/>-->
-
-    <!--<TextView-->
-        <!--android:id="@+id/textTimeFormFragmentDetailApplicant"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--tools:text="денна форма навчання"/>-->
-
-    <!--<TextView-->
-        <!--android:id="@+id/textLastTimeUpdateFragmentDetailApplicant"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--tools:text="денна форма навчання"/>-->
-
-
 </LinearLayout>

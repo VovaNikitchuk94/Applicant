@@ -18,7 +18,7 @@
         <TableRow>
 
             <TextView
-                android:textSize="12sp"
+                android:textSize="13sp"
                 android:id="@+id/textViewSequenceNumberApplicantInfo"
                 android:layout_width="45dp"
                 android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
                 tools:text="1"/>
 
             <TextView
-                android:textSize="12sp"
+                android:textSize="13sp"
                 android:id="@+id/textViewNameApplicantsApplicantInfo"
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
                 tools:text="Никитчук В.Л.ук В.Л."/>
 
             <TextView
-                android:textSize="12sp"
+                android:textSize="13sp"
                 android:id="@+id/textViewCompetitionScoresApplicantInfo"
                 android:layout_width="40dp"
                 android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
                 tools:text="412.96"/>
 
             <TextView
-                android:textSize="12sp"
+                android:textSize="13sp"
                 android:id="@+id/textViewBDOScoreApplicantsApplicantInfo"
                 android:layout_width="40dp"
                 android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
                 tools:text="125.36"/>
 
             <TextView
-                android:textSize="12sp"
+                android:textSize="13sp"
                 android:id="@+id/textViewZNOScoreApplicantsApplicantInfo"
                 android:layout_width="40dp"
                 android:layout_height="wrap_content"

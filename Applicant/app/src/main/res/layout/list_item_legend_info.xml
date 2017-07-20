@@ -4,8 +4,9 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:background="#e0e0e0"
-              android:orientation="horizontal"
-              android:padding="8dp">
+              android:orientation="vertical"
+              android:padding="8dp"
+              android:baselineAligned="false">
 
     <TableLayout
         android:layout_width="match_parent"

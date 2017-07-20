@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.vova.applicant.toolsAndConstans.DBConstants;
 import com.example.vova.applicant.toolsAndConstans.DBConstants.AboutUniversityTable;
-import com.example.vova.applicant.toolsAndConstans.DBConstants.ApplicationTable;
 import com.example.vova.applicant.toolsAndConstans.DBConstants.ApplicationsTable;
 import com.example.vova.applicant.toolsAndConstans.DBConstants.CategoryUniversTable;
 import com.example.vova.applicant.toolsAndConstans.DBConstants.CitiesTable;
@@ -100,21 +99,11 @@ public class DBHelper extends SQLiteOpenHelper {
                 + ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_BACKGROUND + " TEXT, "
                 + ApplicationsTable.Cols.APPLICATIONS_INFO_FIELD_DATE_UPDATE + " TEXT NOT NULL);");
 
-        sqLiteDatabase.execSQL("CREATE TABLE " + ApplicationTable.TABLE_NAME
-                + " (" + ApplicationTable.Cols.APPLICATION_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + ApplicationTable.Cols.APPLICATION_INFO_FIELD_NAME + " TEXT NOT NULL); ");
-
         sqLiteDatabase.execSQL("CREATE TABLE " + ImportantInfoTable.TABLE_NAME
                 + " (" + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_SPECIALITY_ID + " INTEGER NOT NULL, "
 
                 + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_UNIVERSITY_INFOS + " TEXT, "
-//                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_SPECIALITY + " TEXT, "
-//                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_SPECIALIZATION + " TEXT, "
-//                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_FACULTY + " TEXT, "
-//                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_TIME_FORM + " TEXT, "
-//                + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_LAST_TIME_UPDATE + " TEXT, "
-
                 + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_NUMBER + " TEXT, "
                 + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_NAME + " TEXT NOT NULL, "
                 + ImportantInfoTable.Cols.IMPORTANT_INFO_FIELD_PRIORITY + " TEXT, "

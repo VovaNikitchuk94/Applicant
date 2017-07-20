@@ -11,7 +11,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:screenOrientation="portrait"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name=".FabricApp">
         <activity android:name=".activities.CitiesListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -30,6 +31,9 @@
         <activity android:name=".activities.FavoriteItemsActivity"/>
         <activity android:name=".activities.ArchiveActivity"/>
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="f21703667173d08989a946ece329f2f476f9a5df" />
     </application>
 
 </manifest>

@@ -70,11 +70,14 @@ public class CitiesListActivity extends BaseActivity {
     protected void initActivity(Bundle savedInstanceState) {
         Log.d("My", "CitiesListActivity --------> initActivity");
 
-        if (savedInstanceState != null) {
-            mCalendar = (Calendar) savedInstanceState.get(DATE_KEY_INDEX);
-            mYearsCodeLink = (String) savedInstanceState.get(KEY_URL);
-            mLongYearId = (long) savedInstanceState.get(KEY_YEAR_ID);
-        }
+
+//        if (savedInstanceState != null) {
+//            Log.d("My", "CitiesListActivity --------> savedInstanceState != null -> ");
+//            mCalendar = (Calendar) savedInstanceState.get(DATE_KEY_INDEX);
+//            mYearsCodeLink = (String) savedInstanceState.get(KEY_URL);
+//            mLongYearId = (long) savedInstanceState.get(KEY_YEAR_ID);
+//            Log.d("My", "CitiesListActivity --------> savedInstanceState != null -> " + mCalendar + "\n " + mYearsCodeLink + "\n " + mLongYearId);
+//        }
 
         Utils.setNeedToEqualsTime(true);
         mCalendar = Utils.getModDeviceTime();
@@ -205,15 +208,16 @@ public class CitiesListActivity extends BaseActivity {
         super.onStop();
     }
 
-    //TODO слхранять календать
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Log.d("My", "onSaveInstanceState  -> ");
-        outState.putSerializable(DATE_KEY_INDEX, mCalendar);
-        outState.putSerializable(KEY_URL, mYearsCodeLink);
-        outState.putSerializable(KEY_YEAR_ID, mLongYearId);
-    }
+//    //TODO слхранять календать
+//    @Override
+//    protected void onSaveInstanceState(Bundle outState) {
+//
+//        Log.d("My", "onSaveInstanceState  -> ");
+//        outState.putSerializable(DATE_KEY_INDEX, mCalendar);
+//        outState.putSerializable(KEY_URL, mYearsCodeLink);
+//        outState.putSerializable(KEY_YEAR_ID, mLongYearId);
+//        super.onSaveInstanceState(outState);
+//    }
 
     //    @Override
 //    protected void onDestroy() {
@@ -281,6 +285,9 @@ public class CitiesListActivity extends BaseActivity {
     private void getData() {
         CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
         mCitiesInfos.clear();
+        if (citiesInfoEngine.getAllCitiesById(mLongYearId).isEmpty()) {
+            parseData(Update.NEED_AN_UPDATE);
+        }
         mCitiesInfos.addAll(citiesInfoEngine.getAllCitiesById(mLongYearId));
         mCitiesInfoAdapter = new CitiesInfoAdapter(mCitiesInfos);
         mCitiesInfoAdapter.notifyDataSetChanged();
@@ -309,6 +316,10 @@ public class CitiesListActivity extends BaseActivity {
             public void run() {
 
                 final CitiesInfoEngine citiesInfoEngine = new CitiesInfoEngine(getApplication());
+//                if (mYearsCodeLink == null) {
+//                    mYearsCodeLink = Constans.URL_VSTUP_INFO_2017;
+//                    mLongYearId = 7;
+//                }
                 if (Utils.connectToData(mYearsCodeLink) && mLongYearId > -1) {
                     parse(mLongYearId, citiesInfoEngine, isNeedUpdate);
 
@@ -424,7 +435,6 @@ public class CitiesListActivity extends BaseActivity {
 
             @Override
             public void onClick(View v) {
-                Log.d("My", "onClick work getId -> " + v.getId());
                 if (mCitiesInfo == null) {
                     return;
                 }
@@ -435,12 +445,9 @@ public class CitiesListActivity extends BaseActivity {
 
             @Override
             public boolean onLongClick(View v) {
-                Log.d("My", "onLongClick work -> ");
-                Log.d("My", "onLongClick v.getId() -> " + v.getId());
 
                 if (!mMultiSelector.isSelectable() && isCurrentYear()) {
                     startSupportActionMode(mActionModeCallBack);
-                    Log.d("My", "onLongClick mMultiSelector.tapSelection(this) -> " + true);
                     mMultiSelector.setSelectable(true);
                     mMultiSelector.setSelected(CitiesInfoHolder.this, true);
                     return true;
@@ -483,6 +490,7 @@ public class CitiesListActivity extends BaseActivity {
                             engine.updateCity(citiesInfo);
                         }
                     }
+                    mCitiesInfoAdapter.notifyDataSetChanged();
                     return true;
 
                 default:

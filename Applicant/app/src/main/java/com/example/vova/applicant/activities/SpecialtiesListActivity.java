@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -152,7 +153,7 @@ public class SpecialtiesListActivity extends BaseActivity {
                 mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.primary_light));
         searchAutoComplete.setTextColor(Color.WHITE);
-        mSearchView.setQueryHint("Test");
+        mSearchView.setQueryHint(getString(R.string.textHintSearchSpecialty));
 
         //clear button
         ImageView searchCloseIcon = (ImageView) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
@@ -331,10 +332,7 @@ public class SpecialtiesListActivity extends BaseActivity {
                 try {
                     String specialty = "";
                     String applications = "";
-//                    String accepted = "";
-//                    String recommended = "";
-//                    String licenseOrder = "";
-//                    String volumeOrder = "";
+
                     String order = "";
                     String exam = "";
                     String newLink = "";
@@ -352,14 +350,9 @@ public class SpecialtiesListActivity extends BaseActivity {
 
                     for (Element element : trElements) {
                         Elements tdElements = element.select("td");
-                        Log.d("My", "tdElements.toString() -> " + tdElements.toString());
-                        Log.d("My", "tdElements.size() -> " + tdElements.size());
                     }
 
-                    //TODO правильно обработать всю инфу для 2017
-                    //TODO правильно обработать загрузку данных
 //                    //TODO загружает данные всех бакалавров, например Гетьмана веч форма -> бакалавр показало всех бакалавров, нужно открывать не только по специальности а еще и по timeForm
-//                    //TODO пустые данные о (рекомендовано, зараховано) получают  поля с прошлых не пустых данных
                     for (Element link : trElements) {
                         Elements elements = link.getElementsByClass("button button-mini");
                         Elements tdElements = link.select("td");
@@ -369,20 +362,7 @@ public class SpecialtiesListActivity extends BaseActivity {
                                 .replaceAll("(?i)<[/]td[^>]*>", "").replaceAll("(?i)<span title=[^>]*>", "")
                                 .replaceAll("(?i)<[/]span[^>]*>", "").replaceAll("(?i)<br[^>]*>", "\n");
 
-
-//                        Log.d("My", "tdElements.get(0) -> " + tdElements.get(0).toString().replaceAll("(?i)<td[^>]*>", "")
-//                                .replaceAll("(?i)<[/]td[^>]*>", "").replaceAll("(?i)<span title=[^>]*>", "")
-//                                .replaceAll("(?i)<[/]span[^>]*>", "").replaceAll("(?i)<br[^>]*>", "\n"));
-
                         applications = tdElements.get(1).select("span").text();
-//                        Log.d("My", "tdElements.get(1) -> " + tdElements.get(1).select("span").text());
-//                                + tdElements.get(1).toString().replaceAll("(?i)<td[^>]*>", "")
-//                                .replaceAll("(?i)<[/]td[^>]*>", "").replaceAll("(?i)<span title=[^>]*>", "")
-//                                .replaceAll("(?i)<[/]span[^>]*>", "").replaceAll("(?i)<br[^>]*>", "\n"));
-
-//                        order = tdElements.get(2).toString().replaceAll("(?i)<td[^>]*>", "")
-//                                .replaceAll("(?i)<[/]td[^>]*>", "").replaceAll("(?i)<nobr title=[^>]*>", "")
-//                                .replaceAll("(?i)<[/]nobr[^>]*>", " ").replaceAll("(?i)<br[^>]*>", "\n");
 
                         if (tdElements.get(2).select("nobr").size() == 2) {
                             order = tdElements.get(2).select("nobr").get(0).text() + "\n" + tdElements.get(2).select("nobr").get(1).text();
@@ -390,50 +370,12 @@ public class SpecialtiesListActivity extends BaseActivity {
                             order = tdElements.get(2).select("nobr").get(0).text();
                         }
 
-//                        Log.d("My", "tdElements.get(2) -> " + tdElements.get(2).toString().replaceAll("(?i)<td[^>]*>", "")
-//                                .replaceAll("(?i)<[/]td[^>]*>", "").replaceAll("(?i)<nobr title=[^>]*>", "")
-//                                .replaceAll("(?i)<[/]nobr[^>]*>", " ").replaceAll("(?i)<br[^>]*>", "\n"));
-
                         if (tdElements.size() == 4) {
                             exam = tdElements.get(3).toString().replaceAll("(?i)<td[^>]*>", "")
                                     .replaceAll("(?i)<[/]td[^>]*>", "").replaceAll("(?i)<span title=[^>]*>", "")
                                     .replaceAll("(?i)<[/]span[^>]*>", "").replaceAll("(?i)<sub[^>]*>", " ")
                                     .replaceAll("(?i)<[/]sub[^>]*>", " ").replaceAll("(?i)<br[^>]*>", "\n");
-
-//                            Log.d("My", "tdElements.get(3) -> " + tdElements.get(3).toString().replaceAll("(?i)<td[^>]*>", "")
-//                                    .replaceAll("(?i)<[/]td[^>]*>", "").replaceAll("(?i)<span title=[^>]*>", "")
-//                                    .replaceAll("(?i)<[/]span[^>]*>", "").replaceAll("(?i)<sub[^>]*>", "")
-//                                    .replaceAll("(?i)<[/]sub[^>]*>", " ").replaceAll("(?i)<br[^>]*>", "\n"));
                         }
-
-
-//                        specialty = (tdElements.get(0).toString()).replaceAll("(?i)<td[^>]*>", "")
-//                                .replaceAll("(?i)<[/]td[^>]*>", "").replaceAll("(?i)<br[^>]*>", "\n");
-//
-//                        // get more data applications
-//                        applications = tdElements.get(1).select("span").text();
-//                        if (tdElements.get(1).select("nobr").size() == 2) {
-//                            accepted = tdElements.get(1).select("nobr").get(0).text();
-//                            recommended = tdElements.get(1).select("nobr").get(1).text();
-//                        } else if (tdElements.get(1).select("nobr").size() == 1) {
-//                            recommended = tdElements.get(1).select("nobr").get(0).text();
-//                        } else {
-//                            recommended = null;
-//                        }
-//
-//                        // get more data amount
-//                        if (tdElements.get(2).select("nobr").size() == 2) {
-//                            licenseOrder = tdElements.get(2).select("nobr").get(0).text();
-//                            volumeOrder = tdElements.get(2).select("nobr").get(1).text();
-//                        } else if (tdElements.get(2).select("nobr").size() == 1) {
-//                            volumeOrder = tdElements.get(2).select("nobr").get(0).text();
-//                        } else {
-//                            volumeOrder = null;
-//                        }
-//
-//                        //attempt to get more data from exams
-//                        exam = (tdElements.get(3).toString()).replaceAll("(?i)<td[^>]*>", "")
-//                                .replaceAll("(?i)<[/]td[^>]*>", "").replaceAll("(?i)<br[^>]*>", "\n");
 
                         newLink = elements.attr("abs:href");
 
@@ -486,12 +428,8 @@ public class SpecialtiesListActivity extends BaseActivity {
 
             private TextView specialtyTextView;
             private TextView applicationsTextView;
-//            private TextView acceptedTextView;
-//            private TextView recommendedTextView;
-//            private TextView licenseOrderTextView;
-//            private TextView volumeOrderTextView;
             private TextView orderTextView;
-            private ImageButton examButton;
+            private ImageView examButton;
 
             private SpecialtiesInfo mSpecialtiesInfo;
 
@@ -501,12 +439,8 @@ public class SpecialtiesListActivity extends BaseActivity {
 
                 specialtyTextView = (TextView) itemView.findViewById(R.id.textViewSpecialtySpecialtiesInfo);
                 applicationsTextView = (TextView) itemView.findViewById(R.id.textViewApplicationsSpecialtiesInfo);
-//                acceptedTextView = (TextView) itemView.findViewById(R.id.textViewmStrAcceptedSpecialtiesInfo);
-//                recommendedTextView = (TextView) itemView.findViewById(R.id.textViewmStrRecommendedSpecialtiesInfo);
-//                licenseOrderTextView = (TextView) itemView.findViewById(R.id.textViewmmStrLicensedOrderSpecialtiesInfo);
-//                volumeOrderTextView = (TextView) itemView.findViewById(R.id.textViewmmStrVolumeOrderSpecialtiesInfo);
                 orderTextView = (TextView) itemView.findViewById(R.id.textViewOrderSpecialtiesInfo);
-                examButton = (ImageButton) itemView.findViewById(R.id.buttonExamDialogSpecialtiesInfo);
+                examButton = (ImageView) itemView.findViewById(R.id.buttonExamDialogSpecialtiesInfo);
 
                 itemView.setOnClickListener(this);
                 itemView.setOnLongClickListener(this);
@@ -517,10 +451,6 @@ public class SpecialtiesListActivity extends BaseActivity {
                 mSpecialtiesInfo = specialtiesInfo;
                 specialtyTextView.setText(specialtiesInfo.getStrSpecialty());
                 applicationsTextView.setText(specialtiesInfo.getStrApplications());
-//                acceptedTextView.setText(specialtiesInfo.getStrAccepted());
-//                recommendedTextView.setText(specialtiesInfo.getStrRecommended());
-//                licenseOrderTextView.setText(specialtiesInfo.getStrLicensedOrder());
-//                volumeOrderTextView.setText(specialtiesInfo.getStrVolumeOrder());
                 orderTextView.setText(specialtiesInfo.getStrOrder());
                 examButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -544,19 +474,11 @@ public class SpecialtiesListActivity extends BaseActivity {
                     int emptyColor = ContextCompat.getColor(mContext, R.color.md_grey_500);
                     specialtyTextView.setTextColor(emptyColor);
                     applicationsTextView.setTextColor(emptyColor);
-//                    acceptedTextView.setTextColor(emptyColor);
-//                    recommendedTextView.setTextColor(emptyColor);
-//                    licenseOrderTextView.setTextColor(emptyColor);
-//                    volumeOrderTextView.setTextColor(emptyColor);
                     orderTextView.setTextColor(emptyColor);
                 } else {
                     int normalTextColor = ContextCompat.getColor(mContext, R.color.primary_text);
                     specialtyTextView.setTextColor(normalTextColor);
                     applicationsTextView.setTextColor(normalTextColor);
-//                    acceptedTextView.setTextColor(normalTextColor);
-//                    recommendedTextView.setTextColor(normalTextColor);
-//                    licenseOrderTextView.setTextColor(normalTextColor);
-//                    volumeOrderTextView.setTextColor(normalTextColor);
                     orderTextView.setTextColor(normalTextColor);
                 }
 
