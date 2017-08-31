@@ -62,7 +62,7 @@
 
                     <TextView
                         android:id="@+id/textViewLegendCompetitionScoresApplicantInfo"
-                        android:layout_width="40dp"
+                        android:layout_width="50dp"
                         android:layout_height="wrap_content"
                         android:gravity="start"
                         android:paddingEnd="8dp"
@@ -71,20 +71,20 @@
 
                     <TextView
                         android:id="@+id/textViewLegendBDOScoreApplicantsApplicantInfo"
-                        android:layout_width="40dp"
+                        android:layout_width="50dp"
                         android:layout_height="wrap_content"
                         android:gravity="start"
                         android:paddingEnd="8dp"
                         android:paddingStart="5dp"
                         tools:text="ЗНО"/>
 
-                    <TextView
-                        android:id="@+id/textViewLegendZNOScoreApplicantsApplicantInfo"
-                        android:layout_width="40dp"
-                        android:layout_height="wrap_content"
-                        android:gravity="start"
-                        android:paddingStart="5dp"
-                        tools:text="БДО"/>
+                    <!--<TextView-->
+                        <!--android:id="@+id/textViewLegendZNOScoreApplicantsApplicantInfo"-->
+                        <!--android:layout_width="40dp"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:gravity="start"-->
+                        <!--android:paddingStart="5dp"-->
+                        <!--tools:text="БДО"/>-->
 
                 </TableRow>
 

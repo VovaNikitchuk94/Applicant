@@ -38,7 +38,7 @@
             <TextView
                 android:textSize="13sp"
                 android:id="@+id/textViewCompetitionScoresApplicantInfo"
-                android:layout_width="40dp"
+                android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:gravity="start"
                 android:paddingEnd="8dp"
@@ -47,19 +47,19 @@
             <TextView
                 android:textSize="13sp"
                 android:id="@+id/textViewBDOScoreApplicantsApplicantInfo"
-                android:layout_width="40dp"
+                android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:gravity="start"
                 android:paddingEnd="8dp"
                 tools:text="125.36"/>
 
-            <TextView
-                android:textSize="13sp"
-                android:id="@+id/textViewZNOScoreApplicantsApplicantInfo"
-                android:layout_width="40dp"
-                android:layout_height="wrap_content"
-                android:gravity="start"
-                tools:text="251.23"/>
+            <!--<TextView-->
+                <!--android:textSize="13sp"-->
+                <!--android:id="@+id/textViewZNOScoreApplicantsApplicantInfo"-->
+                <!--android:layout_width="40dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:gravity="start"-->
+                <!--tools:text="251.23"/>-->
 
         </TableRow>
 

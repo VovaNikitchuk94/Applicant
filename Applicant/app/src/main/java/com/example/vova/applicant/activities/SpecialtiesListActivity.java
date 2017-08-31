@@ -546,6 +546,8 @@ public class SpecialtiesListActivity extends BaseActivity {
                             specialityInfoEngine.updateSpeciality(specialtiesInfo);
                         }
                     }
+
+                    mSpecialitiesInfoAdapter.notifyDataSetChanged();
                     return true;
 
                 default:

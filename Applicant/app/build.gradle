@@ -19,7 +19,7 @@ android {
     buildToolsVersion "25.0.3"
     defaultConfig {
         applicationId "com.example.vova.applicant"
-        minSdkVersion 19
+        minSdkVersion 16
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -28,6 +28,7 @@ android {
     buildTypes {
         debug {
             versionNameSuffix " -DEBUG-"
+//            ext.enableCrashlytics = false
         }
         release {
             minifyEnabled false

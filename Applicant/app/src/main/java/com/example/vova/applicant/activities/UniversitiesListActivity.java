@@ -321,6 +321,8 @@ public class UniversitiesListActivity extends BaseActivity {
                             engine.updateUniversity(universityInfo);
                         }
                     }
+                    mUniversitiesInfoAdapter.notifyDataSetChanged();
+
                     return true;
 
                 default:

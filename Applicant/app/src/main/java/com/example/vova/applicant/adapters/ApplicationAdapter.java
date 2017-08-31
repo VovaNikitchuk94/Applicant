@@ -41,7 +41,6 @@ public class ApplicationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         ApplicationsInfoViewHolder applicationsInfoViewHolder = (ApplicationsInfoViewHolder) holder;
         final ApplicationsInfo applicationsInfo = mApplicationsInfos.get(position);
         //set background
-        //TODO сделать правильный подбор цветов списка
         Log.d("My", "ApplicantAdapter color -> " + applicationsInfo.getStrBackground());
         applicationsInfoViewHolder.rootView.setBackgroundColor(Color.parseColor(applicationsInfo.getStrBackground()));
         //set text
@@ -50,16 +49,16 @@ public class ApplicationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (applicationsInfo.getStrApplicantMarkDocument().isEmpty()) {
             if (applicationsInfo.getStrPriority().isEmpty()) {
                 applicationsInfoViewHolder.markDocumentTotalScoreTextView.setText(applicationsInfo.getStrApplicantTotalScores());
-                applicationsInfoViewHolder.ZNOScoreOrOrigDocumentTextView.setText(applicationsInfo.getStrOriginalDocument());
+//                applicationsInfoViewHolder.ZNOScoreOrOrigDocumentTextView.setText(applicationsInfo.getStrOriginalDocument());
             } else {
                 applicationsInfoViewHolder.totalScoreOrPriorityTextView.setText(applicationsInfo.getStrPriority());
                 applicationsInfoViewHolder.markDocumentTotalScoreTextView.setText(applicationsInfo.getStrApplicantTotalScores());
-                applicationsInfoViewHolder.ZNOScoreOrOrigDocumentTextView.setText(applicationsInfo.getStrOriginalDocument());
+//                applicationsInfoViewHolder.ZNOScoreOrOrigDocumentTextView.setText(applicationsInfo.getStrOriginalDocument());
             }
         } else {
             applicationsInfoViewHolder.totalScoreOrPriorityTextView.setText(applicationsInfo.getStrApplicantTotalScores());
             applicationsInfoViewHolder.markDocumentTotalScoreTextView.setText(applicationsInfo.getStrApplicantMarkDocument());
-            applicationsInfoViewHolder.ZNOScoreOrOrigDocumentTextView.setText(applicationsInfo.getStrApplicantMarkTest());
+//            applicationsInfoViewHolder.ZNOScoreOrOrigDocumentTextView.setText(applicationsInfo.getStrApplicantMarkTest());
         }
         //set clickListener
         applicationsInfoViewHolder.rootView.setOnClickListener(new View.OnClickListener() {
@@ -93,7 +92,7 @@ public class ApplicationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             nameTextView = (TextView) itemView.findViewById(R.id.textViewNameApplicantsApplicantInfo);
             totalScoreOrPriorityTextView = (TextView) itemView.findViewById(R.id.textViewCompetitionScoresApplicantInfo);
             markDocumentTotalScoreTextView = (TextView) itemView.findViewById(R.id.textViewBDOScoreApplicantsApplicantInfo);
-            ZNOScoreOrOrigDocumentTextView = (TextView) itemView.findViewById(R.id.textViewZNOScoreApplicantsApplicantInfo);
+//            ZNOScoreOrOrigDocumentTextView = (TextView) itemView.findViewById(R.id.textViewZNOScoreApplicantsApplicantInfo);
         }
     }
 

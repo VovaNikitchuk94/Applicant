@@ -44,9 +44,7 @@
     <string name="favorite">Favorite</string>
     <string name="text_choose_category">Choose category</string>
     <string name="textInfoForApplicant">Info for applicant</string>
-    <string name="textImportantInfoForApplicant2017"> \t Currently the site is not yet prepared vstupInfo data.
-        \tWe will notify you as soon as the first information will appear on the site vstupInfo.
-        \tYou can read the terms of admission to universities in 2017.</string>
+
     <string name="textViewConventionsBottomSheet">Conventions</string>
     <string name="textLegend">Legend</string>
     <string name="textEmptyData">Data is empty</string>

@@ -109,7 +109,7 @@ public class ApplicationListActivity extends BaseActivity implements Application
         nameTextView = (TextView) findViewById(R.id.textViewLegendNameApplicantsApplicantInfo);
         totalScoreOrPriorityTextView = (TextView) findViewById(R.id.textViewLegendCompetitionScoresApplicantInfo);
         markDocumentTotalScoreTextView = (TextView) findViewById(R.id.textViewLegendBDOScoreApplicantsApplicantInfo);
-        ZNOScoreOrOrigDocumentTextView = (TextView) findViewById(R.id.textViewLegendZNOScoreApplicantsApplicantInfo);
+//        ZNOScoreOrOrigDocumentTextView = (TextView) findViewById(R.id.textViewLegendZNOScoreApplicantsApplicantInfo);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewApplicationListActivity);
         LinearLayoutManager layoutManager
@@ -136,16 +136,16 @@ public class ApplicationListActivity extends BaseActivity implements Application
         if (importantInfos.getStrMarkDocument().isEmpty()) {
             if (importantInfos.getStrPriority().isEmpty()) {
                 markDocumentTotalScoreTextView.setText(importantInfos.getStrTotalScores());
-                ZNOScoreOrOrigDocumentTextView.setText(importantInfos.getStrOriginalDocument());
+//                ZNOScoreOrOrigDocumentTextView.setText(importantInfos.getStrOriginalDocument());
             } else {
                 totalScoreOrPriorityTextView.setText(importantInfos.getStrPriority());
                 markDocumentTotalScoreTextView.setText(importantInfos.getStrTotalScores());
-                ZNOScoreOrOrigDocumentTextView.setText(importantInfos.getStrOriginalDocument());
+//                ZNOScoreOrOrigDocumentTextView.setText(importantInfos.getStrOriginalDocument());
             }
         } else {
             totalScoreOrPriorityTextView.setText(importantInfos.getStrTotalScores());
             markDocumentTotalScoreTextView.setText(importantInfos.getStrMarkDocument());
-            ZNOScoreOrOrigDocumentTextView.setText(importantInfos.getStrMarkTest());
+//            ZNOScoreOrOrigDocumentTextView.setText(importantInfos.getStrMarkTest());
         }
     }
 
@@ -182,7 +182,7 @@ public class ApplicationListActivity extends BaseActivity implements Application
         getMenuInflater().inflate(R.menu.menu_activity_main, menu);
         setToolbarSearchView(menu);
 
-        MenuItem itemHelp = menu.add(3, MENU_ITEM_LEGEND,3, R.string.textLegend);
+        MenuItem itemHelp = menu.add(3, MENU_ITEM_LEGEND, 3, R.string.textLegend);
         itemHelp.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 
         return super.onCreateOptionsMenu(menu);
@@ -287,7 +287,7 @@ public class ApplicationListActivity extends BaseActivity implements Application
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case MENU_ITEM_LEGEND:
                 if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
@@ -433,6 +433,18 @@ public class ApplicationListActivity extends BaseActivity implements Application
                     Elements links = document.getElementsByClass("tablesaw tablesaw-stack tablesaw-sortable");
                     Elements elementsBody = links.select("tbody");
                     Elements selectTrApplicant = elementsBody.select("tr");
+                    ArrayList<Element> elementArrayList = new ArrayList<>();
+                    for (int i = 0; i < selectTrApplicant.size(); i++) {
+                        if (!selectTrApplicant.get(i).hasText()) {
+                            Log.d("My", "!selectTrApplicant.get(i).hasText() - >" + true);
+                            selectTrApplicant.get(i).remove();
+                        } else {
+
+                            elementArrayList.add(selectTrApplicant.get(i));
+                            Log.d("My", "!selectTrApplicant.get(i).hasText() - >" + false);
+                        }
+                    }
+                    Elements elementsNewTr = new Elements(elementArrayList);
 
                     //Data of legend
                     Element legendElementById = document.getElementById("legend");
@@ -452,10 +464,10 @@ public class ApplicationListActivity extends BaseActivity implements Application
                         parseImportantInfo(detailElements, selectTrMarking, specialityId);
                     }
 
-                    for (Element link : selectTrApplicant) {
+                    for (Element link : elementsNewTr) {
                         Elements tdElements = link.select("td");
 
-                        for (Element elementTest: tdElements) {
+                        for (Element elementTest : tdElements) {
                             fullData += elementTest.text() + "/";
                         }
 
@@ -468,15 +480,15 @@ public class ApplicationListActivity extends BaseActivity implements Application
                             totalScore = tdElements.get(2).text();
                             markDocument = tdElements.get(3).text();
                             markTest = tdElements.get(4).text();
-                        } else if (tdElements.size() >= 9){
+                        } else if (tdElements.size() >= 9) {
                             number = tdElements.get(0).text();
                             name = tdElements.get(1).text();
                             totalScore = tdElements.get(3).text();
                             markDocument = tdElements.get(4).text();
-                        } else if (tdElements.size() >= 4 ) {
+                        } else if (tdElements.size() >= 4) {
                             number = tdElements.get(0).text();
                             name = tdElements.get(1).text();
-                            if (tdElements.size() == 5 ) {
+                            if (tdElements.size() == 5) {
                                 priority = tdElements.get(2).text();
                                 totalScore = tdElements.get(3).text();
                                 originalDocument = tdElements.get(4).text();
@@ -511,6 +523,8 @@ public class ApplicationListActivity extends BaseActivity implements Application
     //get legend data
     private void parseLegendData(Elements selectLegendElements, LegendEngine legendEngine, long specialityId) {
         final String getStyle = "*[style*='background']";
+        String backgroundFirst = "";
+        String backgroundSecond = "";
 
         for (Element legend : selectLegendElements) {
             Elements detailLegend = legend.select("td");
@@ -518,14 +532,28 @@ public class ApplicationListActivity extends BaseActivity implements Application
             String legendDetail = "";
             String legendBackground = "";
 
-
             if (detailLegend.get(0).select(getStyle).size() > 0) {
-                String style = detailLegend.get(0).select(getStyle).toString();
-                if (style.length() > 132 | style.contains("#ff9")) {
-                    legendBackground = "#FFFF99";
-                } else {
-                    legendBackground = style.substring(style.indexOf("#"), style.indexOf(";"));
+
+                backgroundFirst = detailLegend.get(0).select(getStyle).get(0).toString();
+                backgroundFirst = backgroundFirst.substring(backgroundFirst.indexOf("#"), backgroundFirst.indexOf(";"));
+
+                if (detailLegend.select(getStyle).size() >= 2) {
+                    backgroundSecond = detailLegend.get(0).select(getStyle).get(1).toString();
+                    backgroundSecond = backgroundSecond.substring(backgroundSecond.indexOf("#"), backgroundSecond.indexOf(";"));
+                    if (!backgroundFirst.equals(backgroundSecond)) {
+                        backgroundFirst = backgroundSecond;
+                    }
                 }
+
+                if (backgroundFirst.length() == 4) {
+                    char firstChar = backgroundFirst.charAt(1);
+                    char secondChar = backgroundFirst.charAt(2);
+                    char thirdChar = backgroundFirst.charAt(3);
+
+                    StringBuilder builder = new StringBuilder(backgroundFirst);
+                    backgroundFirst = String.valueOf(builder.insert(1, firstChar).insert((builder.length() + 1) / 2, secondChar).insert(builder.length(), thirdChar));
+                }
+                legendBackground = backgroundFirst;
             } else {
                 legendBackground = "#ffffff";
                 legendName = detailLegend.get(0).text();
@@ -533,21 +561,18 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
             if (detailLegend.size() > 1) {
                 legendDetail = detailLegend.get(1).text().trim();
-            }
-
-            if (detailLegend.size() == 1) {
+            } else if (detailLegend.size() == 1) {
                 legendName = "";
                 legendDetail = detailLegend.get(0).text().trim();
                 legendBackground = "#e0e0e0";
             }
-            Log.d("My", "parseLegendData legendBackground -> " + legendBackground);
             legendEngine.addLegend(new LegendInfo(specialityId, legendName, legendDetail, legendBackground));
         }
     }
 
     private void parseImportantInfo(Elements detailElements, Elements selectTrMarking, long specialityId) {
         String universityInfos = "";
-        String number ="";
+        String number = "";
         String name = "";
         String priority = "";
         String totalScore = "";
@@ -558,9 +583,6 @@ public class ApplicationListActivity extends BaseActivity implements Application
 
         ImportantApplicantInfoEngine importantApplicantInfoEngine = new ImportantApplicantInfoEngine(getApplicationContext());
         if (importantApplicantInfoEngine.getImportantInfoById(specialityId) == null) {
-//
-//            String universityName = detailElements.select(".title-description").text();
-
             if (detailElements.select("p").size() > 1) {
                 universityInfos = (detailElements.select("p").get(1).toString()).replaceAll("(?i)<p[^>]*>", "")
                         .replaceAll("(?i)<[/]p[^>]*>", "").replaceAll("(?i)<nobr[^>]*>", "")
@@ -580,13 +602,13 @@ public class ApplicationListActivity extends BaseActivity implements Application
                 totalScore = selectTrMarking.get(2).text();
                 markDocument = selectTrMarking.get(3).text();
                 markTest = selectTrMarking.get(4).text();
-            } else if (selectTrMarking.size() >= 9){
+            } else if (selectTrMarking.size() >= 9) {
                 number = selectTrMarking.get(0).text();
                 name = selectTrMarking.get(1).text();
                 priority = selectTrMarking.get(2).text();
                 totalScore = selectTrMarking.get(3).text();
                 markDocument = selectTrMarking.get(4).text();
-            } else if (selectTrMarking.size() >= 4 ) {
+            } else if (selectTrMarking.size() >= 4) {
                 number = selectTrMarking.get(0).text();
                 name = selectTrMarking.get(1).text();
                 if (selectTrMarking.size() == 5) {
@@ -599,7 +621,7 @@ public class ApplicationListActivity extends BaseActivity implements Application
                 }
             }
 
-            for (Element elementTest: selectTrMarking) {
+            for (Element elementTest : selectTrMarking) {
                 fullData += elementTest.text() + "/";
             }
             importantApplicantInfoEngine.addImportantInfo(new ImportantInfo(specialityId, universityInfos, number, name, priority,
@@ -613,9 +635,9 @@ public class ApplicationListActivity extends BaseActivity implements Application
         final String getStyle = "*[style*='background']";
         String backgroundFirst;
         String backgroundSecond;
-        String color;
+        String color = "";
 
-        if ((tdElements.get(0).select(getStyle).size()) > 0) {
+        if (tdElements.get(0).select(getStyle).size() > 0) {
 
             backgroundFirst = tdElements.get(0).select(getStyle).toString();
             backgroundSecond = tdElements.get(1).select(getStyle).toString();
@@ -623,11 +645,19 @@ public class ApplicationListActivity extends BaseActivity implements Application
             backgroundFirst = backgroundFirst.substring(backgroundFirst.indexOf("#"), backgroundFirst.indexOf(">") - 1);
             backgroundSecond = backgroundSecond.substring(backgroundSecond.indexOf("#"), backgroundSecond.indexOf(">") - 1);
 
-            if (!backgroundFirst.equals(backgroundSecond) | backgroundFirst.contains("#ff9")) {
-                color = "#FFFF99";
-            } else {
-                color = backgroundFirst;
+            if (!backgroundFirst.equals(backgroundSecond)) {
+                backgroundFirst = backgroundSecond;
             }
+
+            if (backgroundFirst.length() == 4) {
+                char firstCol = backgroundFirst.charAt(1);
+                char secondCol = backgroundFirst.charAt(2);
+                char thirdCol = backgroundFirst.charAt(3);
+
+                StringBuilder builder = new StringBuilder(backgroundFirst);
+                backgroundFirst = String.valueOf(builder.insert(1, firstCol).insert((builder.length() + 1) / 2, secondCol).insert(builder.length(), thirdCol));
+            }
+            color = backgroundFirst;
         } else {
             color = "#FFFFFF";
         }
