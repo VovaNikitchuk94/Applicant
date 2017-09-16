@@ -53,7 +53,6 @@ public class AboutUniversityAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public int getItemCount() {
-        Log.d("My", "AboutUniversityAdapter mAboutUniversityInfos.size() -> " + mAboutUniversityInfos.size());
         return mAboutUniversityInfos.size();
     }
 
